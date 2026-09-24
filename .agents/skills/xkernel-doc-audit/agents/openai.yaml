@@ -1,0 +1,6 @@
+interface:
+  display_name: "项目文档巡检"
+  short_description: "按需核对项目当前文档、历史记录与证据，减少过期上下文干扰"
+  default_prompt: "请使用 $xkernel-doc-audit 巡检当前项目的文档一致性，先读取项目规则、roadmap 和当前模块记录，再按需核对其他材料。"
+policy:
+  allow_implicit_invocation: false

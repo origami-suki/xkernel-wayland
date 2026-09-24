@@ -1,0 +1,5 @@
+#!/bin/sh
+# Keep errors and exit status on the console; no daemon/respawn wrapper.
+set -eu
+[ "$(id -u)" = 0 ] || { echo 'wayland-seat: run as root' >&2; exit 1; }
+exec /usr/bin/seatd -g seat -l debug "$@"

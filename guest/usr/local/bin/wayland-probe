@@ -1,0 +1,27 @@
+#!/bin/sh
+# Version probes report expected exit codes; enumeration failures remain separate evidence.
+PROBE_TIMEOUT=${PROBE_TIMEOUT:-30}
+failures=0
+run() {
+    expected=$1; shift
+    printf '\n+ '; printf '%s ' "$@"; printf '\n'
+    timeout -s KILL "$PROBE_TIMEOUT" "$@"
+    rc=$?
+    printf 'exit=%s expected=%s\n' "$rc" "$expected"
+    [ "$expected" = inspect ] || [ "$rc" = "$expected" ] || failures=$((failures + 1))
+}
+run 0 id
+run 0 /bin/busybox
+run 1 /lib/ld-musl-aarch64.so.1
+run 0 /usr/bin/weston --version
+run 0 /usr/bin/weston --help
+run 0 /usr/bin/seatd -v
+run 0 /usr/lib/chromium/chromium --version
+run inspect ls -ld /dev/shm /run/user/1000 /run/seatd.sock
+run inspect ls -l /dev/dri /dev/input
+run inspect sh -c 'ls -l /dev/tty*'
+run inspect ls -ld /proc /sys
+run inspect cat /proc/mounts
+run 0 sha256sum /opt/ict-testpages/index.html /opt/ict-testpages/interaction.html /opt/ict-testpages/layout.html
+printf 'required_probe_failures=%s\n' "$failures"
+[ "$failures" = 0 ]

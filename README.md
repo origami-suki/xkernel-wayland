@@ -32,4 +32,6 @@ python3 scripts/check_project.py --verify-assets
 
 机器专用配置可放入被忽略的 `.local/`。本机默认 QEMU 已统一为系统包提供的 `/usr/bin/qemu-system-aarch64`，实际版本为 `11.1.1`（用户所指系统新版，经检查并非 `11.0`）。旧的 `/usr/local` QEMU `5.2.0` 已卸载；`qemu-img`、`qemu-io` 和 `qemu-nbd` 也使用系统 `11.1.1`。检查脚本接受 `--qemu /absolute/path`，并检查版本与 `config/baseline.json` 一致。已补齐系统 `virtio-gpu` / `virtio-gpu-pci` 及 GTK 显示模块（`qemu-ui-opengl` 是 GTK 包依赖），virtio 键鼠设备由系统模拟器提供。详见 [M0-005 环境任务卡](docs/tasks/M0-005.md)。
 
-[M0-002](docs/tasks/M0-002.md) 已完成内核构建、两次同配置交互 shell/正常关机和 monitor 验证。入口为 `scripts/build_kernel.sh` 与 `python3 scripts/run_guest.py --run-id <新编号>`。M0-003 的 Wayland 增量准备与动态探测正在收尾；尚无图形或 Chromium 显示通过证据。
+[M0-002](docs/tasks/M0-002.md) 已完成内核构建、两次同配置交互 shell/正常关机和 monitor 验证。入口为 `scripts/build_kernel.sh` 与 `python3 scripts/run_guest.py --run-id <新编号>`。[M0-003](docs/tasks/M0-003.md) 已完成 16 包增量、原页部署、独立重建及版本/设备/权限探测，最终工作盘为 `work/images/wayland-m0.img`。M0 进入阶段验收；下一项 [M1-002](docs/tasks/M1-002.md) 处理 Chromium `--version` 触发的 ELF 地址冲突 panic。尚无图形或 Chromium 显示通过证据。
+
+Wayland 工作盘重建：`python3 scripts/rootfs_prepare.py --output work/images/new-wayland.img --evidence artifacts/new-wayland`（输出盘和证据目录须未使用）。精确包锁、准备步骤和已知限制见 [用户态说明](docs/analysis/wayland-rootfs.md)。

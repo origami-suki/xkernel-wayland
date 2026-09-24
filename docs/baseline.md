@@ -20,7 +20,7 @@
 - 内核项目提交 `58cf0e11` 只校正 xtask 两个本地包锁文件版本；运行逻辑仍为上游 v0.2.0。正式启动 Build ID 为 `d3900524f685cdf2b1d956b2f3a19c43a868db04859296f345ce59b94dcbb86f`。
 - Makefile 的运行变量包括 `MEM`、`SMP`、`ACCEL` 和 `DISK_IMG`。启动封装需明确传入 2g、4、n 和工作镜像，不依赖默认值。
 - `GRAPHIC=y` 添加 GPU，不自动添加 keyboard/mouse。guest 输入设备须显式添加并验证；host 模块可加载不等于 guest 驱动/枚举通过。
-- 赛方 rootfs 带 Xorg/JWM/Chromium，不带 Weston；内核 init 与镜像 BusyBox inittab 尚未接通，镜像默认欢迎页不是官方测试页。详见 [rootfs 调查](analysis/rootfs-and-memory.md)。
+- 赛方原 rootfs 带 Xorg/JWM/Chromium，不带 Weston。M0-003 已在独立盘补齐 Weston 14.0.2 与依赖、前台会话入口和原始三页；最终镜像及哈希见 [用户态记录](analysis/wayland-rootfs.md)。内核 init 仍按原设计进入串口 shell；新 BusyBox inittab 也不自动启动 X11/Weston/浏览器。
 
 ## 本队首个可运行版本
 

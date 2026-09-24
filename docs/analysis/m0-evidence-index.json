@@ -1,0 +1,1340 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-24",
+  "kernel_commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+  "kernel_build_id": "d3900524f685cdf2b1d956b2f3a19c43a868db04859296f345ce59b94dcbb86f",
+  "m0_002_integration_commit": "1ee6eb7",
+  "scope": "M0 environment and reproducible Wayland rootfs preparation; no compositor/browser display acceptance",
+  "runs": [
+    {
+      "run_id": "m0-first-boot",
+      "interpretation": "exploratory shell PASS, kernel lockfile not yet committed",
+      "integration": {
+        "commit": "810f8356dd07b089ece1a77b398550ffcb8f4433",
+        "status": "M docs/tasks/M0-002.md\n M sources/x-kernel\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? config/toolchain.json\n?? guest/\n?? scripts/build_kernel.sh\n?? scripts/run_guest.py"
+      },
+      "kernel": {
+        "commit": "c548c427af64bc4fcb7ba9d486d77e006be69b4f",
+        "status": "M xtask/Cargo.lock"
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/xkernel-run.img",
+        "snapshot": true,
+        "sha256_before": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "sha256_after": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "unchanged": true
+      },
+      "exit_reason": "pid1-exit-for-kernel-sync-poweroff",
+      "guest_exit_code": 0,
+      "qemu_exit_code": 0,
+      "runner_exit_code": 0,
+      "bundle_sha256": {
+        "kernel.elf": "071bce311a79499f66f7592ff13fbee7a73c49cc4582c4f4fda9ba1001c01cc1",
+        "kernel.bin": "4ba423d277a9b76b411207300b02a3ef13160a137665794712eeac501072efb1"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-first-boot/command.sh",
+          "bytes": 866,
+          "sha256": "1e38e95b138c28afab49d60e18d68d9379c0ad04db9135224a35bfcf026c9eda"
+        },
+        {
+          "path": "artifacts/runs/m0-first-boot/elf-notes.txt",
+          "bytes": 1663,
+          "sha256": "d094ddcd8c7189d166b4d7bfccb90276fa34312a075f3f85037f0cc3d7900018"
+        },
+        {
+          "path": "artifacts/runs/m0-first-boot/guest-commands.sh",
+          "bytes": 367,
+          "sha256": "d83f43ee5e29cf204aebb6ba7eb88ea06d7b54b7c8754beacbf6fbdb19e52cb8"
+        },
+        {
+          "path": "artifacts/runs/m0-first-boot/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-first-boot/metadata.json",
+          "bytes": 93909,
+          "sha256": "4e79280b277ca3666f6497976c61c25b8c18d1c03f13dddbe0828a99527f4d98"
+        },
+        {
+          "path": "artifacts/runs/m0-first-boot/monitor.log",
+          "bytes": 48163,
+          "sha256": "fa0d5abb4cbd025ed89c67a2127f69af2feb00372959f005a6375eb55c705a36"
+        },
+        {
+          "path": "artifacts/runs/m0-first-boot/objcopy-validation.txt",
+          "bytes": 277,
+          "sha256": "2d23e5cc0027fba68a0357cf8cf887375df8939add832b37ed963ece2cb513a8"
+        },
+        {
+          "path": "artifacts/runs/m0-first-boot/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-first-boot/screendump.ppm",
+          "bytes": 921615,
+          "sha256": "11b8d01bb05554039a8f9d5b5911f5250d5fc5e686fa447cd43370c4c3c37757"
+        },
+        {
+          "path": "artifacts/runs/m0-first-boot/serial.log",
+          "bytes": 4458,
+          "sha256": "ae7631866a5bf347cbf3bb4e082934b9506ab4953de956d62c4e292529b38caa"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-serial-01",
+      "interpretation": "rejected stale bundle before QEMU launch",
+      "integration": {
+        "commit": "810f8356dd07b089ece1a77b398550ffcb8f4433",
+        "status": "M docs/tasks/M0-002.md\n M sources/x-kernel\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? config/toolchain.json\n?? guest/\n?? scripts/build_kernel.sh\n?? scripts/rootfs_prepare.py\n?? scripts/run_guest.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/xkernel-run.img",
+        "snapshot": true
+      },
+      "exit_reason": "ValueError: bundle commit differs from current kernel HEAD; build first",
+      "guest_exit_code": null,
+      "qemu_exit_code": null,
+      "runner_exit_code": 1,
+      "bundle_sha256": null,
+      "files": [
+        {
+          "path": "artifacts/runs/m0-serial-01/metadata.json",
+          "bytes": 33766,
+          "sha256": "ade50342b0e5231ad148fb63ab10127c885cdfadb049c3135f6aec09e4f14e28"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-01/run_guest.py",
+          "bytes": 17007,
+          "sha256": "19beeb3b8411f922078d3653b98d42884e18506f66852c4759c3e82fa8008690"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-serial-02",
+      "interpretation": "runner failure: proc cmdline read too early",
+      "integration": {
+        "commit": "810f8356dd07b089ece1a77b398550ffcb8f4433",
+        "status": "M docs/tasks/M0-002.md\n M sources/x-kernel\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? config/toolchain.json\n?? guest/\n?? scripts/build_kernel.sh\n?? scripts/rootfs_audit.py\n?? scripts/rootfs_prepare.py\n?? scripts/run_guest.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/xkernel-run.img",
+        "snapshot": true,
+        "sha256_before": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "sha256_after": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "unchanged": true
+      },
+      "exit_reason": "ValueError: live QEMU argv differs from planned argv",
+      "guest_exit_code": null,
+      "qemu_exit_code": -15,
+      "runner_exit_code": 1,
+      "bundle_sha256": {
+        "kernel.elf": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+        "kernel.bin": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-serial-02/command.sh",
+          "bytes": 864,
+          "sha256": "37387117e0537b12fe6b846ba2c7987ab241d42ed19aa433b950eb9697dadf50"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-02/elf-notes.txt",
+          "bytes": 1666,
+          "sha256": "d759a13b3d639ca7fc762beabb1565bd8b3c37eceb2b621e99c62557c6e6162e"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-02/guest-commands.sh",
+          "bytes": 367,
+          "sha256": "ddbaa5867aa561f47f6febd71e188c7689fb230625cd24fa03f27fe4e6933619"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-02/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-02/metadata.json",
+          "bytes": 36440,
+          "sha256": "565ed5795538715b3dd22daa2896c15a1ce9047d69d371509ad1dd56c50ae469"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-02/monitor.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-02/objcopy-validation.txt",
+          "bytes": 275,
+          "sha256": "8b032586a9e5b6264fd54eaadefbfb757856c87ef7d9b339413fe095c64d850a"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-02/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-02/run_guest.py",
+          "bytes": 17007,
+          "sha256": "19beeb3b8411f922078d3653b98d42884e18506f66852c4759c3e82fa8008690"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-serial-03",
+      "interpretation": "same runner failure reproduced",
+      "integration": {
+        "commit": "810f8356dd07b089ece1a77b398550ffcb8f4433",
+        "status": "M docs/tasks/M0-002.md\n M sources/x-kernel\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? config/toolchain.json\n?? guest/\n?? scripts/build_kernel.sh\n?? scripts/rootfs_audit.py\n?? scripts/rootfs_prepare.py\n?? scripts/run_guest.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/xkernel-run.img",
+        "snapshot": true,
+        "sha256_before": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "sha256_after": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "unchanged": true
+      },
+      "exit_reason": "ValueError: live QEMU argv differs from planned argv",
+      "guest_exit_code": null,
+      "qemu_exit_code": -15,
+      "runner_exit_code": 1,
+      "bundle_sha256": {
+        "kernel.elf": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+        "kernel.bin": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-serial-03/command.sh",
+          "bytes": 864,
+          "sha256": "27f8a1818a12a2ec08154e0a67fead74debe294f76a6bd99381006e2dbce99cb"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-03/elf-notes.txt",
+          "bytes": 1666,
+          "sha256": "d759a13b3d639ca7fc762beabb1565bd8b3c37eceb2b621e99c62557c6e6162e"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-03/guest-commands.sh",
+          "bytes": 367,
+          "sha256": "8777538c459d803fef9a38149db39e7edf1b8c279bb92d6021335a1107f28bd5"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-03/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-03/metadata.json",
+          "bytes": 36440,
+          "sha256": "1893fb2349c05ba1080766cf6f72558cab8debefd0c6417464c10f0fccc00be8"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-03/monitor.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-03/objcopy-validation.txt",
+          "bytes": 275,
+          "sha256": "dee19eb44efa57e033e6ca00b4ba901d18bf1726f6c89fa3ed9c49d0949a075c"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-03/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-03/run_guest.py",
+          "bytes": 17007,
+          "sha256": "19beeb3b8411f922078d3653b98d42884e18506f66852c4759c3e82fa8008690"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-serial-04",
+      "interpretation": "formal repeat 1 PASS",
+      "integration": {
+        "commit": "810f8356dd07b089ece1a77b398550ffcb8f4433",
+        "status": "M docs/tasks/M0-002.md\n M sources/x-kernel\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? config/toolchain.json\n?? guest/\n?? scripts/build_kernel.sh\n?? scripts/rootfs_audit.py\n?? scripts/rootfs_prepare.py\n?? scripts/run_guest.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/xkernel-run.img",
+        "snapshot": true,
+        "sha256_before": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "sha256_after": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "unchanged": true
+      },
+      "exit_reason": "pid1-exit-for-kernel-sync-poweroff",
+      "guest_exit_code": 0,
+      "qemu_exit_code": 0,
+      "runner_exit_code": 0,
+      "bundle_sha256": {
+        "kernel.elf": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+        "kernel.bin": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-serial-04/command.sh",
+          "bytes": 864,
+          "sha256": "baa2dce33a242f108701880f9bf6696cf644a83ae09339c506d26fb9fd795007"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/elf-notes.txt",
+          "bytes": 1666,
+          "sha256": "d759a13b3d639ca7fc762beabb1565bd8b3c37eceb2b621e99c62557c6e6162e"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/guest-commands.sh",
+          "bytes": 367,
+          "sha256": "63eea72aee4db784228c5484a6758ad02cf1574f29c52bae648c86d2334eb1bc"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/metadata.json",
+          "bytes": 95916,
+          "sha256": "ff9b7cc3bcb665a0f336b878e95cea4b89ef9860c22d857b38091524c6e5c3b8"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/monitor.log",
+          "bytes": 47706,
+          "sha256": "6516a46019da458a4bdd4d999e2246611e92e8d5fb09b0f6b3284b2c2424202b"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/objcopy-validation.txt",
+          "bytes": 275,
+          "sha256": "a3c15759d5679bda32dcf63439374679e6d4c3369109fd5229eb90606b8f570c"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/run_guest.py",
+          "bytes": 17168,
+          "sha256": "87798bb6290026cc5c5f6f46167f61412b3e4a55f1f0e79a69d9c4b6b2797151"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/screendump-preview.png",
+          "bytes": 1360,
+          "sha256": "3392b61102d466ed7c1afd6a20a33ae1ab10c4bc27b94b8bc654d47991422d37"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/screendump.ppm",
+          "bytes": 921615,
+          "sha256": "11b8d01bb05554039a8f9d5b5911f5250d5fc5e686fa447cd43370c4c3c37757"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-04/serial.log",
+          "bytes": 4459,
+          "sha256": "06ba4f37379b5c7499cef69cda7f7792f30dd39b1e6a4921ef5f8aa82fbb8e21"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-serial-05",
+      "interpretation": "formal repeat 2 PASS",
+      "integration": {
+        "commit": "810f8356dd07b089ece1a77b398550ffcb8f4433",
+        "status": "M docs/tasks/M0-002.md\n M sources/x-kernel\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? config/toolchain.json\n?? guest/\n?? scripts/build_kernel.sh\n?? scripts/rootfs_audit.py\n?? scripts/rootfs_prepare.py\n?? scripts/run_guest.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/xkernel-run.img",
+        "snapshot": true,
+        "sha256_before": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "sha256_after": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "unchanged": true
+      },
+      "exit_reason": "pid1-exit-for-kernel-sync-poweroff",
+      "guest_exit_code": 0,
+      "qemu_exit_code": 0,
+      "runner_exit_code": 0,
+      "bundle_sha256": {
+        "kernel.elf": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+        "kernel.bin": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-serial-05/command.sh",
+          "bytes": 864,
+          "sha256": "de039cdbd44d26b1507564516a6b8442a07d3e8d09e4ada2934c8f31626c2c4f"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/elf-notes.txt",
+          "bytes": 1666,
+          "sha256": "d759a13b3d639ca7fc762beabb1565bd8b3c37eceb2b621e99c62557c6e6162e"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/guest-commands.sh",
+          "bytes": 367,
+          "sha256": "89d07d8686ca336b16a3155ed4d4402bc2b6c55f9d06a554589c622fe392e909"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/metadata.json",
+          "bytes": 95916,
+          "sha256": "4e4e4e97fca016f328e417676a03d50bf634288b444e7841e275764c31004770"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/monitor.log",
+          "bytes": 47706,
+          "sha256": "8b80ebfc793d751a0feb1e192bd6453a3ccad45d15990e529c699c57da56cf47"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/objcopy-validation.txt",
+          "bytes": 275,
+          "sha256": "467458cb4b2e34c2c03fbf0b7fe1402ee7a646f887cc0c4e997574fc194f03e4"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/run_guest.py",
+          "bytes": 17168,
+          "sha256": "87798bb6290026cc5c5f6f46167f61412b3e4a55f1f0e79a69d9c4b6b2797151"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/screendump.ppm",
+          "bytes": 921615,
+          "sha256": "11b8d01bb05554039a8f9d5b5911f5250d5fc5e686fa447cd43370c4c3c37757"
+        },
+        {
+          "path": "artifacts/runs/m0-serial-05/serial.log",
+          "bytes": 4455,
+          "sha256": "6f2e43364e274f4d357f769ce1e9f156bad4d074adaaea5e3b3ce2b48ba4e3b4"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-monitor-stop",
+      "interpretation": "monitor quit PASS",
+      "integration": {
+        "commit": "810f8356dd07b089ece1a77b398550ffcb8f4433",
+        "status": "M docs/tasks/M0-002.md\n M sources/x-kernel\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? config/toolchain.json\n?? guest/\n?? scripts/build_kernel.sh\n?? scripts/rootfs_audit.py\n?? scripts/rootfs_prepare.py\n?? scripts/run_guest.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/xkernel-run.img",
+        "snapshot": true,
+        "sha256_before": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "sha256_after": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "unchanged": true
+      },
+      "exit_reason": "monitor-quit",
+      "guest_exit_code": 0,
+      "qemu_exit_code": 0,
+      "runner_exit_code": 0,
+      "bundle_sha256": {
+        "kernel.elf": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+        "kernel.bin": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-monitor-stop/command.sh",
+          "bytes": 870,
+          "sha256": "3e013779fe043b448e67b8e612db049b8a5162558736a354df9f9c59cbda573f"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/elf-notes.txt",
+          "bytes": 1666,
+          "sha256": "d759a13b3d639ca7fc762beabb1565bd8b3c37eceb2b621e99c62557c6e6162e"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/guest-commands.sh",
+          "bytes": 367,
+          "sha256": "d48088f79802862aa7b68f73b699e6b158f1faa2bd680c71c8db34a661ae79f2"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/metadata.json",
+          "bytes": 61191,
+          "sha256": "e65a61c81816d37ab9d056b6eb6b649d6e684370ff42a23cdf4b8d019d7343a6"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/monitor.log",
+          "bytes": 49113,
+          "sha256": "96a1c1fc4d1d255a0574c8230658ea9573a1801f40bdd498e929f0e004beae72"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/objcopy-validation.txt",
+          "bytes": 281,
+          "sha256": "ab02f3670e8be5dc5169ce1ff00b3815324ea6249fcba409363761fc686c7ffa"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/run_guest.py",
+          "bytes": 17168,
+          "sha256": "87798bb6290026cc5c5f6f46167f61412b3e4a55f1f0e79a69d9c4b6b2797151"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/screendump.ppm",
+          "bytes": 921615,
+          "sha256": "11b8d01bb05554039a8f9d5b5911f5250d5fc5e686fa447cd43370c4c3c37757"
+        },
+        {
+          "path": "artifacts/runs/m0-monitor-stop/serial.log",
+          "bytes": 4440,
+          "sha256": "5337d625a91b8159c7122dc51be9bb008627d601fbe4b3f37251c0ce72f6ddd2"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-wayland-probes",
+      "interpretation": "version probes reach Chromium, then kernel ELF/VMA panic",
+      "integration": {
+        "commit": "810f8356dd07b089ece1a77b398550ffcb8f4433",
+        "status": "M docs/tasks/M0-002.md\n M sources/x-kernel\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? config/toolchain.json\n?? guest/\n?? scripts/build_kernel.sh\n?? scripts/rootfs_audit.py\n?? scripts/rootfs_prepare.py\n?? scripts/run_guest.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/wayland-prepared.img",
+        "snapshot": true,
+        "sha256_before": "77e23a208d7c0987af5d6e22d5b3018d7a6348ec9a87fceca2beaaec3ae3a25d",
+        "sha256_after": "77e23a208d7c0987af5d6e22d5b3018d7a6348ec9a87fceca2beaaec3ae3a25d",
+        "unchanged": true
+      },
+      "exit_reason": "unexpected-qemu-exit",
+      "guest_exit_code": null,
+      "qemu_exit_code": 0,
+      "runner_exit_code": 1,
+      "bundle_sha256": {
+        "kernel.elf": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+        "kernel.bin": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-wayland-probes/command.sh",
+          "bytes": 879,
+          "sha256": "1c4a8b00594d2fd173795e7ca21a16d1df048d7e98feade888fce60b80b4e208"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/elf-notes.txt",
+          "bytes": 1666,
+          "sha256": "d759a13b3d639ca7fc762beabb1565bd8b3c37eceb2b621e99c62557c6e6162e"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/guest-commands.sh",
+          "bytes": 413,
+          "sha256": "6da42a28c7f807f8a2ebd123cce2efb5aba472a8b6e58f5dd2940fe72de7af9c"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/metadata.json",
+          "bytes": 37597,
+          "sha256": "d0e89dd816f6992686add77feaf393710a3d4d7b461d5265b7f4fa05e599f74c"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/monitor.log",
+          "bytes": 21804,
+          "sha256": "dd6cb26a327b458713c69e3bd3e5de0bcadc659f9334b57131a68fc911319642"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/objcopy-validation.txt",
+          "bytes": 285,
+          "sha256": "57c9b49327c4d4b7c281862e134fc1d6d541976a0f20da543889acedf23fdc61"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/run_guest.py",
+          "bytes": 17168,
+          "sha256": "87798bb6290026cc5c5f6f46167f61412b3e4a55f1f0e79a69d9c4b6b2797151"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/serial.log",
+          "bytes": 12322,
+          "sha256": "d8f422fde6831b134e71e8f9537cc6af3ded540f579057c23c8857452664593a"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-probes/symbolized.log",
+          "bytes": 14376,
+          "sha256": "7e8f4b97d548354ad0c36ce5004a8322d3ab9ffb3368122060858baeb8b5fa96"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-wayland-inventory",
+      "interpretation": "inventory and page hashes PASS; prepare rc111 on unnecessary devpts recorded",
+      "integration": {
+        "commit": "810f8356dd07b089ece1a77b398550ffcb8f4433",
+        "status": "M docs/tasks/M0-002.md\n M sources/x-kernel\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? config/toolchain.json\n?? docs/analysis/wayland-rootfs.md\n?? guest/\n?? scripts/build_kernel.sh\n?? scripts/rootfs_audit.py\n?? scripts/rootfs_prepare.py\n?? scripts/run_guest.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/wayland-prepared.img",
+        "snapshot": true,
+        "sha256_before": "77e23a208d7c0987af5d6e22d5b3018d7a6348ec9a87fceca2beaaec3ae3a25d",
+        "sha256_after": "77e23a208d7c0987af5d6e22d5b3018d7a6348ec9a87fceca2beaaec3ae3a25d",
+        "unchanged": true
+      },
+      "exit_reason": "pid1-exit-for-kernel-sync-poweroff",
+      "guest_exit_code": 0,
+      "qemu_exit_code": 0,
+      "runner_exit_code": 0,
+      "bundle_sha256": {
+        "kernel.elf": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+        "kernel.bin": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/command.sh",
+          "bytes": 885,
+          "sha256": "e876db4d3632db84b6ac54c108441e0af14cc628724842a6106f120f8d6ff51a"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/elf-notes.txt",
+          "bytes": 1666,
+          "sha256": "d759a13b3d639ca7fc762beabb1565bd8b3c37eceb2b621e99c62557c6e6162e"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/guest-commands.sh",
+          "bytes": 659,
+          "sha256": "5bd838262315610c5142b32b8268f11d0bfee1b7417e778d22f7518ae6b12171"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/metadata.json",
+          "bytes": 104475,
+          "sha256": "69874e7f983b402242fdaf3e07a0dca792dfc335b7401ecc89074e11e2ebde15"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/monitor.log",
+          "bytes": 51474,
+          "sha256": "75f2dc49d5a7431a0231e9841492a3b0fc81491a0a83b2790ce0eb0c349dd693"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/objcopy-validation.txt",
+          "bytes": 291,
+          "sha256": "231208be680e262a715117f3b7a667ad81dbc9cbaf0b5a7ea565f3cd98952085"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/run_guest.py",
+          "bytes": 17168,
+          "sha256": "87798bb6290026cc5c5f6f46167f61412b3e4a55f1f0e79a69d9c4b6b2797151"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/screendump.ppm",
+          "bytes": 921615,
+          "sha256": "11b8d01bb05554039a8f9d5b5911f5250d5fc5e686fa447cd43370c4c3c37757"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-inventory/serial.log",
+          "bytes": 6087,
+          "sha256": "1d7c861d2ca242da9bf3238462d03931a2f06299eb247754a2098ef0e520cec5"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-chromium-original-rootfs",
+      "interpretation": "same Chromium exec panic on unmodified rootfs copy",
+      "integration": {
+        "commit": "1ee6eb79f987d4eeea45fb548f258ba9f763dd75",
+        "status": "M docs/tasks/M0-003.md\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? docs/analysis/wayland-rootfs.md\n?? guest/\n?? scripts/rootfs_audit.py\n?? scripts/rootfs_prepare.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/xkernel-run.img",
+        "snapshot": true,
+        "sha256_before": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "sha256_after": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+        "unchanged": true
+      },
+      "exit_reason": "unexpected-qemu-exit",
+      "guest_exit_code": null,
+      "qemu_exit_code": 0,
+      "runner_exit_code": 1,
+      "bundle_sha256": {
+        "kernel.elf": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+        "kernel.bin": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/command.sh",
+          "bytes": 894,
+          "sha256": "eead5d629bfb122040bc6679dfca1a1813d6a80118cc75d8e5184f57e1c4b879"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/elf-notes.txt",
+          "bytes": 1666,
+          "sha256": "d759a13b3d639ca7fc762beabb1565bd8b3c37eceb2b621e99c62557c6e6162e"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/guest-commands.sh",
+          "bytes": 404,
+          "sha256": "a00be3994dcbc6ebdf68871d1756817caf55c8f8a1767ec5f580ced9830e576a"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/metadata.json",
+          "bytes": 37568,
+          "sha256": "ae7a8a4cf80fbd5f97e90aed80b786bc066827e5d3113e80bad4950780281017"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/monitor.log",
+          "bytes": 21804,
+          "sha256": "dd6cb26a327b458713c69e3bd3e5de0bcadc659f9334b57131a68fc911319642"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/objcopy-validation.txt",
+          "bytes": 305,
+          "sha256": "8937532f165886e29c462538078e120eeb893f6d8266a08f217f6e45fc5a9b85"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/run_guest.py",
+          "bytes": 17168,
+          "sha256": "87798bb6290026cc5c5f6f46167f61412b3e4a55f1f0e79a69d9c4b6b2797151"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/serial.log",
+          "bytes": 4688,
+          "sha256": "490639525e6807fbc85641a912bb30c983a8d4c42472e6b177a27917fca166f7"
+        },
+        {
+          "path": "artifacts/runs/m0-chromium-original-rootfs/symbolized.log",
+          "bytes": 7124,
+          "sha256": "a7bbbd57ec58e2dd35f77c4cbfdcefe3e9df930c651f07e4452471fe072bcb79"
+        }
+      ]
+    },
+    {
+      "run_id": "m0-wayland-final",
+      "interpretation": "final image preparation, permissions, versions and hashes PASS",
+      "integration": {
+        "commit": "1ee6eb79f987d4eeea45fb548f258ba9f763dd75",
+        "status": "M docs/tasks/M0-003.md\n?? .agents/\n?? config/rootfs-wayland.lock.json\n?? docs/analysis/wayland-rootfs.md\n?? guest/\n?? scripts/rootfs_audit.py\n?? scripts/rootfs_prepare.py"
+      },
+      "kernel": {
+        "commit": "58cf0e11a55e2bf94690ecb6684df89654000e6b",
+        "status": ""
+      },
+      "disk": {
+        "path": "/home/origami/Workspace/Competition/ICT/XKernelGUISupport/work/images/wayland-m0.img",
+        "snapshot": true,
+        "sha256_before": "3b97a851dbb672a241ce1921625adc5aed9f806ccb297bc5f39be04fb3b3f32d",
+        "sha256_after": "3b97a851dbb672a241ce1921625adc5aed9f806ccb297bc5f39be04fb3b3f32d",
+        "unchanged": true
+      },
+      "exit_reason": "pid1-exit-for-kernel-sync-poweroff",
+      "guest_exit_code": 0,
+      "qemu_exit_code": 0,
+      "runner_exit_code": 0,
+      "bundle_sha256": {
+        "kernel.elf": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+        "kernel.bin": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072"
+      },
+      "files": [
+        {
+          "path": "artifacts/runs/m0-wayland-final/command.sh",
+          "bytes": 871,
+          "sha256": "577422e87f7c3a1c21e501eabc9a99109358268848068b6b094d56e5f86bcaf9"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/elf-notes.txt",
+          "bytes": 1666,
+          "sha256": "d759a13b3d639ca7fc762beabb1565bd8b3c37eceb2b621e99c62557c6e6162e"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/guest-commands.sh",
+          "bytes": 803,
+          "sha256": "b5764bc2627061d551d3d980e110bd7296d3a740b7cb0bab5b9c3963b802dd1c"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/kernel.config",
+          "bytes": 3006,
+          "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/metadata.json",
+          "bytes": 100031,
+          "sha256": "62a4986535120a31ee3d596fcaa5122952d7641a3b83854a909f9b3988c704c3"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/monitor.log",
+          "bytes": 49558,
+          "sha256": "6fe78d903deb86b17a68edc7d8b83c1144c853dada1290f49b2d0d9ef0b617a8"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/objcopy-validation.txt",
+          "bytes": 283,
+          "sha256": "e9c36833fe3bdd0d34c1c9ed75efd380ce7fa5b45603acd865677379351d926c"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/qemu.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/run_guest.py",
+          "bytes": 17168,
+          "sha256": "87798bb6290026cc5c5f6f46167f61412b3e4a55f1f0e79a69d9c4b6b2797151"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/screendump.ppm",
+          "bytes": 921615,
+          "sha256": "11b8d01bb05554039a8f9d5b5911f5250d5fc5e686fa447cd43370c4c3c37757"
+        },
+        {
+          "path": "artifacts/runs/m0-wayland-final/serial.log",
+          "bytes": 6456,
+          "sha256": "948ceb17c7e0347bbe6d90dbbbe321a9122dadc10bff54d85e08d96637e7aebf"
+        }
+      ]
+    }
+  ],
+  "preparation_files": [
+    {
+      "path": "artifacts/M0-003-final/apk-install.txt",
+      "bytes": 3415,
+      "sha256": "1769ddfde80cafa35bc7ead7cf049cdcc780482996e0166a93d597ae5f15b3d9"
+    },
+    {
+      "path": "artifacts/M0-003-final/apk-verify.txt",
+      "bytes": 4698,
+      "sha256": "6f38b565d5e47669abf58242789a5f57e71a40a8a9b24f1d609e8eb5c3c1bbc9"
+    },
+    {
+      "path": "artifacts/M0-003-final/audit-run.txt",
+      "bytes": 406,
+      "sha256": "1e6692ebc924f5c72732bcb15def6184c805ebc8011b39dda51519e69fa593a2"
+    },
+    {
+      "path": "artifacts/M0-003-final/busybox-help.txt",
+      "bytes": 3157,
+      "sha256": "e05d5896763c7dd61e0f29f51ad70efdf9efe30a0bdf6065ca003920b7b0a74a"
+    },
+    {
+      "path": "artifacts/M0-003-final/chromium-version.txt",
+      "bytes": 230,
+      "sha256": "efa2ff71b8445348e148c4c7fbb7d2e330b3e93fb926cd9bf34f68d7df2ccd33"
+    },
+    {
+      "path": "artifacts/M0-003-final/chromium-wayland-strings.txt",
+      "bytes": 4236,
+      "sha256": "14969a3c0631d1ab61063366c8f6aaa8b2228fda1f4495c34352ba2529bb10a1"
+    },
+    {
+      "path": "artifacts/M0-003-final/document-check.txt",
+      "bytes": 65,
+      "sha256": "cdcf08a9f602988ee44ffe0e4b5aa7777330aab97c11cc9bab7f7b8dd8a42404"
+    },
+    {
+      "path": "artifacts/M0-003-final/e2fsck.txt",
+      "bytes": 301,
+      "sha256": "3efa4d4bcbf1ebe4a954261516dc7d94a1f9de67fcaaa6ceb6b12fe5042ed724"
+    },
+    {
+      "path": "artifacts/M0-003-final/elf-dependencies.json",
+      "bytes": 72824,
+      "sha256": "aee2c5e3168bfc123fbf460c7868074b3f9d4f27f0e504f604918fc91ac469e2"
+    },
+    {
+      "path": "artifacts/M0-003-final/image.json",
+      "bytes": 439,
+      "sha256": "ec8d95453dd43566e4eb3e2b9c8a3f8c78d3f2a3834122e0d7f851afdf487cd7"
+    },
+    {
+      "path": "artifacts/M0-003-final/installed.after",
+      "bytes": 594140,
+      "sha256": "ba4cf404c32ff847c757d1ba0d4187b89543087ead6b40fb1713bd2d841544c6"
+    },
+    {
+      "path": "artifacts/M0-003-final/installed.before",
+      "bytes": 571149,
+      "sha256": "53406565a082bd56dee2bc209fbd28ccc01f9324b0b8fcd33d8ebf06cab7245a"
+    },
+    {
+      "path": "artifacts/M0-003-final/musl-loader.txt",
+      "bytes": 313,
+      "sha256": "65959aea63bd700d87df890688d32411faa837adad66d229247e5ba62b723725"
+    },
+    {
+      "path": "artifacts/M0-003-final/package-changes.json",
+      "bytes": 602,
+      "sha256": "a5effc6c5427c7ddb9a53301d3d46d7873fc613189b17527aeb121766aaa347b"
+    },
+    {
+      "path": "artifacts/M0-003-final/pages.json",
+      "bytes": 262,
+      "sha256": "91c16db52b71ff3430fd74f13b1801d83e271a6611cbc2c5e20f4d4b8fc92b6c"
+    },
+    {
+      "path": "artifacts/M0-003-final/pixman-symbols.txt",
+      "bytes": 80,
+      "sha256": "dba25c79daa3a67c9749e861ea8cf935ccd3c54449ac8861ba30578cc5242699"
+    },
+    {
+      "path": "artifacts/M0-003-final/project-check.txt",
+      "bytes": 326,
+      "sha256": "a21bc69f862013f54235bbaae5ecad87008b23cdea8726d2bf69d8cc3b2a5603"
+    },
+    {
+      "path": "artifacts/M0-003-final/seatd-help.txt",
+      "bytes": 454,
+      "sha256": "efee70d59a4789a66f24f1ff16f98c5c3da4196c04f3f52892bc75d05ea90a7a"
+    },
+    {
+      "path": "artifacts/M0-003-final/seatd-version.txt",
+      "bytes": 207,
+      "sha256": "2cc76422fe3d21b26c5e485efef9b72e3e852cab181266b572b6dfd4e218f44c"
+    },
+    {
+      "path": "artifacts/M0-003-final/solver.txt",
+      "bytes": 3429,
+      "sha256": "67fa67942f8ae9dd1eda3e63e62f4df57e1aa66e2b9735837573bed979a897e4"
+    },
+    {
+      "path": "artifacts/M0-003-final/source-manifest.json",
+      "bytes": 1149,
+      "sha256": "7c6d13e348c8054b4a7ce096fba0aad8eb7aa176376cb0edaf6be1afffbd7580"
+    },
+    {
+      "path": "artifacts/M0-003-final/user-probe-results.json",
+      "bytes": 412,
+      "sha256": "85d222937c29377dff81bc7474456913ddd2f5bae50f2884533c3568c95feafe"
+    },
+    {
+      "path": "artifacts/M0-003-final/weston-help.txt",
+      "bytes": 4225,
+      "sha256": "f93207016674ecfa006b793104c604d0bb6c4254922016e3e6d7926f899ecc04"
+    },
+    {
+      "path": "artifacts/M0-003-final/weston-modules.json",
+      "bytes": 492,
+      "sha256": "b68fc81669eca70689ecc6cdb5b1ef3f69cf115cae8514d5b8a695e20eed9045"
+    },
+    {
+      "path": "artifacts/M0-003-final/weston-version.txt",
+      "bytes": 209,
+      "sha256": "8863c1b68ade2f38fa28623e772710e7b0ae4316cd83877efdfb4800817f3a1c"
+    },
+    {
+      "path": "artifacts/M0-003-final/world.before",
+      "bytes": 256,
+      "sha256": "7367a0f9e5b8b93d0a98829a89650c1ca7de4c541086781a38e62b8dd7c7f724"
+    },
+    {
+      "path": "artifacts/M0-003-protection/existing-output.txt",
+      "bytes": 288,
+      "sha256": "829c2c11adccb9df99325212f908cab26ceeb562f412cc440abc283c5e1489aa"
+    },
+    {
+      "path": "artifacts/M0-003-protection/nonempty-evidence.txt",
+      "bytes": 293,
+      "sha256": "48ac22419a510a6fda5368f503972f253e43ccbb4518f7ead26b0112692fb723"
+    },
+    {
+      "path": "artifacts/M0-003-protection/results.json",
+      "bytes": 123,
+      "sha256": "90e14c99a1dee7b686a5547bb4f7edcac18c65e2d6e524dbd4268842b505231d"
+    },
+    {
+      "path": "artifacts/M0-003-protection/timeout.txt",
+      "bytes": 161,
+      "sha256": "7018e21ebd51cbab92aaad153d0a672749da6b9f6eca1ca361706685e057c868"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/apk-install.txt",
+      "bytes": 3415,
+      "sha256": "e78cc93caee4ee71cb88a05db2e14ee3c3458580a167c2cc59b3c64d6ff63ca7"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/apk-verify.txt",
+      "bytes": 4698,
+      "sha256": "0556d8e8094236fe6bc48d0a0bbfbaa38b968c49d342775899803dea917b80b8"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/audit-run.txt",
+      "bytes": 408,
+      "sha256": "98c3c056f45e9f2cc318368488ae74223c84becbe8a633480ace367eee04a446"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/busybox-help.txt",
+      "bytes": 3157,
+      "sha256": "f3a6ba943eea3b9b080c6e2b025f78e9567e5ab81f865ccb76731592563e23ca"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/chromium-version.txt",
+      "bytes": 230,
+      "sha256": "4092f63242502183974e68f59c4b4908d77ee373e102de5eb9a7d4ad1c32dc85"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/chromium-wayland-strings.txt",
+      "bytes": 4236,
+      "sha256": "14969a3c0631d1ab61063366c8f6aaa8b2228fda1f4495c34352ba2529bb10a1"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/elf-dependencies.json",
+      "bytes": 72824,
+      "sha256": "aee2c5e3168bfc123fbf460c7868074b3f9d4f27f0e504f604918fc91ac469e2"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/image.json",
+      "bytes": 451,
+      "sha256": "e25e26df37ca4c85a6205758c4be7b3f07e3ed732866af2c585eba6324a7577d"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/installed.after",
+      "bytes": 594140,
+      "sha256": "ba4cf404c32ff847c757d1ba0d4187b89543087ead6b40fb1713bd2d841544c6"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/installed.before",
+      "bytes": 571149,
+      "sha256": "53406565a082bd56dee2bc209fbd28ccc01f9324b0b8fcd33d8ebf06cab7245a"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/musl-loader.txt",
+      "bytes": 313,
+      "sha256": "db84b51282fead5d8917ebf5ace6e6da4d73323cfcd1251dba6cc41f19f14d30"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/package-changes.json",
+      "bytes": 602,
+      "sha256": "a5effc6c5427c7ddb9a53301d3d46d7873fc613189b17527aeb121766aaa347b"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/pages.json",
+      "bytes": 262,
+      "sha256": "91c16db52b71ff3430fd74f13b1801d83e271a6611cbc2c5e20f4d4b8fc92b6c"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/pixman-symbols.txt",
+      "bytes": 80,
+      "sha256": "dba25c79daa3a67c9749e861ea8cf935ccd3c54449ac8861ba30578cc5242699"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/seatd-help.txt",
+      "bytes": 454,
+      "sha256": "0722279805b73d65f570f403a1e61ebbb76400ca894914b0d9b0a4c1561e19fd"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/seatd-version.txt",
+      "bytes": 207,
+      "sha256": "fd8130c411e3ee516317dc893aa04b56a93dba0a2e79d929500dee2e13b8031f"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/solver.txt",
+      "bytes": 3429,
+      "sha256": "8c18c7d09ecccce6c877d2272ac778371db8eaa3816521f99159d9140e49bd25"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/user-probe-results.json",
+      "bytes": 412,
+      "sha256": "85d222937c29377dff81bc7474456913ddd2f5bae50f2884533c3568c95feafe"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/weston-help.txt",
+      "bytes": 4225,
+      "sha256": "8ecfa5ae3e4c474db8e67640994875ae2980227cad395c5ff75cd4f7dd5369d4"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/weston-modules.json",
+      "bytes": 492,
+      "sha256": "b68fc81669eca70689ecc6cdb5b1ef3f69cf115cae8514d5b8a695e20eed9045"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/weston-version.txt",
+      "bytes": 209,
+      "sha256": "31445c0f58903a79f1f8fa3b6575e31962b6dfab5ce0ddd69de40560638cf666"
+    },
+    {
+      "path": "artifacts/M0-003-rebuild/world.before",
+      "bytes": 256,
+      "sha256": "7367a0f9e5b8b93d0a98829a89650c1ca7de4c541086781a38e62b8dd7c7f724"
+    },
+    {
+      "path": "artifacts/M0-003/chromium-elf-analysis.txt",
+      "bytes": 14786,
+      "sha256": "e50fecb67f9ddce419e6ecedcedefd5cec3c45f8f261b8db8e08b6e1c4582510"
+    },
+    {
+      "path": "artifacts/M0-003/host-package-install.log",
+      "bytes": 688,
+      "sha256": "0438e30ca909b65a321910a50f53dcbb5d38ed409f7ccdcb2e3de29a7c1fe793"
+    },
+    {
+      "path": "artifacts/M0-003/rebuild-file-comparison.json",
+      "bytes": 1523,
+      "sha256": "721fc4f5685583d397e8e1f47981457a0d76c80f025141459a5b21f60a8a369f"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/build.log",
+      "bytes": 9846,
+      "sha256": "b42ad21f5b950fc4501c5541b654ba5c19863e515b62a2fc3efa6f305db98845"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/bundle.toml",
+      "bytes": 783,
+      "sha256": "521d310e946378bb610e3434f0f04d3bae814a31e26ea01ff29b43820d338c94"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/elf-notes.txt",
+      "bytes": 1667,
+      "sha256": "bf094117af6d3239185260e6a6ef96b5dc19f2eb8a60829469f2b06349832112"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/gcc.txt",
+      "bytes": 247,
+      "sha256": "c127ded9eb1b151d1453421271f12342eefc3010a50635bae9c5e6d121fc0c22"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/host.txt",
+      "bytes": 99,
+      "sha256": "b3d18d79de6dd690886df360b9f333e618ca0f9b381563d60f40c2664ecd27cd"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/integration-commit.txt",
+      "bytes": 41,
+      "sha256": "6224f762578053a0e6f47ab9ce37f2eb8ed76fd8b0155a56cb77defa04ef9b7d"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/kernel-commit.txt",
+      "bytes": 41,
+      "sha256": "adbb7366e8d8bf108813a65fdb6f182fe1cde4268d7f306c75116a08f2925908"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/kernel-status-after.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/kernel-status-before.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/kernel.config",
+      "bytes": 3006,
+      "sha256": "42e8d16450352712d78813b5f78b7ca221dfb88fadc796f57ecf317d7e33f669"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/kernel.sha256",
+      "bytes": 226,
+      "sha256": "9a274569996e52bb16e260ff0cd1532ae96a846388a5f5ad03a6a15369e356f0"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/objcopy.txt",
+      "bytes": 127,
+      "sha256": "5703e82c5a8844beb3fcc05cfef2936d2c997ec78f68b6ea1b05b1251189302d"
+    },
+    {
+      "path": "artifacts/build-m0/build-WJH9anhF/rustc.txt",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "path": "artifacts/build-m0/build.log",
+      "bytes": 34283,
+      "sha256": "8e7a547cca08ea022e866ed69a771d6d99cd4818a0d475232b3c216f47b72db4"
+    },
+    {
+      "path": "artifacts/build-m0/cargo-binutils-install.log",
+      "bytes": 4668,
+      "sha256": "c51f0dc1862989d12ed59fa162560f5b49aa4603fa1b148564af7b6b8e071d31"
+    },
+    {
+      "path": "artifacts/build-m0/chromium-version-commands.sh",
+      "bytes": 37,
+      "sha256": "60e7d50b7ddaeec0695981cb1cb82e010c8f720fcbbb8c05ccb5103ac2c7490b"
+    },
+    {
+      "path": "artifacts/build-m0/defconfig-resumed.log",
+      "bytes": 441,
+      "sha256": "13b34ea6fc07e2c5c2d20d65fd13f29b24b76d8d2fb253e176f0c1d61d235a5d"
+    },
+    {
+      "path": "artifacts/build-m0/defconfig.log",
+      "bytes": 6069,
+      "sha256": "2bf72252bab02586075b06cb56ec294494e46b1a6af1184e97583389402aed23"
+    },
+    {
+      "path": "artifacts/build-m0/host-tools-clippy.log",
+      "bytes": 3157,
+      "sha256": "a89678a98faa901bd3831c42239dbf8ee523eb6a630461ede3d48a3d22553926"
+    },
+    {
+      "path": "artifacts/build-m0/host-tools-tests.log",
+      "bytes": 25996,
+      "sha256": "bb2b442c51f958e906347981266cca42a3026b9b0e58a2f6f19cde9f663e2c4c"
+    },
+    {
+      "path": "artifacts/build-m0/host.txt",
+      "bytes": 4016,
+      "sha256": "7149dbb17308ae9f231c79f0ea11f5ca2ff778df6a6a9ffaa0c28b216d3c22c6"
+    },
+    {
+      "path": "artifacts/build-m0/image-initial.sha256",
+      "bytes": 195,
+      "sha256": "55199541bb88ef34dfb14ce2baa000b26d1a63b7cfbe16b7a1d5984fb5463aaf"
+    },
+    {
+      "path": "artifacts/build-m0/interrupted.md",
+      "bytes": 3309,
+      "sha256": "d286a5592b21fd9abd5be3fea3198ddf953b1e53f8418790a30693f9702adcbf"
+    },
+    {
+      "path": "artifacts/build-m0/lockfile-diff.json",
+      "bytes": 247,
+      "sha256": "f17e124cecdbb1d4f62bc98c7c88e215ba18b7a508f3c91f62284eae13e974ca"
+    },
+    {
+      "path": "artifacts/build-m0/make-justrun-dry-run.log",
+      "bytes": 1014,
+      "sha256": "125f0ef82b5867ed5d2c02e1bf70c3febf5dbbee5381b8801817796b7c97e9ee"
+    },
+    {
+      "path": "artifacts/build-m0/project-check.txt",
+      "bytes": 326,
+      "sha256": "7226f8d37fa359217afc464e0171ebb205c28d07d1859c2bc521e29486398bf7"
+    },
+    {
+      "path": "artifacts/build-m0/runner-validation.txt",
+      "bytes": 305,
+      "sha256": "106252ed7d81ada218610eb751edf86243daed1e924d64650066e09424b77135"
+    },
+    {
+      "path": "artifacts/build-m0/rust-components.txt",
+      "bytes": 384,
+      "sha256": "db3fa65dd97dca34d467d27a291b14ba09a3518aacc34c5d8c67af9be6ff118a"
+    },
+    {
+      "path": "artifacts/build-m0/rust-targets.txt",
+      "bytes": 158,
+      "sha256": "c71362a58782be447219c7b46f7119928935d501056732cf0d7038f1a55fcc1c"
+    },
+    {
+      "path": "artifacts/build-m0/wayland-final-commands.sh",
+      "bytes": 436,
+      "sha256": "4cd43b68bfb8d24fe7afc080c14399e3c23848868be962c089736f3aca5e62a2"
+    },
+    {
+      "path": "artifacts/build-m0/wayland-inventory-commands.sh",
+      "bytes": 292,
+      "sha256": "9dde50e444cf8296b2df8c1b424cb5c7de9847e4f3f0f1f0018112942aa9919e"
+    },
+    {
+      "path": "artifacts/build-m0/wayland-probe-commands.sh",
+      "bytes": 46,
+      "sha256": "7bc84a5ba1a823c2a5873c695e95ecaafceb6b732843a3fee9087aff43089a39"
+    },
+    {
+      "path": "artifacts/rootfs-m0/interrupted.md",
+      "bytes": 4590,
+      "sha256": "5983b9eedd5b99f875e2ba8a2a76d2cffeb56069b117a52c51505be5830e70d6"
+    },
+    {
+      "path": "artifacts/toolchain/archive.sha256",
+      "bytes": 111,
+      "sha256": "dbe607d59110e03e06c56136d0ee7b2fcf0c4f3feec33350c477b48ef44b48f8"
+    },
+    {
+      "path": "artifacts/toolchain/download.headers",
+      "bytes": 256,
+      "sha256": "38104a6cb67aa520247cf5479b442b74f0a8418ce7b59ab071a4af17dd30f49d"
+    },
+    {
+      "path": "artifacts/toolchain/gcc-version.txt",
+      "bytes": 247,
+      "sha256": "c127ded9eb1b151d1453421271f12342eefc3010a50635bae9c5e6d121fc0c22"
+    },
+    {
+      "path": "artifacts/toolchain/ld-version.txt",
+      "bytes": 270,
+      "sha256": "6779d200814bf67d14877f3da880517f2b908ab0572df7d237b6146f8d55cc10"
+    },
+    {
+      "path": "artifacts/toolchain/smoke.txt",
+      "bytes": 162,
+      "sha256": "bdddc97fef5e47467e5b0b05de6213fa59480194fcece64d884a658405ff8a5d"
+    },
+    {
+      "path": "config/rootfs-wayland.lock.json",
+      "bytes": 20673,
+      "sha256": "65baa6e05195c50b7bff243629058c10dc200539da466df43f20978e64f70f89"
+    },
+    {
+      "path": "config/toolchain.json",
+      "bytes": 319,
+      "sha256": "37bfe298dcc83e90673aa45e758f92397ec8868bb2952543ba3a4a17427b40a2"
+    }
+  ]
+}

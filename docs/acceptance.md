@@ -5,7 +5,7 @@
 | 编号 | 场景 | 条件与证据 | 状态 |
 | --- | --- | --- | --- |
 | ENV-01 | 开发环境 | AArch64、TCG、2 GiB、4 vCPU；系统 QEMU 11.1.1；版本、完整命令与设备清单；两次 guest 启动与退出 | [已验证](tasks/M0-002.md)：m0-serial-04/05、m0-monitor-stop |
-| ROOTFS-01 | 赛方输入与工作盘 | 从原始 rootfs 增量补齐 Weston/依赖与 Wayland 配置，记录包版本/来源/哈希；工作盘可重建；三份原页独立部署核对 hash/URL，不能用 kiosk 欢迎页 | 原盘调查完成，增量/部署未执行 |
+| ROOTFS-01 | 赛方输入与工作盘 | 从原始 rootfs 增量补齐 Weston/依赖与 Wayland 配置，记录包版本/来源/哈希；工作盘可重建；三份原页独立部署核对 hash/URL，不能用 kiosk 欢迎页 | [已验证](tasks/M0-003.md)：16包增量、重建、3页host/guest哈希一致 |
 | WAYLAND-01 | 本队 Wayland 路线 | STREAM SCM_RIGHTS/shared mmap 探针；wl_shm 客户端→Weston DRM后端→guest virtio-gpu→screendump；Chromium实际 Ozone/socket/协议链有证据，优先原生 Wayland | 用户路线已确认，运行未验证 |
 | GUI-01 | 图形会话 | Weston 在 guest DRM 输出上启动成功，连续 10 分钟无退出；screendump、PID/时间线与日志，不用 respawn 拼接时长 | 未验证 |
 | WEB-01 | 初次 Chromium | 真实窗口正确显示原始 index.html，中文、内联 SVG、表格和表单视觉正确；screendump、命令和日志 | 未验证 |
@@ -18,7 +18,7 @@
 | STAB-01 | 决赛稳定性 | 30 分钟无崩溃/OOM；每 2 分钟加载测试页，共 10 次，无卡死 | 未验证 |
 | PERF-01 | 性能方法 | 启动首帧、加载、renderer 创建、峰值内存至少四类；明确时钟/对象/单位/失败样本；各至少 5 次，中位数与 min/max；先校准内核占位字段 | 未验证 |
 | MEM-01 | 决赛资格线 | 指定页加载且峰值内存不超过 1.5G；统计对象/单位/采样以官方脚本为准；不通过则整个性能与资源消耗 20 分计 0；不以 guest RAM 或 host RSS 替代 | 未验证，正式口径待核对 |
-| COMPAT-01 | 接口缺口 | 真实缺口、最小复现、Linux 对照、修复及回归；不人为制造缺口 | 未验证 |
+| COMPAT-01 | 接口缺口 | 真实缺口、最小复现、Linux 对照、修复及回归；不人为制造缺口 | 首个 ELF 装载 panic 已双盘复现，修复/Linux system 对照待 M1-002 |
 | UPSTREAM-01 | 上游贡献 | 区分可提交/已提交/已合并；初赛最多 3 个合并 patch 计 12 分，决赛最多 3 个计 9 分；外发需用户授权，合并依赖上游 | 未提交 |
 | OPT-01 | 优化效果 | 对比不可变首版 tag 的原始 before/after；同环境/工作量各 ≥5 次并功能回归；初赛 5%/15%/30% 对应 1/2/3 分，决赛每项 0.5/1/2 分最多 3 项（原文另含方法突破） | 未验证 |
 | RESOURCE-01 | 团队资源回归 | DRM buffer 至少 100 次创建/映射/present/销毁及应用退出后的回收；此为团队阈值，可并行且不延迟 BASE-01 | 未验证 |

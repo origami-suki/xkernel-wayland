@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+[ "$(id -u)" = 1000 ] || { echo 'wayland-session: run as kiosk (uid 1000)' >&2; exit 1; }
+export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0
+export LIBSEAT_BACKEND=seatd SEATD_SOCK=/run/seatd.sock
+[ -d "$XDG_RUNTIME_DIR" ] || { echo 'run wayland-prepare first' >&2; exit 1; }
+exec /usr/bin/weston --backend=drm --renderer=pixman --shell=kiosk-shell.so \
+  --socket="$WAYLAND_DISPLAY" --idle-time=0 --config=/etc/ict-wayland/weston.ini "$@"

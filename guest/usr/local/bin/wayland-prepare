@@ -1,0 +1,15 @@
+#!/bin/sh
+# Run once as root. Existing x-kernel mounts are preserved; Linux init may create missing ones.
+set -eu
+[ "$(id -u)" = 0 ] || { echo 'wayland-prepare: run as root' >&2; exit 1; }
+mkdir -p /proc /sys /dev
+mountpoint -q /proc || mount -t proc proc /proc
+mountpoint -q /sys || mount -t sysfs sysfs /sys
+mountpoint -q /dev || mount -t devtmpfs devtmpfs /dev
+mkdir -p /dev/shm /run/user/1000
+# Serial/Wayland startup does not require PTYs; devpts is a separate future capability probe.
+mountpoint -q /dev/shm || mount -t tmpfs -o mode=1777 tmpfs /dev/shm
+chmod 1777 /dev/shm
+chown 1000:1000 /run/user/1000
+chmod 700 /run/user/1000
+printf '%s\n' 'Ready: XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0'

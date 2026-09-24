@@ -1,0 +1,6 @@
+# M0 diagnostic profile: sessions are started manually and retain their exit reason.
+# Original inittab is retained in /etc/ict-wayland/source/inittab.
+::sysinit:/usr/local/bin/wayland-prepare
+ttyAMA0::respawn:/sbin/getty -L 115200 ttyAMA0 vt100
+::ctrlaltdel:/sbin/reboot
+::shutdown:/bin/umount -a -r

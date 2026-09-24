@@ -1,0 +1,578 @@
+{
+  "schema_version": 1,
+  "alpine": "3.22",
+  "architecture": "aarch64",
+  "source_uncompressed_sha256": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+  "requested": [
+    "weston=14.0.2-r1",
+    "weston-backend-drm=14.0.2-r1",
+    "weston-clients=14.0.2-r1",
+    "seatd=0.9.1-r0"
+  ],
+  "index_snapshots": [
+    {
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64/APKINDEX.tar.gz",
+      "sha256": "30816282769db39ec2586fce4b47566ab830c2abc25fa793bd1a4c17c3dcd693",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ]
+    },
+    {
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/aarch64/APKINDEX.tar.gz",
+      "sha256": "87384d7371629293b0b3cbf02f8158c05dc802a162ee4a8aed4c7b84ed9d6c81",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ]
+    }
+  ],
+  "packages": [
+    {
+      "name": "seatd",
+      "version": "0.9.1-r0",
+      "architecture": "aarch64",
+      "repository": "community",
+      "filename": "seatd-0.9.1-r0.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/aarch64/seatd-0.9.1-r0.apk",
+      "apk_checksum": "Q1ODzPodGpfseXhqaaTvkL6NaOPbg=",
+      "depends": [
+        "/bin/sh",
+        "so:libc.musl-aarch64.so.1"
+      ],
+      "provides": [
+        "cmd:seatd=0.9.1-r0"
+      ],
+      "aport_commit": "7b5afcbc721cea9d4f9786831094cddf23ae69a6",
+      "sha256": "360cd781ddadac310347bfca887010d02cb8f8ceb9d6b3ea4dd5ff1c98bcbbe6",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {
+        ".pre-install": "#!/bin/sh\n\naddgroup -S seat 2>/dev/null\n\nexit 0\n",
+        ".post-install": "#!/bin/sh\n\ncat >&2 <<EOF\n* If you need seatd-launch SUID binary, install it: apk add cmd:seatd-launch.\nEOF\n\nexit 0\n",
+        ".post-upgrade": "#!/bin/sh\n\nver_old=$2\n\nif [ \"$(apk version -t \"$ver_old\" '0.6.2-r1')\" = '<' ]; then\n\tcat >&2 <<-EOF\n\t*\n\t* seatd-launch has been moved to a separate subpackage. If you use it, run:\n\t* apk add cmd:seatd-launch.\n\t*\n\tEOF\nfi\n\nexit 0\n"
+      }
+    },
+    {
+      "name": "mesa-gles",
+      "version": "25.1.9-r0",
+      "architecture": "aarch64",
+      "repository": "main",
+      "filename": "mesa-gles-25.1.9-r0.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64/mesa-gles-25.1.9-r0.apk",
+      "apk_checksum": "Q1Gj1jI2L+qGvQxorP0T2yLvHUE0E=",
+      "depends": [
+        "mesa=25.1.9-r0",
+        "so:libgallium-25.1.9.so"
+      ],
+      "provides": [
+        "so:libGLESv1_CM.so.1=1.1.0",
+        "so:libGLESv2.so.2=2.0.0"
+      ],
+      "aport_commit": "dd9d35b82a5100ea5a3440943a74ab3bf71db4e5",
+      "sha256": "8d4d13d101f64362a61da583fb5cbf02a8b5cf01ac6983c9733884d455cd3ac8",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "libxv",
+      "version": "1.0.13-r0",
+      "architecture": "aarch64",
+      "repository": "main",
+      "filename": "libxv-1.0.13-r0.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64/libxv-1.0.13-r0.apk",
+      "apk_checksum": "Q1skAwmAkAhCbV0oL59VkYOjAmLfE=",
+      "depends": [
+        "so:libX11.so.6",
+        "so:libXext.so.6",
+        "so:libc.musl-aarch64.so.1"
+      ],
+      "provides": [
+        "so:libXv.so.1=1.0.0"
+      ],
+      "aport_commit": "9ce32dfd15fa7aa84849ad3f5ec8e8044ac93b07",
+      "sha256": "7a4e522581983c8f8a961fecb93eb153df32721b4a443eb50b06b105a15d8f7c",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "cdparanoia-libs",
+      "version": "10.2-r14",
+      "architecture": "aarch64",
+      "repository": "main",
+      "filename": "cdparanoia-libs-10.2-r14.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64/cdparanoia-libs-10.2-r14.apk",
+      "apk_checksum": "Q1Hj2A62Qdjt8XLknQAplWf3Z+dJk=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1"
+      ],
+      "provides": [
+        "so:libcdda_interface.so.0=0.10.2",
+        "so:libcdda_paranoia.so.0=0.10.2"
+      ],
+      "aport_commit": "c878341873168fef6b5c91c8f5c924a1af67c7c3",
+      "sha256": "14f7ea58d9826e395e863fa39c0659543e21821bdae8e4cc0734d29ecc90e837",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "graphene",
+      "version": "1.10.8-r5",
+      "architecture": "aarch64",
+      "repository": "main",
+      "filename": "graphene-1.10.8-r5.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64/graphene-1.10.8-r5.apk",
+      "apk_checksum": "Q1qDqpj3EvWY+ehdG2IlMRbJQfsuU=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1",
+        "so:libglib-2.0.so.0",
+        "so:libgobject-2.0.so.0"
+      ],
+      "provides": [
+        "so:libgraphene-1.0.so.0=0.1000.8"
+      ],
+      "aport_commit": "398a5aee3025ec8a4d0d761e448dc86ac777fa09",
+      "sha256": "1dc5215665bcc1386256c369afa2e4887d19e3a567705f1e50df7686b5394d9a",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "gstreamer",
+      "version": "1.26.3-r0",
+      "architecture": "aarch64",
+      "repository": "main",
+      "filename": "gstreamer-1.26.3-r0.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64/gstreamer-1.26.3-r0.apk",
+      "apk_checksum": "Q1PIw51+99vWkHZGUHitjtLugpDZQ=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1",
+        "so:libgio-2.0.so.0",
+        "so:libglib-2.0.so.0",
+        "so:libgmodule-2.0.so.0",
+        "so:libgobject-2.0.so.0",
+        "so:libintl.so.8"
+      ],
+      "provides": [
+        "so:libgstbase-1.0.so.0=0.2603.0",
+        "so:libgstcontroller-1.0.so.0=0.2603.0",
+        "so:libgstnet-1.0.so.0=0.2603.0",
+        "so:libgstreamer-1.0.so.0=0.2603.0"
+      ],
+      "aport_commit": "b5efd63b3d351c551e53f766768e2632860ba14e",
+      "sha256": "1a93d660f1955177fcfb443a091f3005793f80fcfb2051fd42b6e10f601e629f",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "libcap2",
+      "version": "2.78-r0",
+      "architecture": "aarch64",
+      "repository": "main",
+      "filename": "libcap2-2.78-r0.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64/libcap2-2.78-r0.apk",
+      "apk_checksum": "Q1z7E+cPczQLf8xhnwO8kk8OAYy6k=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1"
+      ],
+      "provides": [
+        "so:libcap.so.2=2.78",
+        "so:libpsx.so.2=2.78"
+      ],
+      "aport_commit": "f1c200cd047f2bbd6dfffc9ddb73d9e3a980cdea",
+      "sha256": "de209aee8b76946849bff6bd97151c6af20889be5a96a2e28f9899255e252e3f",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "gstreamer-ptp-helper",
+      "version": "1.26.3-r0",
+      "architecture": "aarch64",
+      "repository": "main",
+      "filename": "gstreamer-ptp-helper-1.26.3-r0.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64/gstreamer-ptp-helper-1.26.3-r0.apk",
+      "apk_checksum": "Q1dQdz3xiklTn+a+/bYPFWdtWXDcM=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1",
+        "so:libcap.so.2",
+        "so:libgcc_s.so.1"
+      ],
+      "provides": [],
+      "aport_commit": "b5efd63b3d351c551e53f766768e2632860ba14e",
+      "sha256": "d00cbcbb81a9e2343dc0e11bc20fed51e9d817c0f0142c1ea5e20d8c0b3ccc5c",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "gst-plugins-base",
+      "version": "1.26.3-r0",
+      "architecture": "aarch64",
+      "repository": "main",
+      "filename": "gst-plugins-base-1.26.3-r0.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64/gst-plugins-base-1.26.3-r0.apk",
+      "apk_checksum": "Q1+WlTQ8z3izcpVn9KitZMRx6x8ik=",
+      "depends": [
+        "so:libEGL.so.1",
+        "so:libGL.so.1",
+        "so:libX11-xcb.so.1",
+        "so:libX11.so.6",
+        "so:libXext.so.6",
+        "so:libXi.so.6",
+        "so:libXv.so.1",
+        "so:libasound.so.2",
+        "so:libc.musl-aarch64.so.1",
+        "so:libcairo.so.2",
+        "so:libcdda_interface.so.0",
+        "so:libcdda_paranoia.so.0",
+        "so:libdrm.so.2",
+        "so:libgio-2.0.so.0",
+        "so:libglib-2.0.so.0",
+        "so:libgmodule-2.0.so.0",
+        "so:libgobject-2.0.so.0",
+        "so:libgraphene-1.0.so.0",
+        "so:libgstbase-1.0.so.0",
+        "so:libgstcontroller-1.0.so.0",
+        "so:libgstnet-1.0.so.0",
+        "so:libgstreamer-1.0.so.0",
+        "so:libintl.so.8",
+        "so:libjpeg.so.8",
+        "so:libogg.so.0",
+        "so:libopus.so.0",
+        "so:liborc-0.4.so.0",
+        "so:libpango-1.0.so.0",
+        "so:libpangocairo-1.0.so.0",
+        "so:libpng16.so.16",
+        "so:libtheoradec.so.1",
+        "so:libtheoraenc.so.1",
+        "so:libvorbis.so.0",
+        "so:libvorbisenc.so.2",
+        "so:libwayland-client.so.0",
+        "so:libwayland-cursor.so.0",
+        "so:libwayland-egl.so.1",
+        "so:libxcb.so.1",
+        "so:libz.so.1"
+      ],
+      "provides": [
+        "so:libgstadder.so=0",
+        "so:libgstallocators-1.0.so.0=0.2603.0",
+        "so:libgstalsa.so=0",
+        "so:libgstapp-1.0.so.0=0.2603.0",
+        "so:libgstapp.so=0",
+        "so:libgstaudio-1.0.so.0=0.2603.0",
+        "so:libgstaudioconvert.so=0",
+        "so:libgstaudiomixer.so=0",
+        "so:libgstaudiorate.so=0",
+        "so:libgstaudioresample.so=0",
+        "so:libgstaudiotestsrc.so=0",
+        "so:libgstbasedebug.so=0",
+        "so:libgstcdparanoia.so=0",
+        "so:libgstcompositor.so=0",
+        "so:libgstdsd.so=0",
+        "so:libgstencoding.so=0",
+        "so:libgstfft-1.0.so.0=0.2603.0",
+        "so:libgstgio.so=0",
+        "so:libgstgl-1.0.so.0=0.2603.0",
+        "so:libgstogg.so=0",
+        "so:libgstopengl.so=0",
+        "so:libgstopus.so=0",
+        "so:libgstoverlaycomposition.so=0",
+        "so:libgstpango.so=0",
+        "so:libgstpbtypes.so=0",
+        "so:libgstpbutils-1.0.so.0=0.2603.0",
+        "so:libgstplayback.so=0",
+        "so:libgstrawparse.so=0",
+        "so:libgstriff-1.0.so.0=0.2603.0",
+        "so:libgstrtp-1.0.so.0=0.2603.0",
+        "so:libgstrtsp-1.0.so.0=0.2603.0",
+        "so:libgstsdp-1.0.so.0=0.2603.0",
+        "so:libgstsubparse.so=0",
+        "so:libgsttag-1.0.so.0=0.2603.0",
+        "so:libgsttcp.so=0",
+        "so:libgsttheora.so=0",
+        "so:libgsttypefindfunctions.so=0",
+        "so:libgstvideo-1.0.so.0=0.2603.0",
+        "so:libgstvideoconvertscale.so=0",
+        "so:libgstvideorate.so=0",
+        "so:libgstvideotestsrc.so=0",
+        "so:libgstvolume.so=0",
+        "so:libgstvorbis.so=0",
+        "so:libgstximagesink.so=0",
+        "so:libgstxvimagesink.so=0",
+        "cmd:gst-device-monitor-1.0=1.26.3-r0",
+        "cmd:gst-discoverer-1.0=1.26.3-r0",
+        "cmd:gst-play-1.0=1.26.3-r0"
+      ],
+      "aport_commit": "bfdcc64034cea5051e4ba2c2b802c360057c47d1",
+      "sha256": "0fcea6ad456755eadf1264c5b303587f947dfcc7bbfcefef46b898e3d31ef4d8",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "libweston",
+      "version": "14.0.2-r1",
+      "architecture": "aarch64",
+      "repository": "community",
+      "filename": "libweston-14.0.2-r1.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/aarch64/libweston-14.0.2-r1.apk",
+      "apk_checksum": "Q1zISWZ5upCR6u3A8JaRwR7RALxAw=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1",
+        "so:libdrm.so.2",
+        "so:libpixman-1.so.0",
+        "so:libwayland-server.so.0",
+        "so:libxkbcommon.so.0"
+      ],
+      "provides": [
+        "so:libweston-14.so.0=0.0.2"
+      ],
+      "aport_commit": "562e4595bac9444c612bef30c22371b45fbadd18",
+      "sha256": "4552a6c96c50b091d559bbaea887e75d61abe58f9832374966b6d2e71012804d",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "weston",
+      "version": "14.0.2-r1",
+      "architecture": "aarch64",
+      "repository": "community",
+      "filename": "weston-14.0.2-r1.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/aarch64/weston-14.0.2-r1.apk",
+      "apk_checksum": "Q1psxzrB69NJ6oc7H8bJWeDVrK4Vw=",
+      "depends": [
+        "/bin/sh",
+        "so:libEGL.so.1",
+        "so:libGLESv2.so.2",
+        "so:libc.musl-aarch64.so.1",
+        "so:libcairo.so.2",
+        "so:libevdev.so.2",
+        "so:libfontconfig.so.1",
+        "so:libgbm.so.1",
+        "so:libglib-2.0.so.0",
+        "so:libgobject-2.0.so.0",
+        "so:libgstallocators-1.0.so.0",
+        "so:libgstapp-1.0.so.0",
+        "so:libgstreamer-1.0.so.0",
+        "so:libgstvideo-1.0.so.0",
+        "so:libinput.so.10",
+        "so:libjpeg.so.8",
+        "so:liblcms2.so.2",
+        "so:libpango-1.0.so.0",
+        "so:libpangocairo-1.0.so.0",
+        "so:libpipewire-0.3.so.0",
+        "so:libpixman-1.so.0",
+        "so:libpng16.so.16",
+        "so:libwayland-client.so.0",
+        "so:libwayland-cursor.so.0",
+        "so:libwayland-server.so.0",
+        "so:libwebp.so.7",
+        "so:libweston-14.so.0",
+        "so:libxkbcommon.so.0"
+      ],
+      "provides": [
+        "so:hmi-controller.so=0",
+        "so:kiosk-shell.so=0",
+        "so:libexec_weston.so.0=0.0.0",
+        "so:screen-share.so=0",
+        "cmd:weston=14.0.2-r1"
+      ],
+      "aport_commit": "562e4595bac9444c612bef30c22371b45fbadd18",
+      "sha256": "f68f71e3bdf492517521a377e2f6718f7d9ff7fd9c25a6ddda3ff106be5c9870",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {
+        ".pre-install": "#!/bin/sh\n\naddgroup -S weston-launch 2>/dev/null\n\nexit 0\n"
+      }
+    },
+    {
+      "name": "libdisplay-info",
+      "version": "0.2.0-r0",
+      "architecture": "aarch64",
+      "repository": "community",
+      "filename": "libdisplay-info-0.2.0-r0.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/aarch64/libdisplay-info-0.2.0-r0.apk",
+      "apk_checksum": "Q1XPHDH08xyuvMpUMPGhyXoWocmCM=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1"
+      ],
+      "provides": [
+        "so:libdisplay-info.so.2=0.2.0"
+      ],
+      "aport_commit": "a297fdc30b25c7df9a8c230128fffe958ecbb42e",
+      "sha256": "93a02113a375bb6ebac472b690ed42dbb4049a1ec769053038b21481ed2eddaf",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "libelogind",
+      "version": "252.24-r1",
+      "architecture": "aarch64",
+      "repository": "community",
+      "filename": "libelogind-252.24-r1.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/aarch64/libelogind-252.24-r1.apk",
+      "apk_checksum": "Q1kF8hnI4/EglLHM5avXOSJaOidbo=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1",
+        "so:libcap.so.2"
+      ],
+      "provides": [
+        "so:libelogind.so.0=0.35.0"
+      ],
+      "aport_commit": "d639013172fbf72aa72ca5dfdfbd01acf6897af6",
+      "sha256": "75bfea31ef11489cf7999a153832d07e828df48761802316152b5e0fb5994d7e",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "libseat",
+      "version": "0.9.1-r0",
+      "architecture": "aarch64",
+      "repository": "community",
+      "filename": "libseat-0.9.1-r0.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/aarch64/libseat-0.9.1-r0.apk",
+      "apk_checksum": "Q1W87Rply8O5TGpeNrLuBR0iyeshg=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1",
+        "so:libelogind.so.0"
+      ],
+      "provides": [
+        "so:libseat.so.1=1"
+      ],
+      "aport_commit": "7b5afcbc721cea9d4f9786831094cddf23ae69a6",
+      "sha256": "d2995b70830cbceb7a4773fa7f405a47027250a5501b46ee04963261dbbb505a",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "weston-backend-drm",
+      "version": "14.0.2-r1",
+      "architecture": "aarch64",
+      "repository": "community",
+      "filename": "weston-backend-drm-14.0.2-r1.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/aarch64/weston-backend-drm-14.0.2-r1.apk",
+      "apk_checksum": "Q1fI/n0MAC+58SyxjOwsLo5GoVg/U=",
+      "depends": [
+        "so:libc.musl-aarch64.so.1",
+        "so:libdisplay-info.so.2",
+        "so:libdrm.so.2",
+        "so:libgbm.so.1",
+        "so:libinput.so.10",
+        "so:libpixman-1.so.0",
+        "so:libseat.so.1",
+        "so:libudev.so.1",
+        "so:libva-drm.so.2",
+        "so:libva.so.2",
+        "so:libwayland-client.so.0",
+        "so:libwayland-server.so.0",
+        "so:libweston-14.so.0"
+      ],
+      "provides": [],
+      "aport_commit": "562e4595bac9444c612bef30c22371b45fbadd18",
+      "sha256": "9d53b507fc7fefe95b664b01aae60b54361bffcb18e741f6657751df8d5359d6",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    },
+    {
+      "name": "weston-clients",
+      "version": "14.0.2-r1",
+      "architecture": "aarch64",
+      "repository": "community",
+      "filename": "weston-clients-14.0.2-r1.apk",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/aarch64/weston-clients-14.0.2-r1.apk",
+      "apk_checksum": "Q1MgY8mYTfHXg1/jFZ9WVfauYfM9E=",
+      "depends": [
+        "so:libEGL.so.1",
+        "so:libGLESv2.so.2",
+        "so:libc.musl-aarch64.so.1",
+        "so:libcairo.so.2",
+        "so:libdrm.so.2",
+        "so:libfontconfig.so.1",
+        "so:libgbm.so.1",
+        "so:libglib-2.0.so.0",
+        "so:libgobject-2.0.so.0",
+        "so:libjpeg.so.8",
+        "so:libpango-1.0.so.0",
+        "so:libpangocairo-1.0.so.0",
+        "so:libpixman-1.so.0",
+        "so:libpng16.so.16",
+        "so:libudev.so.1",
+        "so:libwayland-client.so.0",
+        "so:libwayland-cursor.so.0",
+        "so:libwayland-egl.so.1",
+        "so:libwebp.so.7",
+        "so:libweston-14.so.0",
+        "so:libxkbcommon.so.0"
+      ],
+      "provides": [
+        "cmd:weston-calibrator=14.0.2-r1",
+        "cmd:weston-clickdot=14.0.2-r1",
+        "cmd:weston-cliptest=14.0.2-r1",
+        "cmd:weston-constraints=14.0.2-r1",
+        "cmd:weston-content_protection=14.0.2-r1",
+        "cmd:weston-debug=14.0.2-r1",
+        "cmd:weston-dnd=14.0.2-r1",
+        "cmd:weston-editor=14.0.2-r1",
+        "cmd:weston-eventdemo=14.0.2-r1",
+        "cmd:weston-flower=14.0.2-r1",
+        "cmd:weston-fullscreen=14.0.2-r1",
+        "cmd:weston-image=14.0.2-r1",
+        "cmd:weston-multi-resource=14.0.2-r1",
+        "cmd:weston-presentation-shm=14.0.2-r1",
+        "cmd:weston-resizor=14.0.2-r1",
+        "cmd:weston-scaler=14.0.2-r1",
+        "cmd:weston-screenshooter=14.0.2-r1",
+        "cmd:weston-simple-damage=14.0.2-r1",
+        "cmd:weston-simple-dmabuf-egl=14.0.2-r1",
+        "cmd:weston-simple-dmabuf-feedback=14.0.2-r1",
+        "cmd:weston-simple-dmabuf-v4l=14.0.2-r1",
+        "cmd:weston-simple-egl=14.0.2-r1",
+        "cmd:weston-simple-shm=14.0.2-r1",
+        "cmd:weston-simple-touch=14.0.2-r1",
+        "cmd:weston-smoke=14.0.2-r1",
+        "cmd:weston-stacking=14.0.2-r1",
+        "cmd:weston-subsurfaces=14.0.2-r1",
+        "cmd:weston-tablet=14.0.2-r1",
+        "cmd:weston-touch-calibrator=14.0.2-r1",
+        "cmd:weston-transformed=14.0.2-r1"
+      ],
+      "aport_commit": "562e4595bac9444c612bef30c22371b45fbadd18",
+      "sha256": "6abf86b9d6ac0677931a942acd9207c910fb25a2f3ec11ca29cc8e50adf4eb72",
+      "signatures": [
+        ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+      ],
+      "scriptlets": {}
+    }
+  ],
+  "policy": "Add these signed exact APK files offline with --no-scripts --no-commit-hooks; preserve all pre-existing package versions.",
+  "trusted_signing_keys": [
+    {
+      "name": "alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub",
+      "sha256": "d11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d",
+      "source": "official rootfs /etc/apk/keys"
+    }
+  ]
+}

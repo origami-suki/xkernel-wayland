@@ -13,10 +13,11 @@
 ## 本机现状与源码差异
 
 - 2026-09-24 已按用户要求卸载 `/usr/local` 的 QEMU 5.2.0。默认命令现在选择 `/usr/bin/qemu-system-aarch64`，实际版本 **11.1.1**（用户口述 11.0 指系统新版）；精确版本见 `config/baseline.json`。
-- 已补齐系统 virtio-gpu 与 GTK 模块，完成 TCG/2 GiB/4 vCPU、GPU/keyboard/mouse 加载及 monitor screendump 的 host smoke；这没有启动 guest，真正内核启动仍待 M0-002。迁移范围与原始证据见 [M0-005](tasks/M0-005.md)。
+- 已补齐系统 virtio-gpu 与 GTK 模块，完成 TCG/2 GiB/4 vCPU、GPU/keyboard/mouse 加载及 monitor screendump 的 host smoke；这项 host smoke 本身没有启动 guest；后续 [M0-002](tasks/M0-002.md) 已完成构建和两次真实 shell/正常关机。迁移范围与原始证据见 [M0-005](tasks/M0-005.md)。
 - v0.2.0 的实际 defconfig 为 `platforms/kplat-aarch64/qemu_defconfig`。README 与构建技能中的 `platforms/aarch64-qemu-virt/defconfig` 在此版本不存在。
 - 实际 defconfig 已启用 `KFEAT_DRIVER_VIRTIO_GPU` 和 `KFEAT_DRIVER_VIRTIO_INPUT`；这只能证明配置开启，不能证明图形运行正常。
-- `rust-toolchain.toml` 固定 Rust 1.95.0；格式化流程另提到 nightly-2026-03-08，相关工具是否齐全在构建任务中确认。
+- `rust-toolchain.toml` 固定 Rust 1.95.0，所需组件/目标已验证；cargo-binutils 0.4.0 和 AArch64 musl GCC 11.2.1 已验证。格式化流程另提到 nightly-2026-03-08，本轮无 Rust 源码改动，未运行格式化。
+- 内核项目提交 `58cf0e11` 只校正 xtask 两个本地包锁文件版本；运行逻辑仍为上游 v0.2.0。正式启动 Build ID 为 `d3900524f685cdf2b1d956b2f3a19c43a868db04859296f345ce59b94dcbb86f`。
 - Makefile 的运行变量包括 `MEM`、`SMP`、`ACCEL` 和 `DISK_IMG`。启动封装需明确传入 2g、4、n 和工作镜像，不依赖默认值。
 - `GRAPHIC=y` 添加 GPU，不自动添加 keyboard/mouse。guest 输入设备须显式添加并验证；host 模块可加载不等于 guest 驱动/枚举通过。
 - 赛方 rootfs 带 Xorg/JWM/Chromium，不带 Weston；内核 init 与镜像 BusyBox inittab 尚未接通，镜像默认欢迎页不是官方测试页。详见 [rootfs 调查](analysis/rootfs-and-memory.md)。

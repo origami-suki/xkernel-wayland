@@ -1,0 +1,10 @@
+{
+  "rust": "1.95.0",
+  "cargo_binutils": "0.4.0",
+  "cross_toolchain": {
+    "url": "https://musl.cc/aarch64-linux-musl-cross.tgz",
+    "sha256": "c909817856d6ceda86aa510894fa3527eac7989f0ef6e87b5721c58737a06c38",
+    "directory": "work/toolchains/aarch64-linux-musl-cross",
+    "gcc_version": "11.2.1 20211120"
+  }
+}

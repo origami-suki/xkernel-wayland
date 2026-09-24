@@ -1,10 +1,10 @@
 # 验收与证据矩阵
 
-依据赛题 PDF、原始三份测试页和本轮源码/镜像调查建立。除 host QEMU 迁移外，guest 功能均未验证；静态分析不自动关闭验收项。功能通过、证据齐全和用户学习情况分别记录。评分原文页码与完整拆分见 [需求核查](analysis/requirements-and-testpages.md)。
+依据赛题 PDF、原始三份测试页和本轮源码/镜像调查建立。M0-002 的构建、两次 guest shell/关机与 monitor 已验证；图形/浏览器验收仍未完成，静态分析不自动关闭验收项。功能通过、证据齐全和用户学习情况分别记录。评分原文页码与完整拆分见 [需求核查](analysis/requirements-and-testpages.md)。
 
 | 编号 | 场景 | 条件与证据 | 状态 |
 | --- | --- | --- | --- |
-| ENV-01 | 开发环境 | AArch64、TCG、2 GiB、4 vCPU；系统 QEMU 11.1.1；版本、完整命令与设备清单；两次 guest 启动与退出 | [host 已验证](tasks/M0-005.md)，guest 待 M0-002 |
+| ENV-01 | 开发环境 | AArch64、TCG、2 GiB、4 vCPU；系统 QEMU 11.1.1；版本、完整命令与设备清单；两次 guest 启动与退出 | [已验证](tasks/M0-002.md)：m0-serial-04/05、m0-monitor-stop |
 | ROOTFS-01 | 赛方输入与工作盘 | 从原始 rootfs 增量补齐 Weston/依赖与 Wayland 配置，记录包版本/来源/哈希；工作盘可重建；三份原页独立部署核对 hash/URL，不能用 kiosk 欢迎页 | 原盘调查完成，增量/部署未执行 |
 | WAYLAND-01 | 本队 Wayland 路线 | STREAM SCM_RIGHTS/shared mmap 探针；wl_shm 客户端→Weston DRM后端→guest virtio-gpu→screendump；Chromium实际 Ozone/socket/协议链有证据，优先原生 Wayland | 用户路线已确认，运行未验证 |
 | GUI-01 | 图形会话 | Weston 在 guest DRM 输出上启动成功，连续 10 分钟无退出；screendump、PID/时间线与日志，不用 respawn 拼接时长 | 未验证 |

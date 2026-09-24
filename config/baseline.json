@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "kernel": {
+    "repository": "https://gitee.com/openkylin/x-kernel.git",
+    "path": "sources/x-kernel",
+    "tag": "v0.2.0",
+    "tag_object": "7e556fe8dffbb0db80a5c29fb7a52de69af04f93",
+    "commit": "c548c427af64bc4fcb7ba9d486d77e006be69b4f",
+    "sync_upstream": false,
+    "defconfig": "platforms/kplat-aarch64/qemu_defconfig",
+    "rust_toolchain": "1.95.0"
+  },
+  "development": {
+    "architecture": "aarch64",
+    "accelerator": "tcg",
+    "memory_mib": 2048,
+    "vcpus": 4,
+    "device_policy": "unrestricted; record the actual device list for every run",
+    "qemu_minimum_major": 8,
+    "qemu_binary": "/usr/bin/qemu-system-aarch64",
+    "qemu_version": "11.1.1",
+    "qemu_package_version": "11.1.1-4"
+  },
+  "assets": [
+    {
+      "role": "rootfs",
+      "path": "../Assets/agentos-disk.img.xz",
+      "sha256": "3b0c524ae600cde79c7b2639d650593d46ae16f48a0419c923e4fbbfc3b2440a",
+      "uncompressed_bytes": 2147483648
+    },
+    {
+      "role": "testpages",
+      "path": "../Assets/testpages.tar.xz",
+      "sha256": "66afe5397f0c567cd2a52e19fcc9aca6cf258fc4a70c6031b3523a70afa60b4a"
+    },
+    {
+      "role": "problem_statement",
+      "path": "../Assets/6 赛题六：先进计算应用赛道-基于x-kernel的Chromium运行环境构建与优化(麒麟软件有限公司)(1).pdf",
+      "sha256": "a394029e4eef75289811ceee615107b10c5ad66026b904c637c499dfb3c83696"
+    }
+  ]
+}

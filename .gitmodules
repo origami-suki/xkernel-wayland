@@ -1,0 +1,3 @@
+[submodule "sources/x-kernel"]
+	path = sources/x-kernel
+	url = https://gitee.com/openkylin/x-kernel.git

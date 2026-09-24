@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+cd "$(git rev-parse --show-toplevel)"
+git diff --cached --check
+python3 scripts/check_project.py --verify-assets

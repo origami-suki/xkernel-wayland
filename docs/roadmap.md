@@ -1,6 +1,6 @@
 # 推进路线
 
-按依赖和验收结果推进，不设日历排期。2026-09-24 的修订基于赛题全部 6 页、赛方镜像/测试页和 x-kernel v0.2.0 的实际代码。**M0 的构建、两次串口 shell/正常关机、可重建 Wayland 用户态和原页部署已验证，阶段成果待用户验收。Chromium `--version` 暴露 ELF 装载 panic，已独立复现并转入 M1-002；图形和 Chromium 显示尚未通过。** 实现验证、证据完整性、用户学习/阶段验收分别记录。
+按依赖和验收结果推进，不设日历排期。2026-09-24 的修订基于赛题全部 6 页、赛方镜像/测试页和 x-kernel v0.2.0 的实际代码。**M0 的构建、两次串口 shell/正常关机、可重建 Wayland 用户态和原页部署已验证；M1-002 的装载缺口已修复并回归通过（原盘 Chromium `--version` 已在 x-kernel 内返回 `Chromium 142.0.7444.59`），M1-001 的 Linux system 对照已建立。图形和 Chromium 显示尚未通过。** 实现验证、证据完整性、用户学习/阶段验收分别记录。
 
 **用户已确定：采用 Wayland，复用赛方 rootfs。** 先前调查中提出的 X11 优先建议已撤回；Xorg/JWM 仅作为原镜像内容记录。后续补齐 Weston 和必要依赖、建立原生 Wayland 会话，不再安排路线比较或等待这项决策的批准。
 
@@ -62,9 +62,9 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | 阶段 | 目标和退出条件 | 当前状态 |
 | --- | --- | --- |
 | M0 材料与可重复启动 | 输入锁定、工作副本可重建；正确工具链构建；同一配置两次到达交互 shell并正常结束；Wayland 补包清单和会话启动入口有证据 | 工程检查与证据已完成，阶段验收待用户确认 |
-| M1 诊断、兼容性与计量 | 每个实际阻塞有阶段日志、最小复现、Linux 结果、errno/超时定位与回归；计量入口区分可信值和缺项 | 已复现 Chromium ELF 装载 panic，待最小用例/Linux 对照与修复 |
+| M1 诊断、兼容性与计量 | 每个实际阻塞有阶段日志、最小复现、Linux 结果、errno/超时定位与回归；计量入口区分可信值和缺项 | 首个阻塞（解释器地址冲突）已修复并回归；Linux system 对照已建立；其余接口缺口待按失败触发 |
 | M2 图形与输入 | Weston DRM 会话和 wl_shm 客户端可见；buffer 内容可改变；键鼠经过虚拟设备到客户端；连续 10 分钟，非重启后拼接 | 未运行验证 |
-| M3 首个可运行 Chromium | 目标是原生 Wayland 窗口正确显示原始 index.html；首次实际可运行就保存命令、screendump、日志、代码与不可变 tag，记录真实链路 | 未运行验证 |
+| M3 首个可运行 Chromium | 目标是原生 Wayland 窗口正确显示原始 index.html；首次实际可运行就保存命令、screendump、日志、代码与不可变 tag，记录真实链路 | 未运行验证；Chromium `--version` 已可执行，但未创建窗口或显示页面 |
 | M4 功能与稳定性 | renderer 等多进程；两个可切换页面/窗口；真实键鼠；JS/CSS 各 6 项及视觉核对；30 分钟无崩溃/OOM、每 2 分钟加载共 10 次无卡死 | 未开始 |
 | M5 数据驱动优化 | 对比最早可运行 tag；每项假设有原始 before/after，各不少于 5 次、中位数与范围，并通过相同功能/稳定性回归 | 未开始，测量入口前置 |
 | M6 交付与答辩 | 干净环境复现；初赛材料与决赛现场步骤分开核对；评分项对应证据；官方平台/脚本发布后迁移复测 | 未开始，文档与补丁持续积累 |
@@ -77,9 +77,9 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | [M0-004](tasks/M0-004.md) | 赛题/rootfs/源码调查与路线修订 | 结论指向原文、guest 文件或源码；计划/验证分离；文档链接检查 | 静态调查已验证 |
 | [M0-005](tasks/M0-005.md) | 清除旧 QEMU、使用系统新版 | 来源/卸载清单、PATH、版本、TCG 与图形模块 smoke | 已验证，未启动 guest |
 | [M0-002](tasks/M0-002.md) | 工具链、构建、工作盘与串口启动 | M0-001/005；固定配置两次启动、串口与 monitor、命令/退出日志 | 已验证：两次 shell/关机及 monitor 停止 |
-| [M0-003](tasks/M0-003.md) | rootfs 复用与 Wayland 用户态补齐 | 补包/依赖清单可先离线准备，运行探测依赖 M0-002；Weston/Chromium 能力、会话配置、原页哈希与首个阻塞 | 可重建增量、版本/设备/原页已验证；浏览器装载阻塞移交 M1-002 |
-| M1-001 | Linux 对照与诊断入口 | 与 M0-003 可并行；同一补齐后的 rootfs/Wayland 包及参数；一个通过、一个失败/超时最小用例均有退出码/分层日志 | 计划，执行前建任务卡 |
-| [M1-002](tasks/M1-002.md) | 首个阻塞：大型 PIE 与固定 ELF 解释器地址冲突 | 原盘/补齐盘均复现；下一步最小 ELF 与 Linux 对照，再作独立语义修复 | 已定位装载边界，未修复 |
+| [M0-003](tasks/M0-003.md) | rootfs 复用与 Wayland 用户态补齐 | 补包/依赖清单可先离线准备，运行探测依赖 M0-002；Weston/Chromium 能力、会话配置、原页哈希与首个阻塞 | 可重建增量、版本/设备/原页已验证；浏览器装载阻塞已由 M1-002 修复 |
+| [M1-001](tasks/M1-001.md) | Linux 对照与诊断入口 | 与 M0-003 可并行；同一补齐后的 rootfs/Wayland 包及参数；一个通过、一个失败/超时最小用例均有退出码/分层日志 | 最小 system 对照已验证；图形会话对照随 M2/M3 继续 |
+| [M1-002](tasks/M1-002.md) | 首个阻塞：大型 PIE 与固定 ELF 解释器地址冲突 | 原盘/补齐盘均复现；最小 ELF 与 Linux 对照；解释器基址动态选择与非法 ELF 错误传播 | **已修复并回归通过**：原 Chromium `--version`、80 MiB BSS PIE、畸形 ELF errno、BusyBox/Weston/seatd 与重复启动均通过 |
 | [M1-004](tasks/M1-004.md) | Wayland 的 STREAM fd/共享缓冲区 | M0-002 后做最小复现；SCM_RIGHTS + mmap + 生命周期，Linux 对照；M2 wl_shm 客户端的必要前置 | 静态缺口已定位，动态未执行 |
 | [M1-003](tasks/M1-003.md) | 时间点、进程树与可信内存计量 | 随启动入口准备；首帧前接入可测部分，固定 0 字段不能算通过 | 计划 |
 
@@ -92,6 +92,7 @@ M0-002 不通过下载另一份 rootfs 或切换内核版本绕过构建/挂载�
 | 关卡/候选任务 | 最小验证 | 失败时的入口与边界 |
 | --- | --- | --- |
 | M1-002a 进程与同步 | exec/clone 创建及 wait 回收；futex 唤醒/超时；epoll + eventfd/timerfd；browser/renderer 角色日志 | `core/ksyscall/src/task/`、`core/ksyscall/src/sync/`、`core/ksyscall/src/io_mpx/`、`process/kfd_objects/`；先定位退出/阻塞，不能用 single-process 达到多进程验收 |
+| M1-002b ELF 文件数据边界 | 主映像 `p_filesz` 小于 `p_memsz` 时后续读取越界：x-kernel 当前静默执行，Linux 以 SIGSEGV 终止；需给出 filemap/COW 侧的最小复现再决定修复 | `mm/filemap`、`mm/memspace`、`boot/kernel_elf_parser`；M1-002 已记录差异但未修，属独立候选 |
 | M1-004 共享内存与 fd | memfd→truncate→父子 MAP_SHARED；seals/CLOEXEC；Unix STREAM 传 fd 后 mmap；坏 fd/ancillary 截断/关闭回收；实际 wl_shm 集成交 M2-001 | `posix/mm`、`mm/filemap`、`fs/filesystems/memfs/src/shmem.rs`、`posix/net/src/`、`net/knet/src/unix/`；已有能力先测，stream 缺口先复现后修复 |
 | M1-002c seat/设备发现 | Weston 实际采用的 libseat/seatd/启动方式、DRM 权限、libudev/sysfs 枚举和 evdev；若命中 VT/KD 再做最小复现 | `io/ktty`、`fs/filesystems/devfs`、`fs/boot`；不预设换 Wayland 就不需要 VT，不照搬 Xorg 的修复清单 |
 | [M2-001](tasks/M2-001.md) 显示最小闭环 | DRM VERSION/UNIQUE→资源/dumb buffer→两种图案/present→Weston DRM/pixman→wl_shm 客户端→monitor图像变化 | `fs/filesystems/devfs/src/nodes/dri.rs`→`io/drmdevice/src/card0.rs`→`drivers/devices/virtio/src/gpu.rs`；先验证软件合成所需接口，不预设 PRIME/dma-buf 可用 |
@@ -131,7 +132,7 @@ M5 每次只处理一个有数据支撑的问题，例如输入 poll 空转、DR
 | 阶段 | 关键调用链与亲手实验 | 学习/阶段验收 |
 | --- | --- | --- |
 | M0 | 运行 run_guest.py 并对照 Build ID/设备/shell；比较版本能执行、socket能连接、真正显示像素 | 实现/证据完成，学习与阶段验收待用户完成 |
-| M1 | 两进程传 memfd，再 mmap 改共享页，对比 Linux/x-kernel 的 fd、字节、errno | 待运行环境和用例 |
+| M1 | 运行 `large-pie` 观察解释器基址如何随主映像 PT_LOAD 变化，再对比 Linux/x-kernel 的 fd、字节、errno | 最小用例、Linux 对照与修复回归已完成；学习与阶段验收待用户完成 |
 | M2 | 改变 dumb buffer 颜色，观察 screendump/page flip；一次鼠标移动追到 evdev | 待图形环境 |
 | M3/M4 | 开第二页，关联 renderer PID、共享内存、焦点/输入，再关页观察回收 | 待浏览器 |
 | M5/M6 | 重跑至少 5 个样本，解释时钟、缓存和共享页统计如何影响结果 | 待可靠数据 |

@@ -53,6 +53,17 @@ def write_json(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n")
 
 
+def archive_copy(source, destination):
+    """Keep an independent artifact, sharing immutable extents where supported."""
+    result = subprocess.run(["cp", "--reflink=always", "--preserve=mode,timestamps",
+                             str(source), str(destination)], capture_output=True)
+    if result.returncode == 0:
+        return "reflink"
+    destination.unlink(missing_ok=True)
+    shutil.copy2(source, destination)
+    return "copy"
+
+
 def check_disk(path):
     path = path.resolve(strict=True)
     require(path.is_relative_to((ROOT / "work/images").resolve()),
@@ -83,11 +94,12 @@ def check_bundle(bundle, output, state):
     shutil.copy2(manifest_path, saved / "bundle.toml")
     shutil.copy2(KERNEL / ".config", output / "kernel.config")
     hashes = {}
+    storage = {}
     for key, name in (("kernel-elf", "kernel.elf"), ("kernel-image", "kernel.bin")):
         require(manifest[key]["path"] == name, f"unexpected {key} path")
         source = bundle / name
         require(source.stat().st_size == manifest[key]["size"], f"{name} size mismatch")
-        shutil.copy2(source, saved / name)
+        storage[name] = archive_copy(source, saved / name)
         hashes[name] = sha256(saved / name)
     notes = command(["readelf", "-n", str(saved / "kernel.elf")])
     (output / "elf-notes.txt").write_text(notes + "\n")
@@ -109,7 +121,8 @@ def check_bundle(bundle, output, state):
                  "KFEAT_DRIVER_VIRTIO_RNG=y"):
         require(line in config.splitlines(), f"configuration missing {line}")
     state["bundle"] = {"source": str(bundle), "build_info": info, "build_id": build_id,
-                       "sha256": hashes, "config_file_sha256": sha256(output / "kernel.config"),
+                       "sha256": hashes, "storage": storage,
+                       "config_file_sha256": sha256(output / "kernel.config"),
                        "validation": "manifest sizes, ELF GNU note, objcopy ELF/bin equality; "
                        "config copied with required platform/device symbols; no source-freshness claim"}
     return saved / "kernel.bin", build_id
@@ -256,6 +269,8 @@ def main():
                 require(b"(qemu) " in response, f"monitor did not finish {query}")
             phase = "boot"
             serial_path = output / "serial.log"
+            script_sent = False
+            marker_at = 0
             while time.monotonic() < deadline and process.poll() is None:
                 try:
                     serial.recv(65536)  # Drain the channel; the chardev logfile is authoritative.
@@ -271,8 +286,20 @@ def main():
                             "booted guest does not print the verified Build ID")
                     require(re.search(r"(?m)^smp = 4$", clean), "guest did not report 4 CPUs")
                     state["shell_ready"] = True
-                    serial.sendall(script.encode())
+                    # The marker line is still being echoed and the shell is
+                    # still printing its prompt. Sending the script now
+                    # interleaves host bytes with guest output and corrupts the
+                    # commands, so wait for the prompt that follows the marker.
+                    marker_at = clean.rindex(ready)
+                    phase = "await-prompt" if not re.search(r"(?:^|\n)[^\n]*[#$] $",
+                                                            clean[marker_at:]) else "commands"
+                if phase == "await-prompt" and re.search(r"(?:^|\n)[^\n]*[#$] $",
+                                                         clean[marker_at:]):
                     phase = "commands"
+                if phase == "commands" and not script_sent:
+                    serial.sendall(script.encode())
+                    script_sent = True
+                    state["script_bytes_sent"] = len(script)
                 completed = re.search(r"(?m)^" + re.escape(done) + r"(\d+)$", clean)
                 if phase == "commands" and completed:
                     state["guest_exit_code"] = int(completed[1])

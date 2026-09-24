@@ -1,0 +1,81 @@
+{
+  "kernel_commit": "c548c427af64bc4fcb7ba9d486d77e006be69b4f",
+  "image_sha256": "441b4504cfa7fef53f8458f28b4a80eb71f4fd08104f9f260627993fce47fe84",
+  "files": [
+    {
+      "guest_path": "/etc/inittab",
+      "sha256": "2de22e2b481880258e44f54615d6631865a609a7454851cd8b73b978d30feeeb",
+      "bytes": 542
+    },
+    {
+      "guest_path": "/usr/local/bin/x11-session",
+      "sha256": "c8e1960c696e2248965d880e5ad9bbd8af0d05e28f7a6e7105a8146373993bc5",
+      "bytes": 1934
+    },
+    {
+      "guest_path": "/etc/init.d/kiosk-boot",
+      "sha256": "65a9b29ef2e7f796c7dc053c22798f655a89849ef184780408cb394bf2d47422",
+      "bytes": 822
+    },
+    {
+      "guest_path": "/etc/fstab",
+      "sha256": "0d4275d835a8cbb696d72124cbc1e8cfd2a71800aeec8bf31930ae8a6c401123",
+      "bytes": 89
+    },
+    {
+      "guest_path": "/usr/lib/os-release",
+      "sha256": "295eb4832e3b04c20c0c3dd9ac3fa674363aec66112fd7c10f52f014643df52e",
+      "bytes": 188
+    },
+    {
+      "guest_path": "/etc/kiosk/url",
+      "sha256": "fe341094b69112d130a9e0b53e6100ec113e44dde5d2df2e725e839a2a9c6107",
+      "bytes": 35
+    },
+    {
+      "guest_path": "/usr/share/kiosk/index.html",
+      "sha256": "d34337bee3341cfd1feb775d68dc5c360e862b63d6fe126d2434a01754734f67",
+      "bytes": 3024
+    },
+    {
+      "guest_path": "/usr/lib/chromium/chromium-launcher.sh",
+      "sha256": "314ea0a8831178893e35f24f9a9570d089864d97345da8a0f0c55425bb61b2fc",
+      "bytes": 1019
+    },
+    {
+      "guest_path": "/lib/apk/db/installed",
+      "sha256": "53406565a082bd56dee2bc209fbd28ccc01f9324b0b8fcd33d8ebf06cab7245a",
+      "bytes": 571149
+    }
+  ],
+  "page_hashes": {
+    "index.html": "831cf28f3748940b450d1da325aa39a2dcaea2fee15b0532bf4111144d176b38",
+    "interaction.html": "58130daa4a2f426fd16b8bde93d964713f20e147da8af1537ab2d8b506d2fd58",
+    "layout.html": "a1b04f9aba81b4b7818be2e7a858d482d471bd0d625dee257f605b2129b8fc4c"
+  },
+  "date": "2026-09-24",
+  "scope": "Offline materials and fixed-source audit; no kernel build or guest runtime verification",
+  "artifacts": {
+    "artifacts/roadmap-audit/chromium-needed.txt": "7f5f71d0d12ab9813dc512b98fc4edd2fce6a885ee4c3e2aaef73e10a148b528",
+    "artifacts/roadmap-audit/commit-bad-subject.txt": "b97c4f7874e791a8943d98438a43a4becbf06708982a49f6fdc7227e3a98a33d",
+    "artifacts/roadmap-audit/commit-missing-task.txt": "49f5079b76b659e0a5bd94d455244103fc41d4f650783fb6dd9e5b8a067b90ee",
+    "artifacts/roadmap-audit/commit-missing-tests.txt": "8cd6c0d93f891e48b4b47fec791b938e933d4f779dc68c19d0c138ff129fbc10",
+    "artifacts/roadmap-audit/commit-valid.txt": "691e063e666eb82ba3e20a76e1b966cd42cb7266c315acd928fc242c04ad3bc3",
+    "artifacts/roadmap-audit/packages.json": "b9e06dd4e0404dfe9df426fdf11b42d1d2b411ba625f698b5d2dd3d90a389df0",
+    "artifacts/roadmap-audit/project-check.txt": "7226f8d37fa359217afc464e0171ebb205c28d07d1859c2bc521e29486398bf7",
+    "artifacts/roadmap-audit/rootfs-dump-results.txt": "74df8ce4ab64bbdf61046ea84d4ce6b480965ee0d83cf26ae806c7c3cd0c3e8f",
+    "artifacts/roadmap-audit/rootfs-extra.txt": "38e87fa9fa2c5b5433a3e7db17a798cb7a037cb5fd109359c6a4cb909cec5a88",
+    "artifacts/roadmap-audit/rootfs-files.json": "26ba97a771642ffe5385a4db05dc49f2d39490d2dacae0f1e7df418db2a36049",
+    "artifacts/roadmap-audit/rootfs-inventory.txt": "817e6274ef7c94e0f3aa2a18a410d54bb7d5fd120804588f28d6fbd7f32165a2",
+    "artifacts/roadmap-audit/rootfs-session.txt": "1a70b2643431473b8bb2ff58420bc16c0ccbb1e9007b40eae191ed3747bd7afd",
+    "artifacts/roadmap-audit/rootfs-sha256.txt": "773f5535095df09f7d658588e5c1abf77d2863450425707f81312cb60ce5316b",
+    "artifacts/roadmap-audit/document-validation.txt": "4e78989441123df08844c20eca32e59625bb1e1f2e141f22d7ea865becfb28df",
+    "artifacts/roadmap-audit/wayland-document-validation.txt": "c61a31968c51a8783c456803d1bc7429bef1ea94483dfa0f7f8c04b316aa04d9",
+    "artifacts/roadmap-audit/hook-validation.txt": "cc775696af1b815978b97bf75c412f29b85e06947513ebfae325b3fa9fe01cf8"
+  },
+  "qemu_evidence_manifest": {
+    "path": "artifacts/qemu-migration/SHA256SUMS",
+    "sha256": "95ba927b828f5cc4a01f9ebbd87f9deed3fcd934fc419444b5129e14e3868a7b"
+  },
+  "route_decision": "Wayland with incremental additions to the supplied rootfs; guest modifications and runtime not performed"
+}

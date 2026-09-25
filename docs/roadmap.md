@@ -1,6 +1,6 @@
 # 推进路线
 
-按依赖和验收结果推进，不设日历排期。2026-09-24 的修订基于赛题全部 6 页、赛方镜像/测试页和 x-kernel v0.2.0 的实际代码。**M0 的构建、两次串口 shell/正常关机、可重建 Wayland 用户态和原页部署已验证；M1-002 的装载缺口已修复并完成独立收尾（原盘 Chromium `--version` 已在 x-kernel 内返回 `Chromium 142.0.7444.59`），M1-001 的 Linux system 对照已建立。M1-004 的 STREAM fd/共享映射/生命周期及 memfd seals 已完成同盘 20 项对照、独立测试与最终干净版本复跑。图形和 Chromium 显示尚未通过。** 实现验证、证据完整性、用户学习/阶段验收分别记录。
+按依赖和验收结果推进，不设日历排期。2026-09-24 的修订基于赛题全部 6 页、赛方镜像/测试页和 x-kernel v0.2.0 的实际代码。**M0 的构建、两次串口 shell/正常关机、可重建 Wayland 用户态和原页部署已验证；M1-002 的装载缺口已修复并完成独立收尾（原盘 Chromium `--version` 已在 x-kernel 内返回 `Chromium 142.0.7444.59`），M1-001 的 Linux system 对照已建立。M1-004 的 STREAM fd/共享映射/生命周期及 memfd seals 已完成同盘 20 项对照、独立测试与最终干净版本复跑。M2-001 已完成 Weston DRM/pixman 与动态 wl_shm 客户端显示和正常退出的独立验收。Chromium 窗口、真实输入和长时稳定性尚未通过。** 实现验证、证据完整性、用户学习/阶段验收分别记录。
 
 **用户已确定：采用 Wayland，复用赛方 rootfs。** 先前调查中提出的 X11 优先建议已撤回；Xorg/JWM 仅作为原镜像内容记录。后续补齐 Weston 和必要依赖、建立原生 Wayland 会话，不再安排路线比较或等待这项决策的批准。
 
@@ -63,7 +63,7 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | --- | --- | --- |
 | M0 材料与可重复启动 | 输入锁定、工作副本可重建；正确工具链构建；同一配置两次到达交互 shell并正常结束；Wayland 补包清单和会话启动入口有证据 | 工程检查与证据已完成，阶段验收待用户确认 |
 | M1 诊断、兼容性与计量 | 每个实际阻塞有阶段日志、最小复现、Linux 结果、errno/超时定位与回归；计量入口区分可信值和缺项 | ELF、STREAM fd 与 memfd seal 缺口已修复并独立验证；计量未实现，其余缺口按实际失败触发 |
-| M2 图形与输入 | Weston DRM 会话和 wl_shm 客户端可见；buffer 内容可改变；键鼠经过虚拟设备到客户端；连续 10 分钟，非重启后拼接 | DRM 查询/原语已通过，Linux Weston/client 对照已显示；x-kernel 会话仍在定位设备发现 |
+| M2 图形与输入 | Weston DRM 会话和 wl_shm 客户端可见；buffer 内容可改变；键鼠经过虚拟设备到客户端；连续 10 分钟，非重启后拼接 | M2-001 显示与正常退出通过；真实键鼠/10分钟和资源循环待验证 |
 | M3 首个可运行 Chromium | 目标是原生 Wayland 窗口正确显示原始 index.html；首次实际可运行就保存命令、screendump、日志、代码与不可变 tag，记录真实链路 | 未运行验证；Chromium `--version` 已可执行，但未创建窗口或显示页面 |
 | M4 功能与稳定性 | renderer 等多进程；两个可切换页面/窗口；真实键鼠；JS/CSS 各 6 项及视觉核对；30 分钟无崩溃/OOM、每 2 分钟加载共 10 次无卡死 | 未开始 |
 | M5 数据驱动优化 | 对比最早可运行 tag；每项假设有原始 before/after，各不少于 5 次、中位数与范围，并通过相同功能/稳定性回归 | 未开始，测量入口前置 |
@@ -82,6 +82,8 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | [M1-002](tasks/M1-002.md) | 首个阻塞：大型 PIE 与固定 ELF 解释器地址冲突 | 原盘/补齐盘均复现；最小 ELF 与 Linux 对照；解释器基址动态选择与非法 ELF 错误传播 | **已修复并回归通过**：原 Chromium `--version`、80 MiB BSS PIE、畸形 ELF errno、BusyBox/Weston/seatd 与重复启动均通过 |
 | [M1-004](tasks/M1-004.md) | Wayland 的 STREAM fd/共享缓冲区 | M0-002 后做最小复现；SCM_RIGHTS + mmap + 生命周期，Linux 对照；M2 wl_shm 客户端的必要前置 | 接口验证通过：STREAM fd/共享映射/生命周期与 memfd seals 同盘 20 项通过，独立测试见任务卡 |
 | [M1-003](tasks/M1-003.md) | 时间点、进程树与可信内存计量 | 随启动入口准备；首帧前接入可测部分，固定 0 字段不能算通过 | 计划 |
+| [M2-001](tasks/M2-001.md) | Weston DRM/pixman 与动态 wl_shm 客户端 | M1-004；真实 monitor 图像变化、frame/release、正常退出 | **独立验收及干净复跑通过**；非 VT seat、暂允许无输入 |
+| [M3-001](tasks/M3-001.md) | Chromium 原生 Wayland 首帧与不可变基线 | M2-001 已满足；正确显示原始 index 后立即存档 | 下一项；尚未启动浏览器窗口 |
 
 M0-002 不通过下载另一份 rootfs 或切换内核版本绕过构建/挂载问题。镜像中自带 Linux 只用于行为对照，不能作为 x-kernel 功能证据。
 

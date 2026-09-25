@@ -32,6 +32,6 @@ python3 scripts/check_project.py --verify-assets
 
 机器专用配置可放入被忽略的 `.local/`。本机默认 QEMU 已统一为系统包提供的 `/usr/bin/qemu-system-aarch64`，实际版本为 `11.1.1`（用户所指系统新版，经检查并非 `11.0`）。旧的 `/usr/local` QEMU `5.2.0` 已卸载；`qemu-img`、`qemu-io` 和 `qemu-nbd` 也使用系统 `11.1.1`。检查脚本接受 `--qemu /absolute/path`，并检查版本与 `config/baseline.json` 一致。已补齐系统 `virtio-gpu` / `virtio-gpu-pci` 及 GTK 显示模块（`qemu-ui-opengl` 是 GTK 包依赖），virtio 键鼠设备由系统模拟器提供。详见 [M0-005 环境任务卡](docs/tasks/M0-005.md)。
 
-当前推进状态以 [路线图](docs/roadmap.md) 为准，接口实现与运行证据见 [M1-004](docs/tasks/M1-004.md)。构建/启动入口为 `scripts/build_kernel.sh` 和 `scripts/run_guest.py`；fd/共享映射/seals 对照入口为 `scripts/prepare_rights_tests.py`。下一显示闭环见 [M2-001](docs/tasks/M2-001.md)，尚无图形或 Chromium 显示通过证据。
+当前推进状态以 [路线图](docs/roadmap.md) 为准，接口实现与运行证据见 [M1-004](docs/tasks/M1-004.md)。构建/启动入口为 `scripts/build_kernel.sh` 和 `scripts/run_guest.py`；fd/共享映射/seals 对照入口为 `scripts/prepare_rights_tests.py`。[M2-001](docs/tasks/M2-001.md) 的 Weston/wl_shm 显示及正常退出已验证，入口为 `tests/drm/session.sh`。下一项是 [M3-001](docs/tasks/M3-001.md) 的 Chromium 原始页首帧；真实键鼠和长时稳定性仍未验证。
 
 Wayland 工作盘重建：`python3 scripts/rootfs_prepare.py --output work/images/new-wayland.img --evidence artifacts/new-wayland`（输出盘和证据目录须未使用）。精确包锁、准备步骤和已知限制见 [用户态说明](docs/analysis/wayland-rootfs.md)。

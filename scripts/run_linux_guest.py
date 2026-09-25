@@ -27,6 +27,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from frame_capture import capture_frames
+from serial_drain import SerialDrain
 
 ROOT = Path(__file__).resolve().parents[1]
 QEMU = "/usr/bin/qemu-system-aarch64"
@@ -156,6 +157,8 @@ def monitor_command(client, log, text=None):
         received.extend(data)
         if b"(qemu) " in received:
             break
+    if text != "quit" and b"(qemu) " not in received:
+        raise TimeoutError("QEMU monitor did not finish its response within 5 seconds")
     return bytes(received)
 
 
@@ -181,6 +184,7 @@ def main():
     output.mkdir(parents=True, exist_ok=False)
     shutil.copy2(Path(__file__), output / "run_linux_guest.py")
     shutil.copy2(Path(__file__).with_name("frame_capture.py"), output / "frame_capture.py")
+    shutil.copy2(Path(__file__).with_name("serial_drain.py"), output / "serial_drain.py")
     state = {"run_id": args.run_id, "started_utc": datetime.now(timezone.utc).isoformat(),
              "integration": git_state(ROOT), "xkernel_reference": git_state(ROOT / "sources/x-kernel"),
              "host": {"uname": list(platform.uname()), "python": sys.version,
@@ -188,10 +192,12 @@ def main():
                       "meminfo": Path("/proc/meminfo").read_text()},
              "runner_sha256": sha256(output / "run_linux_guest.py"),
              "frame_capture_sha256": sha256(output / "frame_capture.py"),
+             "serial_drain_sha256": sha256(output / "serial_drain.py"),
              "disk": {"path": str(disk), "snapshot": True}, "timeout_seconds": args.timeout,
              "policy": "AArch64 TCG thread=multi, 2 GiB, 4 vCPU; same PCI devices as x-kernel runner; offline"}
     print(f"Evidence: {output}", flush=True)
     process = serial = monitor = sockets = None
+    drain = None
     result = 1
     try:
         state["qemu_version"] = command([QEMU, "--version"])
@@ -230,6 +236,7 @@ def main():
             process = subprocess.Popen(argv, cwd=ROOT, stdout=qemu_log, stderr=subprocess.STDOUT)
             state["qemu_pid"] = process.pid
             serial = connect(socket_dir / "serial", process, min(deadline, time.monotonic() + 15))
+            drain = SerialDrain(serial)
             monitor = connect(socket_dir / "monitor", process, min(deadline, time.monotonic() + 15))
             monitor_command(monitor, mon_log)
             actual = Path(f"/proc/{process.pid}/cmdline").read_bytes().rstrip(b"\0").split(b"\0")
@@ -240,10 +247,7 @@ def main():
             phase = "boot"
             serial_path = output / "serial.log"
             while time.monotonic() < deadline and process.poll() is None:
-                try:
-                    serial.recv(65536)
-                except socket.timeout:
-                    pass
+                drain.check()
                 raw = serial_path.read_text(errors="replace") if serial_path.exists() else ""
                 clean = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", raw).replace("\r", "")
                 if phase == "boot" and re.search(r"(?:^|\n)[^\n]*[#$] $", clean):
@@ -284,6 +288,10 @@ def main():
                 process.kill()
                 process.wait(timeout=5)
             state["qemu_exit_code"] = process.returncode
+        if drain is not None:
+            state["serial_drain"] = drain.stop()
+            if state["serial_drain"]["error"] is not None:
+                result = 1
         for client in (serial, monitor):
             if client is not None:
                 client.close()

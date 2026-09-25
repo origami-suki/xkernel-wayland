@@ -25,6 +25,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from frame_capture import capture_frames
+from serial_drain import SerialDrain
 
 ROOT = Path(__file__).resolve().parents[1]
 KERNEL = ROOT / "sources/x-kernel"
@@ -150,7 +151,7 @@ class Monitor:
         self.logfile = logfile
         self.read_prompt()
 
-    def read_prompt(self):
+    def read_prompt(self, require_prompt=True):
         received = bytearray()
         deadline = time.monotonic() + 5
         while time.monotonic() < deadline:
@@ -165,13 +166,15 @@ class Monitor:
             received.extend(data)
             if b"(qemu) " in received:
                 break
+        if require_prompt and b"(qemu) " not in received:
+            raise TimeoutError("QEMU monitor did not finish its response within 5 seconds")
         return bytes(received)
 
     def send(self, text):
         self.logfile.write(("\nHOST COMMAND: " + text + "\n").encode())
         self.logfile.flush()
         self.client.sendall((text + "\n").encode())
-        return self.read_prompt()
+        return self.read_prompt(require_prompt=text != "quit")
 
 
 def marker_command(kind, token, argument=""):
@@ -204,6 +207,7 @@ def main():
     output.mkdir(parents=True, exist_ok=False)
     shutil.copy2(Path(__file__), output / "run_guest.py")
     shutil.copy2(Path(__file__).with_name("frame_capture.py"), output / "frame_capture.py")
+    shutil.copy2(Path(__file__).with_name("serial_drain.py"), output / "serial_drain.py")
     print(f"Evidence: {output}", flush=True)
     state = {"run_id": args.run_id, "started_utc": datetime.now(timezone.utc).isoformat(),
              "integration": git_state(ROOT), "kernel": git_state(KERNEL),
@@ -212,12 +216,14 @@ def main():
                       "meminfo": Path("/proc/meminfo").read_text()},
              "runner_sha256": sha256(output / "run_guest.py"),
              "frame_capture_sha256": sha256(output / "frame_capture.py"),
+             "serial_drain_sha256": sha256(output / "serial_drain.py"),
              "disk": {"path": str(disk), "snapshot": True},
              "timeout_seconds": args.timeout,
              "policy": "TCG thread=multi, 2 GiB, 4 vCPU; NET and VSOCK omitted for offline "
                        "serial/monitor checks; no DHCP, host forwarding or vhost dependency",
              "mode": "monitor-stop" if args.monitor_stop else "pid1-exit"}
     process = serial = monitor = None
+    drain = None
     result = 1
     sockets = None
     try:
@@ -260,6 +266,7 @@ def main():
             process = subprocess.Popen(argv, cwd=KERNEL, stdout=qemu_log, stderr=subprocess.STDOUT)
             state["qemu_pid"] = process.pid
             serial = connect(socket_dir / "serial", process, min(deadline, time.monotonic() + 15))
+            drain = SerialDrain(serial)
             monitor = Monitor(connect(socket_dir / "monitor", process,
                                       min(deadline, time.monotonic() + 15)), monitor_log)
             # /proc/cmdline can briefly be empty during exec. A monitor greeting
@@ -276,10 +283,7 @@ def main():
             script_sent = False
             marker_at = 0
             while time.monotonic() < deadline and process.poll() is None:
-                try:
-                    serial.recv(65536)  # Drain the channel; the chardev logfile is authoritative.
-                except socket.timeout:
-                    pass
+                drain.check()
                 data = serial_path.read_text(errors="replace") if serial_path.exists() else ""
                 clean = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", data).replace("\r", "")
                 if phase == "boot" and re.search(r"(?:^|\n)[^\n]*[#$] $", clean):
@@ -349,6 +353,10 @@ def main():
                 process.kill()
                 process.wait(timeout=5)
             state["qemu_exit_code"] = process.returncode
+        if drain is not None:
+            state["serial_drain"] = drain.stop()
+            if state["serial_drain"]["error"] is not None:
+                result = 1
         if serial is not None:
             serial.close()
         if monitor is not None:

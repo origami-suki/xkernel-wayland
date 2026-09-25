@@ -183,6 +183,18 @@ def marker_command(kind, token, argument=""):
     return f"printf '\\n%s%s%s\\n' '__XK_{kind}_' '{token}__' {shlex.quote(argument)}"
 
 
+def send_exit_after_prompt(serial, clean, marker_end):
+    """Wait for the shell prompt after DONE before injecting the exit command.
+
+    DONE acknowledges the preceding script, not readiness for a new input line.
+    Its bytes and the following prompt can arrive in separate serial reads.
+    """
+    if not re.search(r"(?:^|\n)[^\n]*[#$] $", clean[marker_end:]):
+        return False
+    serial.sendall(b'exit "$xk_rc"\n')
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-id", default=datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -322,9 +334,12 @@ def main():
                     if args.monitor_stop:
                         monitor.send("quit")
                         state["stop_requested"] = "monitor-quit"
+                        phase = "shutdown"
                     else:
-                        serial.sendall(b"exit \"$xk_rc\"\n")
-                        state["stop_requested"] = "pid1-exit-for-kernel-sync-poweroff"
+                        marker_at = completed.end()
+                        phase = "await-exit-prompt"
+                if phase == "await-exit-prompt" and send_exit_after_prompt(serial, clean, marker_at):
+                    state["stop_requested"] = "pid1-exit-for-kernel-sync-poweroff"
                     phase = "shutdown"
                 time.sleep(0.02)
             if process.poll() is None:

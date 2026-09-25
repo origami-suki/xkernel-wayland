@@ -120,6 +120,34 @@ class CaptureTests(unittest.TestCase):
                 capture_frames('__ICT_FRAME_new__\n', Path(directory), None,
                                {'frames': [{'label': str(i)} for i in range(16)]})
 
+    def test_restart_events_keep_first_receipt_and_original_sampling_grid(self):
+        with tempfile.TemporaryDirectory() as directory:
+            now = [10_000_000_000]
+            sampler = OneSecondSampler(clock=lambda: now[0], max_frames=601)
+            state = {}
+
+            def monitor(command):
+                Path(json.loads(command.removeprefix('screendump '))).write_bytes(
+                    b'P6\n1 1\n255\n\xff\0\0')
+                return b'(qemu) '
+
+            text = '__ICT_CAPTURE_START__\n'
+            sampler.update(text, Path(directory), monitor, state)
+            now[0] += 200_500_000_000
+            text += '__ICT_CAPTURE_FIRST_END__\n__ICT_CAPTURE_RELAUNCH__\n'
+            sampler.update(text, Path(directory), monitor, state)
+            received = now[0]
+            now[0] += 1_000_000_000
+            sampler.update(text, Path(directory), monitor, state)
+            timing = state['periodic_capture']
+            self.assertEqual(timing['origin_host_monotonic_ns'], 10_000_000_000)
+            self.assertEqual(timing['events_host_monotonic_ns']['RELAUNCH'], received)
+            self.assertEqual([f['label'] for f in state['frames']],
+                             ['sample-000', 'sample-200', 'sample-201'])
+            text += '__ICT_CAPTURE_SECOND_END__\n__ICT_CAPTURE_STOP__\n'
+            sampler.update(text, Path(directory), monitor, state)
+            self.assertEqual(timing['events_host_monotonic_ns']['SECOND_END'], now[0])
+
 
 if __name__ == '__main__':
     unittest.main()

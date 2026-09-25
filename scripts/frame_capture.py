@@ -83,6 +83,13 @@ class OneSecondSampler:
                 'origin_meaning': 'host receipt of guest marker immediately before browser launch; '
                                   'includes launch overhead, excludes Weston setup; serial delay uncalibrated',
             }
+        # Restart observations share the original sampling grid, but keep
+        # separate host receipt times for each browser launch/window boundary.
+        for name in ('FIRST_END', 'RELAUNCH', 'SECOND_END'):
+            if re.search(r'(?m)^__ICT_CAPTURE_' + name + r'__$', clean):
+                events = state['periodic_capture'].setdefault('events_host_monotonic_ns', {})
+                if name not in events:
+                    events[name] = self.clock()
         if re.search(r'(?m)^__ICT_CAPTURE_STOP__$', clean):
             self.stopped = True
             state['periodic_capture']['stop_reason'] = 'guest-stop-marker'

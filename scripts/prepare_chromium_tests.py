@@ -40,6 +40,8 @@ def main():
     inputs = {source.name: sha256(source)}
     binaries = {}
     for name, source_name, linkage in (
+            ('dupfd', 'dupfd', []),
+            ('dupfd-static', 'dupfd', ['-static']),
             ('cache-sync', 'cache-sync', ['-shared-libgcc']),
             ('cache-sync-static', 'cache-sync', ['-static']),
             ('userns-probe', 'userns-probe', ['-static']),

@@ -68,7 +68,7 @@ D1 与 D2 如先获得确定的故障边界，可转入对应最小复现；不�
 
 | 接口/路径 | 已确认的实现行为 | 与当前白屏的关系 |
 | --- | --- | --- |
-| `fcntl(F_DUPFD/F_DUPFD_CLOEXEC)` | `posix/fs/src/fd_ops.rs` 调 `dup_fd`，未传入最小编号 arg；[M1-008](../tasks/M1-008.md) 已有同盘失败对照 | 缺口已复现；原浏览器当前路径是否依赖它仍未证明 |
+| `fcntl(F_DUPFD/F_DUPFD_CLOEXEC)` | 已在 `ec9df016` 修复最小编号、非法范围和软限制；[M1-008](../tasks/M1-008.md) 同盘动态/静态各 71 项通过 | 缺口已复现；原浏览器当前路径是否依赖它仍未证明 |
 | fcntl POSIX/OFD 文件锁、`flock` | 同文件 SETLK/SETLKW 直接成功；GETLK 写 F_UNLCK；flock 为 TODO 后成功 | 占位已确认；实际调用及是否阻塞导航待关联 |
 | 未识别的 fcntl 命令 | 同文件兜底分支警告后 `Ok(0)` | 存在静默成功风险；必须先取得实际 cmd/arg，不能把所有 fcntl 都判为坏 |
 | `membarrier` | `core/ksyscall/src/sync/membarrier.rs` 查询返回掩码，其他零 flags 请求只执行 `compiler_fence` 后成功 | 没有跨 CPU 执行同步的实现；是否被本次运行依赖未确认 |
@@ -145,3 +145,9 @@ python3 scripts/missing_interfaces.py artifacts/runs/<run-id>
 允许把同一故障链上已确认相关的最小修复组成一批；每批完成接口对照和原浏览器复跑，再推进下一批。**不以“全部已见调用都实现”作为下一次复跑的门槛**：这会推迟发现回归，也无法保证覆盖此前未执行到的路径。所有能力的长期完备性与当前页面首帧是不同目标。
 
 验证：新增采集器四项 host 测试，加原有 runner/frame/serial 测试，共 16 项通过；覆盖原文/行号保留、重复消息不计作调用次数、应用操作不冒充 syscall、空日志限制和拒绝覆盖旧证据。Python 编译检查、shell 语法检查及差异空白检查通过。`m3-interface-inventory-smoke-20260925` 与 `m3-interface-inventory-linux-smoke-20260925` 已实际走完两侧 runner、自动生成清单并正常关机，两者 guest/QEMU/runner=0、工作盘 hash 不变；这是采集流程验证，不是浏览器验收。
+
+## 10. F_DUPFD 修复后复跑（2026-09-25）
+
+用户授权自行实现本批已知缺口，并确认不再为这些接口逐项检索上游。M1-008 自行修复已提交内核 `ec9df016`，Linux/x-kernel 的动态/静态边界对照、13 项内核单测、M1/M2 及 Weston 回归通过，准确证据见任务卡。未作独立 Agent 验证。
+
+`m3-dupfd-after-20260925` 保持 Chromium 参数，采用已有内建 read 线程观察版本；12 张 monitor 原图中后 6 张仍是相同的提示栏与白色正文，完整应用日志含 Network service crashed。观察循环完成，清理阶段 KILL 后 wait 未返回，300 秒超时，QEMU=0/runner=1。因此本项接口修复通过，原页首帧未通过；当前证据不能将 F_DUPFD 定为白屏根因，也不能排除它曾影响其他启动路径。下一项是未知 fcntl 命令的错误返回合同与应用阶段定位。

@@ -2,6 +2,8 @@
 
 按依赖和验收结果推进，不设日历排期。2026-09-24 的修订基于赛题全部 6 页、赛方镜像/测试页和 x-kernel v0.2.0 的实际代码。**M0 的构建、两次串口 shell/正常关机、可重建 Wayland 用户态和原页部署已验证；M1-002 的装载缺口已修复并完成独立收尾（原盘 Chromium `--version` 已在 x-kernel 内返回 `Chromium 142.0.7444.59`），M1-001 的 Linux system 对照已建立。M1-004 的 STREAM fd/共享映射/生命周期及 memfd seals 已完成同盘 20 项对照、独立测试与最终干净版本复跑。M2-001 已完成 Weston DRM/pixman 与动态 wl_shm 客户端显示和正常退出的独立验收。M3首次试跑已完成Linux原始index对照；x-kernel触发user namespace及no_new_privs前置问题，M1-005已独立验收并干净复跑通过，M1-006调度TID查询已修复并通过107项单测及独立M1/M2回归；M1-007发送者凭据已修复并通过236项同盘对照、256项内核单测、独立M1/M2回归和干净复跑；Chromium仍黑屏，M1-009已修复proc task动态链接数，Linux/独立动态与静态各76项及259项内核单测通过，真实Zygote状态请求已成功；干净长观察已显示浏览器提示栏，但原页正文空白，GPU子进程exit_code=132已定位到libgcc缓存同步的CTR_EL0陷阱；M1-010已启用每CPU的UCT/UCI，82项同盘对照、18项内核单测和M1/M2回归通过，原页仍空白，待定位后续GPU/renderer请求。Chromium页面首帧、真实输入和长时稳定性尚未通过。** 实现验证、证据完整性、用户学习/阶段验收分别记录。
 
+2026-09-25 上游 ELF 替换已收尾：!797 独立适配引入为内核 `ca59027c`，串口退出同步修复为集成 `8561f5e`；独立六轮对照/回归及主工作区 ELF、M1/M2、Weston 三轮正常关机通过。无效 ELF 的 errno/信号差异及旧 fixture 归因纠正见 [M1-002](tasks/M1-002.md)，不改变 Chromium 原页首帧尚未通过的状态。
+
 **用户已确定：采用 Wayland，复用赛方 rootfs。** 先前调查中提出的 X11 优先建议已撤回；Xorg/JWM 仅作为原镜像内容记录。后续补齐 Weston 和必要依赖、建立原生 Wayland 会话，不再安排路线比较或等待这项决策的批准。
 
 日常先读本文件及当前任务卡，需要依据时再读专题调查：
@@ -100,7 +102,7 @@ M0-002 不通过下载另一份 rootfs 或切换内核版本绕过构建/挂载�
 | 关卡/候选任务 | 最小验证 | 失败时的入口与边界 |
 | --- | --- | --- |
 | M1-002a 进程与同步 | exec/clone 创建及 wait 回收；futex 唤醒/超时；epoll + eventfd/timerfd；browser/renderer 角色日志 | `core/ksyscall/src/task/`、`core/ksyscall/src/sync/`、`core/ksyscall/src/io_mpx/`、`process/kfd_objects/`；先定位退出/阻塞，不能用 single-process 达到多进程验收 |
-| M1-002b ELF 文件数据边界 | 主映像 `p_filesz` 小于 `p_memsz` 时后续读取越界：x-kernel 当前静默执行，Linux 以 SIGSEGV 终止；需给出 filemap/COW 侧的最小复现再决定修复 | `mm/filemap`、`mm/memspace`、`boot/kernel_elf_parser`；M1-002 已记录差异但未修，属独立候选 |
+| M1-002b 旧 ELF 样本归因纠正 | `bad-filesz` 实际是 `p_memsz=1 < p_filesz=2404` 的无效 ELF；旧 filemap/COW 缺陷推断撤回。当前上游适配以 ENOEXEC 提前拒绝，与 Linux 的 SIGSEGV 差异明确保留 | 见 [M1-002](tasks/M1-002.md) 三方同盘对照；`p_filesz < p_memsz` 可为正常 BSS，不能单凭该关系建立缺陷任务 |
 | M1-004 共享内存与 fd | memfd→truncate→父子 MAP_SHARED；seals/CLOEXEC；Unix STREAM 传 fd 后 mmap；坏 fd/ancillary 截断/关闭回收；实际 wl_shm 集成交 M2-001 | `posix/mm`、`mm/filemap`、`fs/filesystems/memfs/src/shmem.rs`、`posix/net/src/`、`net/knet/src/unix/`；已有能力先测，stream 缺口先复现后修复 |
 | M1-002c seat/设备发现 | Weston 实际采用的 libseat/seatd/启动方式、DRM 权限、libudev/sysfs 枚举和 evdev；若命中 VT/KD 再做最小复现 | `io/ktty`、`fs/filesystems/devfs`、`fs/boot`；不预设换 Wayland 就不需要 VT，不照搬 Xorg 的修复清单 |
 | [M2-001](tasks/M2-001.md) 显示最小闭环 | DRM VERSION/UNIQUE→资源/dumb buffer→两种图案/present→Weston DRM/pixman→wl_shm 客户端→monitor图像变化 | `fs/filesystems/devfs/src/nodes/dri.rs`→`io/drmdevice/src/card0.rs`→`drivers/devices/virtio/src/gpu.rs`；先验证软件合成所需接口，不预设 PRIME/dma-buf 可用 |

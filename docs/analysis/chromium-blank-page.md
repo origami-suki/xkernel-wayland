@@ -70,7 +70,7 @@ D1 与 D2 如先获得确定的故障边界，可转入对应最小复现；不�
 | --- | --- | --- |
 | `fcntl(F_DUPFD/F_DUPFD_CLOEXEC)` | 已在 `ec9df016` 修复最小编号、非法范围和软限制；[M1-008](../tasks/M1-008.md) 同盘动态/静态各 71 项通过 | 缺口已复现；原浏览器当前路径是否依赖它仍未证明 |
 | fcntl POSIX/OFD 文件锁、`flock` | 同文件 SETLK/SETLKW 直接成功；GETLK 写 F_UNLCK；flock 为 TODO 后成功 | 占位已确认；实际调用及是否阻塞导航待关联 |
-| 未识别的 fcntl 命令 | 同文件兜底分支警告后 `Ok(0)` | 存在静默成功风险；必须先取得实际 cmd/arg，不能把所有 fcntl 都判为坏 |
+| 未识别的 fcntl 命令 | 已在 `31c8f270` 改为有效 FD 的 EINVAL、坏 FD 的 EBADF；[M1-011](../tasks/M1-011.md) 两版本各 20 项同盘通过 | 存在静默成功风险；必须先取得实际 cmd/arg，不能把所有 fcntl 都判为坏 |
 | `membarrier` | `core/ksyscall/src/sync/membarrier.rs` 查询返回掩码，其他零 flags 请求只执行 `compiler_fence` 后成功 | 没有跨 CPU 执行同步的实现；是否被本次运行依赖未确认 |
 | `prctl` 部分控制项 | `core/ksyscall/src/task/ctl.rs` 的 SET_SECCOMP、SET_DUMPABLE、SET_CHILD_SUBREAPER、SET_TIMERSLACK 等为空分支；部分 GET 返回固定值 | 按命中的具体 option 排查；NNP 已修复，不混写为仍未实现 |
 | `seccomp` | `core/ksyscall/src/sys.rs::sys_seccomp` 返回 ENOSYS | 默认沙箱能力不足；当前 no-sandbox 配置不能据此宣称完整沙箱可用，也不能直接认定当前白屏由它导致 |
@@ -151,3 +151,11 @@ python3 scripts/missing_interfaces.py artifacts/runs/<run-id>
 用户授权自行实现本批已知缺口，并确认不再为这些接口逐项检索上游。M1-008 自行修复已提交内核 `ec9df016`，Linux/x-kernel 的动态/静态边界对照、13 项内核单测、M1/M2 及 Weston 回归通过，准确证据见任务卡。未作独立 Agent 验证。
 
 `m3-dupfd-after-20260925` 保持 Chromium 参数，采用已有内建 read 线程观察版本；12 张 monitor 原图中后 6 张仍是相同的提示栏与白色正文，完整应用日志含 Network service crashed。观察循环完成，清理阶段 KILL 后 wait 未返回，300 秒超时，QEMU=0/runner=1。因此本项接口修复通过，原页首帧未通过；当前证据不能将 F_DUPFD 定为白屏根因，也不能排除它曾影响其他启动路径。下一项是未知 fcntl 命令的错误返回合同与应用阶段定位。
+
+## 11. 未知 fcntl 修复及子进程连接超时边界
+
+M1-011 内核 `31c8f270` 已通过 Linux/x-kernel 的动态/静态各 20 项对照和 F_DUPFD 各 71 项回归；详细记录见任务卡。未将文件锁占位等其他接口一并改为成功或拒绝。
+
+`m3-fcntl-stages-20260925` 的详细应用日志确认 browser 对原始 index 调用 `FileURLLoader::Start`，但这不是加载完成。PID 86 的 cmdline 明确为 NetworkService，PID 98 仍继承 zygote cmdline；两者打印 `ChildThreadImpl::EnsureConnected()`。固定版本源码显示这是未收到连接完成回调时的超时终止函数（退出状态 0），不是连接成功。D1 已定位到 browser 发起文件加载、子进程 IPC 连接超时之间的边界；renderer 的准确 PID、响应和首个内容帧仍未确认。
+
+本轮只加 `--v=1`，8 张 monitor 图全部黑；原始日志完整，清理强制 KILL，guest/runner=1/QEMU=0，最终正常关机。较短观察窗口不用于判断 F_DUPFD/未知命令修复的显示回归。下一项取两端 sendmsg/recvmsg 的 FD、长度、返回值及等待证据，缩小握手问题；不扩大为全部 IPC 或调度器重写。

@@ -90,7 +90,8 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | [M1-007](tasks/M1-007.md) | Unix socket发送者凭据与Zygote PID握手 | 同盘SO_PASSCRED/SCM_CREDENTIALS正常路径probe及Chromium源码链 | 已修复：236项同盘凭据对照、256项单测及独立M1/M2回归通过 |
 | [M1-009](tasks/M1-009.md) | proc task动态链接数与Zygote单线程检查 | 线程生命周期Linux同盘对照 | 已修复；动态/静态各76项、259项内核单测通过，Zygote状态回复成功，独立验收与干净复跑通过 |
 | [M1-010](tasks/M1-010.md) | AArch64用户态缓存同步与GPU SIGILL | 实际异常指令、同盘Linux对照与每CPU探针 | 已修复：动态/静态各41项、18项内核单测及M1/M2回归通过；原页仍空白 |
-| [M1-008](tasks/M1-008.md) | F_DUPFD最小编号与非法范围 | 诊断launcher及6项同盘对照 | 已复现独立候选；尚无原浏览器依赖证据，按M3实际后续故障决定优先级 |
+| [M1-008](tasks/M1-008.md) | F_DUPFD最小编号与非法范围 | 同盘动态/静态各71项及13项内核单测 | 已修复，M1/M2及Weston回归通过；正文仍空白 |
+| [M1-011](tasks/M1-011.md) | 未知fcntl命令的错误返回 | 同盘动态/静态各20项及F_DUPFD回归 | 已修复；browser发起原页加载，子进程IPC连接超时待定位 |
 | [M3-001](tasks/M3-001.md) | Chromium 原生 Wayland 首帧与不可变基线 | M2-001 已满足；正确显示原始 index 后立即存档 | 进行中；Linux原页通过，x-kernel窗口壳可见、原页首帧未通过 |
 
 M0-002 不通过下载另一份 rootfs 或切换内核版本绕过构建/挂载问题。镜像中自带 Linux 只用于行为对照，不能作为 x-kernel 功能证据。

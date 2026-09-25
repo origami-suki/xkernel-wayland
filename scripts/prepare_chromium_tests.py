@@ -41,6 +41,7 @@ def main():
     binaries = {}
     for name, source_name, linkage in (
             ('userns-probe', 'userns-probe', ['-static']),
+            ('unix-credentials', 'unix-credentials', ['-static']),
             ('no-new-privs', 'no-new-privs', ['-static']),
             ('scheduler-query', 'scheduler-query', []),
             ('scheduler-query-static', 'scheduler-query', ['-static'])):

@@ -105,6 +105,7 @@ def main():
     load = next(p for p in headers if struct.unpack_from('<I', original, p)[0] == 1)
     interp = next(p for p in headers if struct.unpack_from('<I', original, p)[0] == 3)
     cases = {
+        # Keep the historical name: +40 is p_memsz, making p_filesz > p_memsz.
         'bad-filesz': (load + 40, '<Q', 1),
         'bad-overflow': (load + 40, '<Q', 0xffffffffffffffff),
         'bad-offset': (load + 8, '<Q', 1),

@@ -48,7 +48,10 @@ def capture_frames(clean, output, send_monitor, state, *, max_frames=16):
                        'monitor_log': 'monitor.log',
                        'meaning': 'host observation interval, not guest presentation time'})
         seen.add(label)
-        (output / 'metadata.json').write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n')
+        # A live GDB client may read this while a display marker is captured.
+        temporary = output / 'metadata.tmp'
+        temporary.write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n')
+        temporary.replace(output / 'metadata.json')
 
 
 class OneSecondSampler:

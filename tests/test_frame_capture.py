@@ -3,6 +3,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from frame_capture import OneSecondSampler, capture_frames
@@ -31,6 +32,31 @@ class CaptureTests(unittest.TestCase):
     def test_complete_rgb_frame_and_repeated_log_scan(self):
         frame = self.capture(b'P6\n2 1\n255\n\xff\0\0\0\xff\0')
         self.assertEqual((frame['width'], frame['height']), (2, 1))
+
+    def test_metadata_readers_see_complete_old_state_until_publish(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            metadata = output / 'metadata.json'
+            metadata.write_text('{"old": true}\n')
+            original = Path.write_text
+            observed = []
+
+            def writing(path, contents, *args, **kwargs):
+                if path.name.startswith('metadata.'):
+                    # Emulate a reader running after truncate, before full write.
+                    path.write_bytes(b'')
+                    observed.append(json.loads(metadata.read_text()))
+                return original(path, contents, *args, **kwargs)
+
+            def monitor(command):
+                Path(json.loads(command.removeprefix('screendump '))).write_bytes(
+                    b'P6\n1 1\n255\n\xff\0\0')
+                return b'(qemu) '
+
+            with patch.object(Path, 'write_text', writing):
+                capture_frames('__ICT_FRAME_red__\n', output, monitor, {})
+            self.assertEqual(observed, [{'old': True}])
+            self.assertEqual(json.loads(metadata.read_text())['frames'][0]['label'], 'red')
 
     def test_missing_file_fails(self):
         with self.assertRaises(ValueError):

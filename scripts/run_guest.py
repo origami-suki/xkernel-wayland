@@ -27,6 +27,7 @@ from pathlib import Path
 from frame_capture import OneSecondSampler, capture_frames
 from missing_interfaces import write_inventory
 from serial_drain import SerialDrain
+from gdb_capture import DebugSession, verify_debug_elf, write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 KERNEL = ROOT / "sources/x-kernel"
@@ -53,10 +54,6 @@ def git_state(directory):
             "status": command(["git", "status", "--porcelain=v1"], directory)}
 
 
-def write_json(path, value):
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n")
-
-
 def archive_copy(source, destination):
     """Keep an independent artifact, sharing immutable extents where supported."""
     result = subprocess.run(["cp", "--reflink=always", "--preserve=mode,timestamps",
@@ -79,7 +76,7 @@ def check_disk(path):
     return path
 
 
-def check_bundle(bundle, output, state):
+def check_bundle(bundle, output, state, debug=False):
     manifest_path = bundle / "bundle.toml"
     manifest = tomllib.loads(manifest_path.read_text())
     info = manifest["build-info"]
@@ -105,6 +102,15 @@ def check_bundle(bundle, output, state):
         require(source.stat().st_size == manifest[key]["size"], f"{name} size mismatch")
         storage[name] = archive_copy(source, saved / name)
         hashes[name] = sha256(saved / name)
+    if debug:
+        name = "kernel.debug.elf"
+        entry = manifest.get("kernel-debug-elf", {})
+        require(entry.get("path") == name, "bundle has no canonical debug ELF")
+        require((bundle / name).stat().st_size == entry.get("size"), "debug ELF size mismatch")
+        storage[name] = archive_copy(bundle / name, saved / name)
+        hashes[name] = sha256(saved / name)
+        identity = verify_debug_elf(saved / "kernel.elf", saved / name)
+        write_json(output / "debug-elf-validation.json", identity)
     notes = command(["readelf", "-n", str(saved / "kernel.elf")])
     (output / "elf-notes.txt").write_text(notes + "\n")
     ids = re.findall(r"Build ID:\s*([0-9a-f]+)", notes)
@@ -211,10 +217,17 @@ def main():
                         help="after successful smoke/probe, stop with monitor quit instead of PID1 exit")
     parser.add_argument("--sample-every-second", action="store_true",
                         help="host screenshots after __ICT_CAPTURE_START__, until STOP or 181 frames")
+    parser.add_argument("--gdb", action="store_true",
+                        help="enable bounded GDB requests and automatic capture on guest timeout")
+    parser.add_argument("--gdb-snapshot-on-ready", action="store_true",
+                        help="with --gdb, capture once at the shell prompt before guest commands")
     args = parser.parse_args()
     sampler = OneSecondSampler() if args.sample_every_second else None
     require(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}", args.run_id), "invalid run ID")
     require(0 < args.timeout <= 3600, "timeout must be in (0, 3600] seconds")
+    require(not args.gdb_snapshot_on_ready or args.gdb, "--gdb-snapshot-on-ready requires --gdb")
+    require(not (args.gdb and args.sample_every_second),
+            "GDB pauses invalidate performance samples; run one-second measurement separately")
     disk = check_disk(args.disk)
     extra = args.guest_commands.read_text() if args.guest_commands else ""
     require("\x00" not in extra and len(extra.encode()) <= 1024,
@@ -225,6 +238,7 @@ def main():
     shutil.copy2(Path(__file__).with_name("frame_capture.py"), output / "frame_capture.py")
     shutil.copy2(Path(__file__).with_name("serial_drain.py"), output / "serial_drain.py")
     shutil.copy2(Path(__file__).with_name("missing_interfaces.py"), output / "missing_interfaces.py")
+    shutil.copy2(Path(__file__).with_name("gdb_capture.py"), output / "gdb_capture.py")
     print(f"Evidence: {output}", flush=True)
     state = {"run_id": args.run_id, "started_utc": datetime.now(timezone.utc).isoformat(),
              "integration": git_state(ROOT), "kernel": git_state(KERNEL),
@@ -235,6 +249,7 @@ def main():
              "frame_capture_sha256": sha256(output / "frame_capture.py"),
              "serial_drain_sha256": sha256(output / "serial_drain.py"),
              "missing_interfaces_sha256": sha256(output / "missing_interfaces.py"),
+             "gdb_capture_sha256": sha256(output / "gdb_capture.py"),
              "disk": {"path": str(disk), "snapshot": True},
              "timeout_seconds": args.timeout,
              "policy": "TCG thread=multi, 2 GiB, 4 vCPU; NET and VSOCK omitted for offline "
@@ -244,14 +259,20 @@ def main():
     drain = None
     result = 1
     sockets = None
+    debug = None
     try:
         state["qemu_version"] = command([QEMU, "--version"])
         require(re.search(r"version 11\.1\.1(?:\s|$)", state["qemu_version"]),
                 "QEMU must be /usr/bin/qemu-system-aarch64 version 11.1.1")
-        kernel_image, build_id = check_bundle(args.bundle.resolve(), output, state)
+        kernel_image, build_id = check_bundle(args.bundle.resolve(), output, state, debug=args.gdb)
         state["disk"]["sha256_before"] = sha256(disk)
         sockets = tempfile.TemporaryDirectory(prefix="xkm0-", dir="/tmp")
         socket_dir = Path(sockets.name)
+        if args.gdb:
+            gdb = shutil.which("gdb")
+            require(gdb is not None, "GDB is required for --gdb")
+            debug = DebugSession(output, socket_dir / "gdb", str(Path(gdb).resolve()), state)
+            state["debug"]["version"] = command([gdb, "--version"])
         argv = [QEMU, "-machine", "virt,gic-version=3", "-cpu", "cortex-a76",
                 "-accel", "tcg,thread=multi", "-m", "2g", "-smp", "4",
                 "-kernel", str(kernel_image), "-snapshot",
@@ -263,6 +284,8 @@ def main():
                 "-chardev", f"socket,id=serial0,path={socket_dir}/serial,server=on,wait=off,"
                 f"logfile={output}/serial.log", "-serial", "chardev:serial0",
                 "-monitor", f"unix:{socket_dir}/monitor,server=on,wait=off", "-no-reboot"]
+        if debug:
+            argv += debug.qemu_args()
         state["argv"] = argv
         write_json(output / "metadata.json", state)
         (output / "command.sh").write_text("#!/bin/sh\nexec " + shlex.join(argv) + "\n")
@@ -302,6 +325,11 @@ def main():
             marker_at = 0
             while time.monotonic() < deadline and process.poll() is None:
                 drain.check()
+                if debug:
+                    elapsed = debug.service(monitor)
+                    deadline += elapsed
+                    if elapsed:
+                        write_json(output / "metadata.json", state)
                 data = serial_path.read_text(errors="replace") if serial_path.exists() else ""
                 clean = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", data).replace("\r", "")
                 if phase == "boot" and re.search(r"(?:^|\n)[^\n]*[#$] $", clean):
@@ -323,6 +351,9 @@ def main():
                                                          clean[marker_at:]):
                     phase = "commands"
                 if phase == "commands" and not script_sent:
+                    if args.gdb_snapshot_on_ready:
+                        deadline += debug.capture("shell-ready", {}, monitor)
+                        write_json(output / "metadata.json", state)
                     serial.sendall(script.encode())
                     script_sent = True
                     state["script_bytes_sent"] = len(script)
@@ -353,6 +384,8 @@ def main():
                 time.sleep(0.02)
             if process.poll() is None:
                 state["exit_reason"] = "timeout-" + phase
+                if debug:
+                    debug.capture("guest-timeout", {}, monitor)
                 monitor.send("quit")
             else:
                 state["exit_reason"] = (state.get("stop_requested", "unexpected-qemu-exit"))

@@ -39,13 +39,17 @@ def main():
     run([gcc, '--version'])
     inputs = {source.name: sha256(source)}
     binaries = {}
-    for name in ('userns-probe', 'no-new-privs'):
-        c_source = ROOT / 'tests/chromium' / (name + '.c')
+    for name, source_name, linkage in (
+            ('userns-probe', 'userns-probe', ['-static']),
+            ('no-new-privs', 'no-new-privs', ['-static']),
+            ('scheduler-query', 'scheduler-query', []),
+            ('scheduler-query-static', 'scheduler-query', ['-static'])):
+        c_source = ROOT / 'tests/chromium' / (source_name + '.c')
         (evidence / c_source.name).write_bytes(c_source.read_bytes())
         inputs[c_source.name] = sha256(c_source)
         binary = evidence / name
-        run([gcc, '-Wall', '-Wextra', '-Werror', '-O2', '-static', '-pthread',
-             c_source, '-o', binary])
+        run([gcc, '-Wall', '-Wextra', '-Werror', '-O2', '-pthread',
+             *linkage, c_source, '-o', binary])
         (evidence / (name + '.readelf.txt')).write_bytes(run(['readelf', '-lW', binary]))
         binaries[name] = binary
     before = sha256(base)

@@ -1,6 +1,6 @@
 # Chromium 启动时间线（M1-003）
 
-使用 Chromium 142 自带 startup tracing，在宿主用 Perfetto 打开与查询。内核仍为 `31c8f270`；不安装 guest tracer，不修改 Chromium/Weston/运行库或官方测试页。追踪增加进程、事件记录与 I/O，所有此类运行均是诊断样本，不能用于首帧性能排名或补丁收益比较。
+使用 Chromium 142 自带 startup tracing，在宿主用 Perfetto 打开与查询。原始接入记录使用 `31c8f270`；CPU 计账修复及与当前 buddy 修改的组合版本见 [M1-012](tasks/M1-012.md)。不安装 guest tracer，不修改 Chromium/Weston/运行库或官方测试页。追踪增加进程、事件记录与 I/O，所有此类运行均是诊断样本，不能用于首帧性能排名或补丁收益比较。
 
 ## 采集和导出
 
@@ -12,14 +12,14 @@ python3 scripts/prepare_startup_trace.py \
   --evidence artifacts/my-trace-preparation
 
 python3 scripts/run_guest.py --run-id my-chromium-trace \
-  --bundle artifacts/M1-011-fcntl-unknown-20260925/clean-bundle \
+  --bundle artifacts/M1-012-combined-20260926/main/bundle \
   --disk work/images/chromium-startup-trace-v1.img \
   --guest-commands tests/chromium/run-startup-trace.sh --timeout 360
 
 python3 scripts/extract_startup_trace.py --run artifacts/runs/my-chromium-trace
 ```
 
-`--bundle` 必须与当前内核 HEAD 对应。工作盘始终用 QEMU `-snapshot`；原始盘和工作盘输入哈希在运行前后核对。正式显示证据为 monitor PPM，当前入口每 30 秒一帧、共 5 帧。
+`--bundle` 必须与当前内核 HEAD 对应；上例是本次主区组合验证的准确 bundle，后续内核变化时须换成对应新构建产物。也可使用已制备且验证过的 `work/images/m1-012-combined-trace.img` 跳过制备步骤。工作盘始终用 QEMU `-snapshot`；原始盘和工作盘输入哈希在运行前后核对。正式显示证据为 monitor PPM，当前入口每 30 秒一帧、共 5 帧。
 
 固定类别见 `tests/chromium/trace-startup.sh`，包含 startup/navigation/loading、toplevel/base、renderer、GPU/Viz 和 IPC。使用 64 MiB 主缓冲与 120 秒追踪期限；期限与服务启动相关，不能理解为 guest launch 后恰好 120 秒。观察 150 秒后，额外最多等待约 60 秒检查文件大小稳定，快照复制、gzip、带标记的 base64 串口导出均在观察阶段之后执行。大小稳定只表示观察结果，不证明文件已完整结束。
 
@@ -40,7 +40,7 @@ python3 scripts/analyze_startup_trace.py --run artifacts/runs/my-chromium-trace
 ## 解释边界
 
 - slice 的 `dur` 是经过时间，可能包含抢占、阻塞和等待，不等同 CPU 用时；父子 slice 与并发任务的时长不能直接相加。
-- **当前 x-kernel 的 `thread_dur` 不可信。** 自编 `tests/observe/thread-clock.c` 的同盘对照证明，`CLOCK_THREAD_CPUTIME_ID` 把 1 秒睡眠计成约 1 秒 CPU 时间，Linux 仅计约 0.15–0.37 毫秒。本轮不使用该字段区分 CPU 与等待，也不以 `dur-thread_dur` 推断 off-CPU 时间。原始 trace 保持不变，校准证据见本轮记录。
+- **历史 `31c8f270` 的 `thread_dur` 不可信。** 自编 `tests/observe/thread-clock.c` 的同盘对照证明，该版本把 1 秒睡眠计成约 1 秒 CPU 时间。CPU-only `9b55511b` 及后续 buddy 组合均通过 [M1-012](tasks/M1-012.md) 的睡眠、阻塞 read 和就绪排队校准，长任务中 CPU 与经过时间恢复区别；短 slice 仍有采样误差，不能承诺逐事件精度，也不能把 `dur-thread_dur` 自动归因到某种锁或 I/O 等待。修复不会改变旧 trace 的原始计数。
 - 默认启动追踪生成的 DISCARD/流式写入、未设周期 flush 配置会被新版 Perfetto 标记为风险。这些提示不能直接解释成“确实丢了几个事件”，也不能忽略；同时查看原始 buffer/producer/解析计数与实际覆盖范围。
 - 固定 Chromium 142 源码的 `kStartupTracingTimeoutMs` 为 **30 秒**。x-kernel 下服务接管较晚时，早期 startup session 可能已经结束。本轮 Browser 的普通线程事件明显晚于回溯记录的启动指标，不能把之前的空白轨道解释为线程没有执行，也不声称取得从 exec 开始的完整调用记录。
 - Chromium 的 `NonEmptyPaint` 是应用内部指标，不能代替 monitor 原图验证。

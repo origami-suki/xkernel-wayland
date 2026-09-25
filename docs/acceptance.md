@@ -1,6 +1,6 @@
 # 验收与证据矩阵
 
-依据赛题 PDF、原始三份测试页和本轮源码/镜像调查建立。M0-002 的构建、两次 guest shell/关机与 monitor 已验证；M1-002 的 ELF 装载缺口已修复并回归（原盘 Chromium `--version` 在 x-kernel 内返回 `Chromium 142.0.7444.59`），M2-001 的 Weston/wl_shm 显示与正常退出也已通过；完整输入/稳定性和浏览器验收仍未完成，静态分析不自动关闭验收项。功能通过、证据齐全和用户学习情况分别记录。评分原文页码与完整拆分见 [需求核查](analysis/requirements-and-testpages.md)。
+2026-09-25：**原生 Wayland Chromium 已正确显示原始 index.html，并立即建立不可变 `baseline/first-runnable`**（集成 `6cf0331`、内核 `31c8f270`）。关键参数为 `--ipc-connection-timeout=120`；默认 15 秒会触发已观察到的子进程连接超时。F_DUPFD 和未知 fcntl 已修复并通过同盘对照，M0/M1/M2 既有验证保留。仍使用 no-sandbox，真实输入、页面自检、10/30 分钟稳定性、正常退出和性能计量待验证。见 [首个可运行记录](first-runnable.md)。
 
 | 编号 | 场景 | 条件与证据 | 状态 |
 | --- | --- | --- | --- |
@@ -8,8 +8,8 @@
 | ROOTFS-01 | 赛方输入与工作盘 | 从原始 rootfs 增量补齐 Weston/依赖与 Wayland 配置，记录包版本/来源/哈希；工作盘可重建；三份原页独立部署核对 hash/URL，不能用 kiosk 欢迎页 | [已验证](tasks/M0-003.md)：16包增量、重建、3页host/guest哈希一致 |
 | WAYLAND-01 | 本队 Wayland 路线 | STREAM SCM_RIGHTS/shared mmap 探针；wl_shm 客户端→Weston DRM后端→guest virtio-gpu→screendump；Chromium实际 Ozone/socket/协议链有证据，优先原生 Wayland | [M1-004](tasks/M1-004.md) 接口与 [M2-001](tasks/M2-001.md) 的 Weston DRM/pixman、动态 wl_shm 显示通过；Chromium Ozone 链仍待 M3 |
 | GUI-01 | 图形会话 | Weston 在 guest DRM 输出上启动成功，连续 10 分钟无退出；screendump、PID/时间线与日志，不用 respawn 拼接时长 | M2-001 显示及正常退出通过；连续10分钟尚未验证 |
-| WEB-01 | 初次 Chromium | 真实窗口正确显示原始 index.html，中文、内联 SVG、表格和表单视觉正确；screendump、命令和日志 | 未验证 |
-| BASE-01 | 首个可运行存档 | 首次满足 WEB-01 立即保存成功现场和 baseline/first-runnable；两个仓库提交、镜像/配置/页面/参数、证据 hash；未测项显式说明 | 未建立 |
+| WEB-01 | 初次 Chromium | 真实窗口正确显示原始 index.html，中文、内联 SVG、表格和表单视觉正确；screendump、命令和日志 | 通过：2026-09-25 monitor 第7帧，中文/SVG/表格/表单可见；参数及限制见首帧记录 |
+| BASE-01 | 首个可运行存档 | 首次满足 WEB-01 立即保存成功现场和 baseline/first-runnable；两个仓库提交、镜像/配置/页面/参数、证据 hash；未测项显式说明 | 已建立：两仓库不可变 tag，完整现场/镜像/源码 bundle 同机备份，60文件恢复哈希及Git恢复核验通过 |
 | PROC-01 | 多进程 | 可观察 renderer 等进程，记录进程结构 | 未验证 |
 | INPUT-01 | 键鼠 | QEMU 虚拟设备输入 `hello x-kernel` 并回显、鼠标点击计数和页面跳转；记录输入与窗口焦点，不能用 JS 派发事件替代 | 未验证 |
 | WEB-02 | 多页面 | 至少两个标签页或窗口并可切换 | 未验证 |

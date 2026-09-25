@@ -1,8 +1,8 @@
 # 推进路线
 
-按依赖和验收结果推进，不设日历排期。2026-09-24 的修订基于赛题全部 6 页、赛方镜像/测试页和 x-kernel v0.2.0 的实际代码。**M0 的构建、两次串口 shell/正常关机、可重建 Wayland 用户态和原页部署已验证；M1-002 的装载缺口已修复并完成独立收尾（原盘 Chromium `--version` 已在 x-kernel 内返回 `Chromium 142.0.7444.59`），M1-001 的 Linux system 对照已建立。M1-004 的 STREAM fd/共享映射/生命周期及 memfd seals 已完成同盘 20 项对照、独立测试与最终干净版本复跑。M2-001 已完成 Weston DRM/pixman 与动态 wl_shm 客户端显示和正常退出的独立验收。M3首次试跑已完成Linux原始index对照；x-kernel触发user namespace及no_new_privs前置问题，M1-005已独立验收并干净复跑通过，M1-006调度TID查询已修复并通过107项单测及独立M1/M2回归；M1-007发送者凭据已修复并通过236项同盘对照、256项内核单测、独立M1/M2回归和干净复跑；Chromium仍黑屏，M1-009已修复proc task动态链接数，Linux/独立动态与静态各76项及259项内核单测通过，真实Zygote状态请求已成功；干净长观察已显示浏览器提示栏，但原页正文空白，GPU子进程exit_code=132已定位到libgcc缓存同步的CTR_EL0陷阱；M1-010已启用每CPU的UCT/UCI，82项同盘对照、18项内核单测和M1/M2回归通过，原页仍空白，待定位后续GPU/renderer请求。Chromium页面首帧、真实输入和长时稳定性尚未通过。** 实现验证、证据完整性、用户学习/阶段验收分别记录。
+2026-09-25：**原生 Wayland Chromium 已正确显示原始 index.html，并立即建立不可变 `baseline/first-runnable`**（集成 `6cf0331`、内核 `31c8f270`）。关键参数为 `--ipc-connection-timeout=120`；默认 15 秒会触发已观察到的子进程连接超时。F_DUPFD 和未知 fcntl 已修复并通过同盘对照，M0/M1/M2 既有验证保留。仍使用 no-sandbox，真实输入、页面自检、10/30 分钟稳定性、正常退出和性能计量待验证。见 [首个可运行记录](first-runnable.md)。
 
-2026-09-25 上游 ELF 替换已收尾：!797 独立适配引入为内核 `ca59027c`，串口退出同步修复为集成 `8561f5e`；独立六轮对照/回归及主工作区 ELF、M1/M2、Weston 三轮正常关机通过。无效 ELF 的 errno/信号差异及旧 fixture 归因纠正见 [M1-002](tasks/M1-002.md)，不改变 Chromium 原页首帧尚未通过的状态。
+2026-09-25 上游 ELF 替换已收尾：!797 独立适配引入为内核 `ca59027c`，串口退出同步修复为集成 `8561f5e`；独立六轮对照/回归及主工作区 ELF、M1/M2、Weston 三轮正常关机通过。无效 ELF 的 errno/信号差异及旧 fixture 归因纠正见 [M1-002](tasks/M1-002.md)，该段记录首帧成功前的历史状态，当前结果见上方。
 
 **用户已确定：采用 Wayland，复用赛方 rootfs。** 先前调查中提出的 X11 优先建议已撤回；Xorg/JWM 仅作为原镜像内容记录。后续补齐 Weston 和必要依赖、建立原生 Wayland 会话，不再安排路线比较或等待这项决策的批准。
 
@@ -66,7 +66,7 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | M0 材料与可重复启动 | 输入锁定、工作副本可重建；正确工具链构建；同一配置两次到达交互 shell并正常结束；Wayland 补包清单和会话启动入口有证据 | 工程检查与证据已完成，阶段验收待用户确认 |
 | M1 诊断、兼容性与计量 | 每个实际阻塞有阶段日志、最小复现、Linux 结果、errno/超时定位与回归；计量入口区分可信值和缺项 | ELF、STREAM fd、memfd seal、no_new_privs、调度TID查询、发送者凭据与proc task链接数已修复并独立验证；计量未实现，其余缺口按实际失败触发 |
 | M2 图形与输入 | Weston DRM 会话和 wl_shm 客户端可见；buffer 内容可改变；键鼠经过虚拟设备到客户端；连续 10 分钟，非重启后拼接 | M2-001 显示与正常退出通过；真实键鼠/10分钟和资源循环待验证 |
-| M3 首个可运行 Chromium | 目标是原生 Wayland 窗口正确显示原始 index.html；首次实际可运行就保存命令、screendump、日志、代码与不可变 tag，记录真实链路 | Linux原始index已显示；x-kernel已显示浏览器提示栏但正文空白，仍无原页首帧，proc task单线程检查已修复且Zygote状态请求成功，后续黑屏边界见M1-009和M3任务卡 |
+| M3 首个可运行 Chromium | 目标是原生 Wayland 窗口正确显示原始 index.html；首次实际可运行就保存命令、screendump、日志、代码与不可变 tag，记录真实链路 | 原始 index 首帧已通过；baseline/first-runnable 已建立，IPC 期限为120秒；输入/稳定性/正常退出待验证 |
 | M4 功能与稳定性 | renderer 等多进程；两个可切换页面/窗口；真实键鼠；JS/CSS 各 6 项及视觉核对；30 分钟无崩溃/OOM、每 2 分钟加载共 10 次无卡死 | 未开始 |
 | M5 数据驱动优化 | 对比最早可运行 tag；每项假设有原始 before/after，各不少于 5 次、中位数与范围，并通过相同功能/稳定性回归 | 未开始，测量入口前置 |
 | M6 交付与答辩 | 干净环境复现；初赛材料与决赛现场步骤分开核对；评分项对应证据；官方平台/脚本发布后迁移复测 | 未开始，文档与补丁持续积累 |
@@ -92,7 +92,7 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | [M1-010](tasks/M1-010.md) | AArch64用户态缓存同步与GPU SIGILL | 实际异常指令、同盘Linux对照与每CPU探针 | 已修复：动态/静态各41项、18项内核单测及M1/M2回归通过；原页仍空白 |
 | [M1-008](tasks/M1-008.md) | F_DUPFD最小编号与非法范围 | 同盘动态/静态各71项及13项内核单测 | 已修复，M1/M2及Weston回归通过；正文仍空白 |
 | [M1-011](tasks/M1-011.md) | 未知fcntl命令的错误返回 | 同盘动态/静态各20项及F_DUPFD回归 | 已修复；browser发起原页加载，子进程IPC连接超时待定位 |
-| [M3-001](tasks/M3-001.md) | Chromium 原生 Wayland 首帧与不可变基线 | M2-001 已满足；正确显示原始 index 后立即存档 | 进行中；Linux原页通过，x-kernel窗口壳可见、原页首帧未通过 |
+| [M3-001](tasks/M3-001.md) | Chromium 原生 Wayland 首帧与不可变基线 | M2-001 已满足；正确显示原始 index 后立即存档 | 原始 index 首帧已通过；baseline/first-runnable 已建立，IPC 期限为120秒；输入/稳定性/正常退出待验证 |
 
 M0-002 不通过下载另一份 rootfs 或切换内核版本绕过构建/挂载问题。镜像中自带 Linux 只用于行为对照，不能作为 x-kernel 功能证据。
 
@@ -109,7 +109,7 @@ M0-002 不通过下载另一份 rootfs 或切换内核版本绕过构建/挂载�
 | [M2-001](tasks/M2-001.md) 显示最小闭环 | DRM VERSION/UNIQUE→资源/dumb buffer→两种图案/present→Weston DRM/pixman→wl_shm 客户端→monitor图像变化 | `fs/filesystems/devfs/src/nodes/dri.rs`→`io/drmdevice/src/card0.rs`→`drivers/devices/virtio/src/gpu.rs`；先验证软件合成所需接口，不预设 PRIME/dma-buf 可用 |
 | M2-002 输入/会话 | QEMU keyboard/mouse→guest event→libinput→客户端；10 分钟显示服务 PID 不更换 | virtio-input、`io/inputdev/src/lib.rs`、`fs/filesystems/devfs/src/nodes/event.rs`；核对 eventN/sysfs/EVIOCGABS，先验证相对鼠标 |
 | M2-003 图形资源回收 | 至少 100 次 create/map/present/unmap/destroy/退出，资源计数回到可解释范围；此为团队回归阈值，可并行且不阻塞首次成功存档 | DRM `retained_pages`/GEM backing 生命周期；不能靠重启服务清理并声称无泄漏 |
-| [M3-001](tasks/M3-001.md) 浏览器首帧 | loader→browser/renderer→原生 Wayland surface/buffer→Weston→DRM present；正确显示原始 index；立即存档 | 用 `--ozone-platform=wayland` 明确选择，检查实际连接/协议证据；镜像 X11/GLX 参数不能照搬，其他变化逐项记录 |
+| [M3-001](tasks/M3-001.md) 浏览器首帧 | loader→browser/renderer→原生 Wayland surface/buffer→Weston→DRM present；正确显示原始 index；立即存档 | 原始 index 首帧已通过；baseline/first-runnable 已建立，IPC 期限为120秒；输入/稳定性/正常退出待验证 |
 
 **本路线的 wl_shm 必须通过 Unix STREAM 的 SCM_RIGHTS 传递共享文件 fd，并正确映射同一对象。** DGRAM 已实现不代表此链通过；M1-004 与 Weston DRM/设备探测可并行，但 wl_shm 客户端/Chromium 不能跳过该依赖。PRIME/dma-buf、EGL/ANGLE 是否需要继续按浏览器实际协商验证，不把它们和 wl_shm 混为一项。沙箱、namespace、seccomp、membarrier 与用户凭据按实际调用定位，参数及最终隔离状态公开记录。
 

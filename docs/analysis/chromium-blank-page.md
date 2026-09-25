@@ -1,5 +1,7 @@
 # Chromium 正文空白：判断依据与逐项排查
 
+**当前结果（2026-09-25）：原始 index 已显示并存档为 baseline/first-runnable。** 干净内核31c8f270，仅延长IPC连接期限至120秒即越过先前白屏；底层启动过慢原因未定位。以下第1–11节保留成功前的调查，最新结论见第12节及[首帧记录](../first-runnable.md)。
+
 更新：2026-09-25。所属任务：[M3-001](../tasks/M3-001.md)。本文集中维护当前假设、排查顺序和结果；历史修复、上游候选及完整验收继续引用原任务卡，不重复建立问题文档。
 
 ## 1. 当前判断与版本边界
@@ -159,3 +161,11 @@ M1-011 内核 `31c8f270` 已通过 Linux/x-kernel 的动态/静态各 20 项对�
 `m3-fcntl-stages-20260925` 的详细应用日志确认 browser 对原始 index 调用 `FileURLLoader::Start`，但这不是加载完成。PID 86 的 cmdline 明确为 NetworkService，PID 98 仍继承 zygote cmdline；两者打印 `ChildThreadImpl::EnsureConnected()`。固定版本源码显示这是未收到连接完成回调时的超时终止函数（退出状态 0），不是连接成功。D1 已定位到 browser 发起文件加载、子进程 IPC 连接超时之间的边界；renderer 的准确 PID、响应和首个内容帧仍未确认。
 
 本轮只加 `--v=1`，8 张 monitor 图全部黑；原始日志完整，清理强制 KILL，guest/runner=1/QEMU=0，最终正常关机。较短观察窗口不用于判断 F_DUPFD/未知命令修复的显示回归。下一项取两端 sendmsg/recvmsg 的 FD、长度、返回值及等待证据，缩小握手问题；不扩大为全部 IPC 或调度器重写。
+
+## 12. 连接期限对照与首个内容帧
+
+固定 Chromium 142.0.7444.59 的 ChildThreadImpl 默认连接期限为15秒；EnsureConnected 是超时终止回调，OnChannelConnected 应取消它。带上限的临时内核日志表明超时前已有双向消息及FD接收：诊断现场的NetworkService PID95收9次、发1次；zygote子进程PID102收34次、发3次，并收到11次control=24的消息。没有据此认定FD内容、全部握手或共享状态正确。诊断补丁和准确ELF保存在 `artifacts/M3-001-ipc-connect-20260925/`，补丁已经撤回，主内核干净。
+
+同盘Linux详细日志对照 `m3-ipc-stages-linux-20260925` 原页可见且正常退出。干净内核31c8f270的默认参数长观察 `m3-fcntl-clean-long-20260925` 仍得到提示栏和空白正文。随后同内核/工作盘/观察脚本只增加 `--ipc-connection-timeout=120`，`m3-ipc-timeout120-20260925` 第7帧开始显示原页，7–12帧内容hash相同。三份官方页面hash逐一匹配原始压缩包。首次发现立即归档，未改第三方程序或页面。
+
+这个结果支持“本次路径被过短的连接期限中止”，不证明所有接口正确，也没有定位慢初始化或调度的根因。不同观察开销/主机负载未作为正式性能实验控制，不能给出加速倍数。原页首帧已通过，正常清理仍未通过；文件锁、membarrier、prctl、NETLINK/inotify等保留待处理状态，不能因页面已出现而标为已修复。

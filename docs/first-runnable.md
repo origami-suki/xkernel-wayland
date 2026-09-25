@@ -16,3 +16,11 @@ python3 scripts/run_guest.py --run-id <新的运行名> \
 集成运行起点为 `f9f9e58`，当时有此前遗留的未提交文档修改；完整 patch/status 已随首帧存档。标签提交纳入与本次受测版本逐字节相同的启动脚本，内核与其运行 ELF 独立固定，不把未提交文档工作区描述为干净现场。
 
 `baseline/first-runnable` 在集成和内核仓库中均为不可移动的 annotated tag。最早截图、当时日志快照和完整最终 run 分开保存；后续复跑不能替代最早现场。
+
+## 运行结束与备份核验
+
+最终采样：第1–5帧黑屏，第6帧提示栏加空白，第7–12帧为原页，内容帧SHA256均为 `5954354a033f30af4fa4861a5a4616b6a78bb34b2d9d72497fa3202fab6ce287`。第6帧到第7帧的host采集区间跨度14.507秒，是内容出现的采样界限；第7到第12帧跨度68.544秒。没有guest绘制完成时间戳，不能把第7帧采集时刻等同于真实首帧时刻；可信峰值内存等仍未测。
+
+清理请求Chromium及Weston强制KILL；guest/runner=1、QEMU=0，最终正常关机，不能宣称应用正常退出。最终原始日志与metadata在原run目录，首次发现时的快照另存，均未覆盖。
+
+同机完整备份 `artifacts/backups/first-runnable-20260925.tar.zst`，546556806字节，SHA256 `bf771386f4f6b8010941460b16ba4bbe1003f37f7a42a711accda1167e16d18f`。从解压流核对全部60个清单文件，包含完整rootfs工作盘、内核ELF/BIN、首帧/最终run、原测试页压缩包和两份Git bundle；两份源码在临时目录实际恢复到标签目标并通过git fsck。记录见同目录 `first-runnable-20260925-verification.json`。这是同机备份，不是异地备份。

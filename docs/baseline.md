@@ -24,6 +24,8 @@
 
 ## 本队首个可运行版本
 
+已于2026-09-25建立：集成 `6cf0331`、内核 `31c8f270`，两侧 tag 均为 `baseline/first-runnable`。原始页面 monitor 第7帧及完整工作盘、源码、日志已备份恢复核验。实际参数含 `--ipc-connection-timeout=120` 和 `--no-sandbox`。见 [首帧记录](first-runnable.md)；以下为其最小存档条件。
+
 由本队按以下最小条件建立 `baseline/first-runnable`：
 
 1. 在本项目 x-kernel/QEMU 环境内通过已确定的 Wayland 会话运行 Chromium，记录实际 Ozone/协议链路；

@@ -40,6 +40,8 @@ def main():
     inputs = {source.name: sha256(source)}
     binaries = {}
     for name, source_name, linkage in (
+            ('cache-sync', 'cache-sync', ['-shared-libgcc']),
+            ('cache-sync-static', 'cache-sync', ['-static']),
             ('userns-probe', 'userns-probe', ['-static']),
             ('proc-task', 'proc-task', []),
             ('proc-task-static', 'proc-task', ['-static']),

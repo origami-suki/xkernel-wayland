@@ -1,6 +1,6 @@
 # 推进路线
 
-按依赖和验收结果推进，不设日历排期。2026-09-24 的修订基于赛题全部 6 页、赛方镜像/测试页和 x-kernel v0.2.0 的实际代码。**M0 的构建、两次串口 shell/正常关机、可重建 Wayland 用户态和原页部署已验证；M1-002 的装载缺口已修复并完成独立收尾（原盘 Chromium `--version` 已在 x-kernel 内返回 `Chromium 142.0.7444.59`），M1-001 的 Linux system 对照已建立。M1-004 的 STREAM fd/共享映射/生命周期及 memfd seals 已完成同盘 20 项对照、独立测试与最终干净版本复跑。M2-001 已完成 Weston DRM/pixman 与动态 wl_shm 客户端显示和正常退出的独立验收。M3首次试跑已完成Linux原始index对照；x-kernel触发user namespace及no_new_privs前置问题，M1-005已独立验收并干净复跑通过，M1-006调度TID查询已修复并通过107项单测及独立M1/M2回归；M1-007发送者凭据已修复并通过236项同盘对照、256项内核单测、独立M1/M2回归和干净复跑；Chromium仍黑屏，M1-009已修复proc task动态链接数，Linux/独立动态与静态各76项及259项内核单测通过，真实Zygote状态请求已成功；干净长观察已显示浏览器提示栏，但原页正文空白，记录GPU子进程exit_code=132，待取异常现场。Chromium页面首帧、真实输入和长时稳定性尚未通过。** 实现验证、证据完整性、用户学习/阶段验收分别记录。
+按依赖和验收结果推进，不设日历排期。2026-09-24 的修订基于赛题全部 6 页、赛方镜像/测试页和 x-kernel v0.2.0 的实际代码。**M0 的构建、两次串口 shell/正常关机、可重建 Wayland 用户态和原页部署已验证；M1-002 的装载缺口已修复并完成独立收尾（原盘 Chromium `--version` 已在 x-kernel 内返回 `Chromium 142.0.7444.59`），M1-001 的 Linux system 对照已建立。M1-004 的 STREAM fd/共享映射/生命周期及 memfd seals 已完成同盘 20 项对照、独立测试与最终干净版本复跑。M2-001 已完成 Weston DRM/pixman 与动态 wl_shm 客户端显示和正常退出的独立验收。M3首次试跑已完成Linux原始index对照；x-kernel触发user namespace及no_new_privs前置问题，M1-005已独立验收并干净复跑通过，M1-006调度TID查询已修复并通过107项单测及独立M1/M2回归；M1-007发送者凭据已修复并通过236项同盘对照、256项内核单测、独立M1/M2回归和干净复跑；Chromium仍黑屏，M1-009已修复proc task动态链接数，Linux/独立动态与静态各76项及259项内核单测通过，真实Zygote状态请求已成功；干净长观察已显示浏览器提示栏，但原页正文空白，GPU子进程exit_code=132已定位到libgcc缓存同步的CTR_EL0陷阱；M1-010已启用每CPU的UCT/UCI，82项同盘对照、18项内核单测和M1/M2回归通过，原页仍空白，待定位后续GPU/renderer请求。Chromium页面首帧、真实输入和长时稳定性尚未通过。** 实现验证、证据完整性、用户学习/阶段验收分别记录。
 
 **用户已确定：采用 Wayland，复用赛方 rootfs。** 先前调查中提出的 X11 优先建议已撤回；Xorg/JWM 仅作为原镜像内容记录。后续补齐 Weston 和必要依赖、建立原生 Wayland 会话，不再安排路线比较或等待这项决策的批准。
 
@@ -87,6 +87,7 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | [M1-006](tasks/M1-006.md) | 活跃TID的调度参数查询 | M3日志及同盘动态/静态probe；查询语义与独立回归 | 已修复：动态/静态各33项、107单测及M1/M2独立回归通过 |
 | [M1-007](tasks/M1-007.md) | Unix socket发送者凭据与Zygote PID握手 | 同盘SO_PASSCRED/SCM_CREDENTIALS正常路径probe及Chromium源码链 | 已修复：236项同盘凭据对照、256项单测及独立M1/M2回归通过 |
 | [M1-009](tasks/M1-009.md) | proc task动态链接数与Zygote单线程检查 | 线程生命周期Linux同盘对照 | 已修复；动态/静态各76项、259项内核单测通过，Zygote状态回复成功，独立验收与干净复跑通过 |
+| [M1-010](tasks/M1-010.md) | AArch64用户态缓存同步与GPU SIGILL | 实际异常指令、同盘Linux对照与每CPU探针 | 已修复：动态/静态各41项、18项内核单测及M1/M2回归通过；原页仍空白 |
 | [M1-008](tasks/M1-008.md) | F_DUPFD最小编号与非法范围 | 诊断launcher及6项同盘对照 | 已复现独立候选；尚无原浏览器依赖证据，按M3实际后续故障决定优先级 |
 | [M3-001](tasks/M3-001.md) | Chromium 原生 Wayland 首帧与不可变基线 | M2-001 已满足；正确显示原始 index 后立即存档 | 进行中；Linux原页通过，x-kernel窗口壳可见、原页首帧未通过 |
 

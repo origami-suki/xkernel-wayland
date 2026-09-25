@@ -27,6 +27,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from frame_capture import capture_frames
+from missing_interfaces import write_inventory
 from serial_drain import SerialDrain
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -185,6 +186,7 @@ def main():
     shutil.copy2(Path(__file__), output / "run_linux_guest.py")
     shutil.copy2(Path(__file__).with_name("frame_capture.py"), output / "frame_capture.py")
     shutil.copy2(Path(__file__).with_name("serial_drain.py"), output / "serial_drain.py")
+    shutil.copy2(Path(__file__).with_name("missing_interfaces.py"), output / "missing_interfaces.py")
     state = {"run_id": args.run_id, "started_utc": datetime.now(timezone.utc).isoformat(),
              "integration": git_state(ROOT), "xkernel_reference": git_state(ROOT / "sources/x-kernel"),
              "host": {"uname": list(platform.uname()), "python": sys.version,
@@ -193,6 +195,7 @@ def main():
              "runner_sha256": sha256(output / "run_linux_guest.py"),
              "frame_capture_sha256": sha256(output / "frame_capture.py"),
              "serial_drain_sha256": sha256(output / "serial_drain.py"),
+             "missing_interfaces_sha256": sha256(output / "missing_interfaces.py"),
              "disk": {"path": str(disk), "snapshot": True}, "timeout_seconds": args.timeout,
              "policy": "AArch64 TCG thread=multi, 2 GiB, 4 vCPU; same PCI devices as x-kernel runner; offline"}
     print(f"Evidence: {output}", flush=True)
@@ -302,6 +305,11 @@ def main():
             state["disk"]["unchanged"] = state["disk"]["sha256_before"] == state["disk"]["sha256_after"]
             if not state["disk"]["unchanged"]:
                 result = 1
+        try:
+            state["missing_interfaces"] = write_inventory(output)
+        except OSError as error:
+            state["missing_interfaces"] = {"error": str(error)}
+            result = 1
         state["finished_utc"] = datetime.now(timezone.utc).isoformat()
         state["runner_exit_code"] = result
         write_json(output / "metadata.json", state)

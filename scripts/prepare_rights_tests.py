@@ -35,6 +35,7 @@ def main():
     gcc = ROOT / 'work/toolchains/aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc'
     source = ROOT / 'tests/unix-rights/rights.c'
     binary = evidence / 'rights'
+    (evidence / 'rights.c').write_bytes(source.read_bytes())
     run([gcc, '--version'])
     run([gcc, '-Wall', '-Wextra', '-Werror', '-O2', '-static', source, '-o', binary])
     (evidence / 'rights.readelf.txt').write_bytes(run(['readelf', '-lW', binary]))

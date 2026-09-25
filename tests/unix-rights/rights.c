@@ -284,6 +284,32 @@ static void seal_write(void) {
     close(fd);
 }
 
+static void seal_grow_write(void) {
+    int fd = memory_file('G');
+    CHECK(fcntl(fd, F_ADD_SEALS, F_SEAL_GROW) == 0);
+    CHECK(pwrite(fd, "XY", 2, 4095) == -1 && errno == EPERM);
+    char b;
+    CHECK(pread(fd, &b, 1, 4095) == 1 && b == 0);
+    CHECK(pwrite(fd, "H", 1, 0) == 1);
+    struct stat st;
+    CHECK(fstat(fd, &st) == 0 && st.st_size == 4096);
+    close(fd);
+}
+
+static void seal_future_write(void) {
+    int fd = memory_file('F');
+    char *p = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    CHECK(p != MAP_FAILED);
+    CHECK(fcntl(fd, F_ADD_SEALS, 0x10 /* F_SEAL_FUTURE_WRITE */) == 0);
+    p[0] = 'E'; /* Existing writable shared mappings remain writable. */
+    CHECK(pwrite(fd, "X", 1, 0) == -1 && errno == EPERM);
+    CHECK(mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0) == MAP_FAILED && errno == EPERM);
+    char b;
+    CHECK(pread(fd, &b, 1, 0) == 1 && b == 'E');
+    CHECK(munmap(p, 4096) == 0);
+    close(fd);
+}
+
 static void bad_fd(void) {
     int sv[2], fd = -1;
     CHECK(socketpair(AF_UNIX, SOCK_STREAM, 0, sv) == 0);
@@ -301,7 +327,8 @@ int main(int argc, char **argv) {
         {"discard", discard}, {"bad-fd", bad_fd}, {"dgram", dgram},
         {"release-read", release_read}, {"release-no-control", release_no_control},
         {"release-truncated", release_truncated}, {"release-close", release_close},
-        {"peer-exit", peer_exit}, {"consecutive", consecutive}, {"seal-write", seal_write}
+        {"peer-exit", peer_exit}, {"consecutive", consecutive}, {"seal-write", seal_write},
+        {"seal-grow-write", seal_grow_write}, {"seal-future-write", seal_future_write}
     };
     setvbuf(stdout, NULL, _IONBF, 0);
     signal(SIGPIPE, SIG_IGN);

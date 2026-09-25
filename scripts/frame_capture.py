@@ -9,14 +9,14 @@ import re
 import time
 
 
-def capture_frames(clean, output, send_monitor, state):
+def capture_frames(clean, output, send_monitor, state, *, max_frames=16):
     frames = state.setdefault('frames', [])
     seen = {frame['label'] for frame in frames}
     for match in re.finditer(r'(?m)^__ICT_FRAME_([a-zA-Z0-9_-]{1,40})__$', clean):
         label = match[1]
         if label in seen:
             continue
-        if len(frames) >= 16:
+        if len(frames) >= max_frames:
             raise ValueError('guest frame limit exceeded')
         path = output / ('frame-' + label + '.ppm')
         started = time.monotonic_ns()
@@ -49,3 +49,49 @@ def capture_frames(clean, output, send_monitor, state):
                        'meaning': 'host observation interval, not guest presentation time'})
         seen.add(label)
         (output / 'metadata.json').write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n')
+
+
+class OneSecondSampler:
+    """Sample on the host after a guest launch marker, without guest polling.
+
+    The origin is receipt of the marker immediately before browser launch, not
+    exec completion. Late ticks are recorded as gaps rather than burst captures.
+    """
+
+    def __init__(self, clock=time.monotonic_ns, max_frames=181):
+        self.clock = clock
+        self.max_frames = max_frames
+        self.origin = None
+        self.next_due = None
+        self.stopped = False
+
+    def update(self, clean, output, send_monitor, state):
+        if self.stopped:
+            return
+        if self.origin is None:
+            if not re.search(r'(?m)^__ICT_CAPTURE_START__$', clean):
+                return
+            self.origin = self.clock()
+            self.next_due = self.origin
+            state['periodic_capture'] = {
+                'origin_host_monotonic_ns': self.origin,
+                'period_ns': 1_000_000_000,
+                'max_frames': self.max_frames,
+                'origin_meaning': 'host receipt of guest marker immediately before browser launch; '
+                                  'includes launch overhead, excludes Weston setup; serial delay uncalibrated',
+            }
+        if re.search(r'(?m)^__ICT_CAPTURE_STOP__$', clean):
+            self.stopped = True
+            state['periodic_capture']['stop_reason'] = 'guest-stop-marker'
+            return
+        now = self.clock()
+        if now < self.next_due:
+            return
+        if len(state.get('frames', [])) >= self.max_frames:
+            self.stopped = True
+            state['periodic_capture']['stop_reason'] = 'frame-limit'
+            return
+        slot = (now - self.origin) // 1_000_000_000
+        capture_frames(f'__ICT_FRAME_sample-{slot:03d}__\n', output, send_monitor,
+                       state, max_frames=self.max_frames)
+        self.next_due = self.origin + (slot + 1) * 1_000_000_000

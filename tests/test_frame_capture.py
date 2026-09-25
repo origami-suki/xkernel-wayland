@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from frame_capture import capture_frames
+from frame_capture import OneSecondSampler, capture_frames
 
 
 class CaptureTests(unittest.TestCase):
@@ -60,6 +60,39 @@ class CaptureTests(unittest.TestCase):
             capture_frames("printf '__ICT_FRAME_red__'\n__ICT_FRAME_../bad__\n",
                            Path(directory), monitor, state)
             self.assertEqual(state['frames'], [])
+
+    def test_periodic_capture_ignores_echo_and_records_late_ticks_without_burst(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            state = {}
+            now = [10_000_000_000]
+            sampler = OneSecondSampler(clock=lambda: now[0])
+
+            def monitor(command):
+                path = Path(json.loads(command.removeprefix('screendump ')))
+                path.write_bytes(b'P6\n1 1\n255\n\xff\0\0')
+                return b'(qemu) '
+
+            sampler.update("printf '__ICT_CAPTURE_START__'\n", output, monitor, state)
+            self.assertNotIn('frames', state)
+            marker = '__ICT_CAPTURE_START__\n'
+            sampler.update(marker, output, monitor, state)
+            now[0] += 500_000_000
+            sampler.update(marker, output, monitor, state)
+            self.assertEqual(len(state['frames']), 1)
+            now[0] += 3_000_000_000
+            sampler.update(marker, output, monitor, state)
+            self.assertEqual([x['label'] for x in state['frames']], ['sample-000', 'sample-003'])
+            sampler.update(marker + '__ICT_CAPTURE_STOP__\n', output, monitor, state)
+            now[0] += 2_000_000_000
+            sampler.update(marker, output, monitor, state)
+            self.assertEqual(len(state['frames']), 2)
+
+    def test_default_marker_capture_limit_remains_sixteen(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, 'limit'):
+                capture_frames('__ICT_FRAME_new__\n', Path(directory), None,
+                               {'frames': [{'label': str(i)} for i in range(16)]})
 
 
 if __name__ == '__main__':

@@ -24,7 +24,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from frame_capture import capture_frames
+from frame_capture import OneSecondSampler, capture_frames
 from missing_interfaces import write_inventory
 from serial_drain import SerialDrain
 
@@ -209,7 +209,10 @@ def main():
                         help="POSIX shell script run after smoke, inside a subshell; its status is checked")
     parser.add_argument("--monitor-stop", action="store_true",
                         help="after successful smoke/probe, stop with monitor quit instead of PID1 exit")
+    parser.add_argument("--sample-every-second", action="store_true",
+                        help="host screenshots after __ICT_CAPTURE_START__, until STOP or 181 frames")
     args = parser.parse_args()
+    sampler = OneSecondSampler() if args.sample_every_second else None
     require(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}", args.run_id), "invalid run ID")
     require(0 < args.timeout <= 3600, "timeout must be in (0, 3600] seconds")
     disk = check_disk(args.disk)
@@ -324,7 +327,10 @@ def main():
                     script_sent = True
                     state["script_bytes_sent"] = len(script)
                 if phase == "commands":
-                    capture_frames(clean, output, monitor.send, state)
+                    if sampler:
+                        sampler.update(clean, output, monitor.send, state)
+                    else:
+                        capture_frames(clean, output, monitor.send, state)
                 completed = re.search(r"(?m)^" + re.escape(done) + r"(\d+)$", clean)
                 if phase == "commands" and completed:
                     state["guest_exit_code"] = int(completed[1])

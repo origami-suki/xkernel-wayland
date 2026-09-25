@@ -1,0 +1,233 @@
+{
+  "date": "2026-09-25",
+  "authorization": "User explicitly requested deletion of historical M0 large files with placeholders; exception to previous retention policy limited to listed files.",
+  "files": [
+    {
+      "path": "artifacts/runs/m0-chromium-original-rootfs/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072",
+      "mtime_ns": 1790237689051968863,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-chromium-original-rootfs/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-chromium-original-rootfs/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+      "mtime_ns": 1790237688806975194,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-chromium-original-rootfs/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-first-boot/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "4ba423d277a9b76b411207300b02a3ef13160a137665794712eeac501072efb1",
+      "mtime_ns": 1790237524373828752,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-first-boot/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-first-boot/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "071bce311a79499f66f7592ff13fbee7a73c49cc4582c4f4fda9ba1001c01cc1",
+      "mtime_ns": 1790237524078781215,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-first-boot/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-monitor-stop/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072",
+      "mtime_ns": 1790237689051968863,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-monitor-stop/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-monitor-stop/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+      "mtime_ns": 1790237688806975194,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-monitor-stop/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-serial-02/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072",
+      "mtime_ns": 1790237689051968863,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-serial-02/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-serial-02/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+      "mtime_ns": 1790237688806975194,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-serial-02/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-serial-03/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072",
+      "mtime_ns": 1790237689051968863,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-serial-03/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-serial-03/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+      "mtime_ns": 1790237688806975194,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-serial-03/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-serial-04/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072",
+      "mtime_ns": 1790237689051968863,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-serial-04/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-serial-04/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+      "mtime_ns": 1790237688806975194,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-serial-04/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-serial-05/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072",
+      "mtime_ns": 1790237689051968863,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-serial-05/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-serial-05/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+      "mtime_ns": 1790237688806975194,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-serial-05/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-wayland-final/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072",
+      "mtime_ns": 1790237689051968863,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-wayland-final/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-wayland-final/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+      "mtime_ns": 1790237688806975194,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-wayland-final/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-wayland-inventory/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072",
+      "mtime_ns": 1790237689051968863,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-wayland-inventory/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-wayland-inventory/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+      "mtime_ns": 1790237688806975194,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-wayland-inventory/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-wayland-probes/bundle/kernel.bin",
+      "bytes": 8205824,
+      "allocated_bytes": 8208384,
+      "sha256": "5d2ad6a1697bca501dbbfc0e0a26345420c370b017319307b6755a1f9e72b072",
+      "mtime_ns": 1790237689051968863,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-wayland-probes/bundle/kernel.bin.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "artifacts/runs/m0-wayland-probes/bundle/kernel.elf",
+      "bytes": 221488160,
+      "allocated_bytes": 221491200,
+      "sha256": "bd2af5b41b80ac7122cf61c2d38cbceb9193f2f282fab0acd69456c22570cdda",
+      "mtime_ns": 1790237688806975194,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "artifacts/runs/m0-wayland-probes/bundle/kernel.elf.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "work/images/wayland-prepared.img",
+      "bytes": 2147483648,
+      "allocated_bytes": 1003999232,
+      "sha256": "77e23a208d7c0987af5d6e22d5b3018d7a6348ec9a87fceca2beaaec3ae3a25d",
+      "mtime_ns": 1790237714693235288,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "work/images/wayland-prepared.img.RETIRED.md",
+      "status": "retired"
+    },
+    {
+      "path": "work/images/wayland-rebuild-verify.img",
+      "bytes": 2147483648,
+      "allocated_bytes": 2147483648,
+      "sha256": "14921355e3e5fd330b217f804539085ca07e6a62c5b43f18a030f3292ac4e04e",
+      "mtime_ns": 1790237782975260968,
+      "reason": "User explicitly retired historical M0 large artifacts; current base disks and all logs retained",
+      "placeholder": "work/images/wayland-rebuild-verify.img.RETIRED.md",
+      "status": "retired"
+    }
+  ],
+  "logical_bytes_removed": 6591907136,
+  "retained_files_verified": 118,
+  "retained_inputs": [
+    "work/images/wayland-m0.img",
+    "work/images/xkernel-run.img"
+  ],
+  "scope_note": "Historical logs and metadata retained. Retired bundles no longer constitute complete original binary evidence. No original Assets, M1/M2/M3 artifacts or current builds removed."
+}

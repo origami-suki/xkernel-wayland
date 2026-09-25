@@ -1336,5 +1336,10 @@
       "bytes": 319,
       "sha256": "37bfe298dcc83e90673aa45e758f92397ec8868bb2952543ba3a4a17427b40a2"
     }
-  ]
+  ],
+  "retirement": {
+    "date": "2026-09-25",
+    "manifest": "docs/analysis/m0-retirement-20260925.json",
+    "status": "Historical M0 binaries selectively retired by user authorization. Hashes below describe original runs, not present availability. See manifest for deleted files and placeholders."
+  }
 }

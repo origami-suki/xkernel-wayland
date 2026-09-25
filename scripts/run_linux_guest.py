@@ -26,6 +26,8 @@ import zlib
 from datetime import datetime, timezone
 from pathlib import Path
 
+from frame_capture import capture_frames
+
 ROOT = Path(__file__).resolve().parents[1]
 QEMU = "/usr/bin/qemu-system-aarch64"
 
@@ -178,12 +180,14 @@ def main():
     output = ROOT / "artifacts/runs" / args.run_id
     output.mkdir(parents=True, exist_ok=False)
     shutil.copy2(Path(__file__), output / "run_linux_guest.py")
+    shutil.copy2(Path(__file__).with_name("frame_capture.py"), output / "frame_capture.py")
     state = {"run_id": args.run_id, "started_utc": datetime.now(timezone.utc).isoformat(),
              "integration": git_state(ROOT), "xkernel_reference": git_state(ROOT / "sources/x-kernel"),
              "host": {"uname": list(platform.uname()), "python": sys.version,
                       "cpuinfo": Path("/proc/cpuinfo").read_text(),
                       "meminfo": Path("/proc/meminfo").read_text()},
              "runner_sha256": sha256(output / "run_linux_guest.py"),
+             "frame_capture_sha256": sha256(output / "frame_capture.py"),
              "disk": {"path": str(disk), "snapshot": True}, "timeout_seconds": args.timeout,
              "policy": "AArch64 TCG thread=multi, 2 GiB, 4 vCPU; same PCI devices as x-kernel runner; offline"}
     print(f"Evidence: {output}", flush=True)
@@ -250,6 +254,8 @@ def main():
                     state["shell_ready"] = True
                     serial.sendall(script.encode())
                     phase = "commands"
+                if phase == "commands":
+                    capture_frames(clean, output, lambda command: monitor_command(monitor, mon_log, command), state)
                 completed = re.search(r"(?m)^" + re.escape(done) + r"(\d+)$", clean)
                 if phase == "commands" and completed:
                     state["guest_exit_code"] = int(completed[1])

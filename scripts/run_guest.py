@@ -24,6 +24,8 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+from frame_capture import capture_frames
+
 ROOT = Path(__file__).resolve().parents[1]
 KERNEL = ROOT / "sources/x-kernel"
 QEMU = "/usr/bin/qemu-system-aarch64"
@@ -201,6 +203,7 @@ def main():
     output = ROOT / "artifacts/runs" / args.run_id
     output.mkdir(parents=True, exist_ok=False)
     shutil.copy2(Path(__file__), output / "run_guest.py")
+    shutil.copy2(Path(__file__).with_name("frame_capture.py"), output / "frame_capture.py")
     print(f"Evidence: {output}", flush=True)
     state = {"run_id": args.run_id, "started_utc": datetime.now(timezone.utc).isoformat(),
              "integration": git_state(ROOT), "kernel": git_state(KERNEL),
@@ -208,6 +211,7 @@ def main():
                       "cpuinfo": Path("/proc/cpuinfo").read_text(),
                       "meminfo": Path("/proc/meminfo").read_text()},
              "runner_sha256": sha256(output / "run_guest.py"),
+             "frame_capture_sha256": sha256(output / "frame_capture.py"),
              "disk": {"path": str(disk), "snapshot": True},
              "timeout_seconds": args.timeout,
              "policy": "TCG thread=multi, 2 GiB, 4 vCPU; NET and VSOCK omitted for offline "
@@ -300,6 +304,8 @@ def main():
                     serial.sendall(script.encode())
                     script_sent = True
                     state["script_bytes_sent"] = len(script)
+                if phase == "commands":
+                    capture_frames(clean, output, monitor.send, state)
                 completed = re.search(r"(?m)^" + re.escape(done) + r"(\d+)$", clean)
                 if phase == "commands" and completed:
                     state["guest_exit_code"] = int(completed[1])

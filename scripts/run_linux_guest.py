@@ -26,7 +26,7 @@ import zlib
 from datetime import datetime, timezone
 from pathlib import Path
 
-from frame_capture import capture_frames
+from frame_capture import OneSecondSampler, capture_frames
 from missing_interfaces import write_inventory
 from serial_drain import SerialDrain
 
@@ -171,7 +171,10 @@ def main():
     parser.add_argument("--guest-commands", type=Path,
                         help="POSIX shell commands in a subshell; nonzero final status fails the runner")
     parser.add_argument("--timeout", type=float, default=240)
+    parser.add_argument("--sample-every-second", action="store_true",
+                        help="host screenshots after __ICT_CAPTURE_START__, until STOP or 181 frames")
     args = parser.parse_args()
+    sampler = OneSecondSampler() if args.sample_every_second else None
     require(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}", args.run_id), "invalid run ID")
     require(0 < args.timeout <= 3600, "timeout must be in (0, 3600]")
     disk = args.disk.resolve(strict=True)
@@ -262,7 +265,11 @@ def main():
                     serial.sendall(script.encode())
                     phase = "commands"
                 if phase == "commands":
-                    capture_frames(clean, output, lambda command: monitor_command(monitor, mon_log, command), state)
+                    send_monitor = lambda command: monitor_command(monitor, mon_log, command)
+                    if sampler:
+                        sampler.update(clean, output, send_monitor, state)
+                    else:
+                        capture_frames(clean, output, send_monitor, state)
                 completed = re.search(r"(?m)^" + re.escape(done) + r"(\d+)$", clean)
                 if phase == "commands" and completed:
                     state["guest_exit_code"] = int(completed[1])

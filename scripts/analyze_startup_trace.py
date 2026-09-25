@@ -95,7 +95,7 @@ def main():
         'performance_sample_valid': False,
         'limitations': ['slice duration includes waiting and preemption',
                         'inclusive duration sums overlap; they are not exclusive CPU time',
-                        'thread_dur is an OS-reported counter; the pinned x-kernel charges sleep to thread CPU time (see clock calibration)',
+                        'thread_dur is an OS-reported counter; calibrate the exact kernel before using it (see M1-012; historical 31c8f270 charges sleep as CPU)',
                         'successful SQL import alone does not prove complete process or startup coverage',
                         'guest trace and host screenshot clocks have not been aligned'],
     }

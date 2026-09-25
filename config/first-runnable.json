@@ -1,0 +1,23 @@
+{
+  "kernel_commit": "31c8f27023ce483ff327386597f6e0a640d705f9",
+  "integration_at_run_start": "f9f9e58ef886428d082ae125b9023c08eced628f",
+  "run_id": "m3-ipc-timeout120-20260925",
+  "guest_script": "tests/chromium/first-runnable.sh",
+  "guest_script_sha256": "30011a083aac1926bbab9a2e4a0039f0eda2353002dfcea3f4c381fc92c267ee",
+  "disk": "work/images/chromium-m1-fcntl-unknown-v1.img",
+  "disk_sha256": "9a122bcadc8efe19100f3e43cc72d3bc77796573b3572705658e2c6e74f59941",
+  "kernel_elf_sha256": "7b17d189f670d69de3769dc20ad505ec0bdebbb805a4474db8ef87e9b881387e",
+  "first_frame": "artifacts/runs/m3-ipc-timeout120-20260925/frame-chromium-7.ppm",
+  "first_frame_sha256": "5954354a033f30af4fa4861a5a4616b6a78bb34b2d9d72497fa3202fab6ce287",
+  "config": {
+    "cpu": "cortex-a76",
+    "qemu": "11.1.1",
+    "memory_mib": 2048,
+    "vcpus": 4,
+    "accelerator": "tcg",
+    "ipc_connection_timeout_seconds": 120,
+    "sandbox": false
+  },
+  "evidence_snapshot": "artifacts/baseline/first-runnable/first-frame.json",
+  "uncommitted_integration_state": "Pre-existing documentation patch preserved in evidence; runtime sources match tagged commit plus the now-committed byte-identical observer."
+}

@@ -1,6 +1,8 @@
 # 推进路线
 
-2026-09-27：**M5-003 定位闭环完成，下一候选为 openat 的实际文件创建路径。** 五轮复扫 openat CPU 中位 8.068149 秒；两轮原页诊断显示中间遍历与末查找/创建占路径打开 85.58%，小 C 探针 120/120 成功并经独立复核。已有 O_CREAT 与实际创建的成本已区分，但 Chromium 实际创建数和创建内部成本仍待确认，尚无生产优化。全程最多一个 QEMU。见 [M5-003](tasks/M5-003.md)、[复扫记录](measurements/syscall-hotspots-post-munmap-20260927.md)与[定位记录](measurements/openat-path-cost-20260927.md)。
+2026-09-27：**后续优先级调整为当前版本启动预算，暂缓 openat 创建路径深挖。** munmap 的累计 CPU 收益与首帧提前分别成立，但现有数据尚不能解释约 76 秒的关键路径。旧 trace 预算的窗口/进程汇总缺陷及过强推断已纠正；下一步按启动、子进程准备、导航、提交画面关联 CPU、就绪等待和阻塞依赖。此轮仅完成分析，未运行新对照或实施追踪。见 [M5-004](tasks/M5-004.md)和[分析记录](analysis/startup-critical-path-20260927.md)。
+
+2026-09-27：**M5-003 定位闭环完成；当时提出的 openat 实际创建候选现已暂缓。** 五轮复扫 openat CPU 中位 8.068149 秒；两轮原页诊断显示中间遍历与末查找/创建占路径打开 85.58%，小 C 探针 120/120 成功并经独立复核。已有 O_CREAT 与实际创建的成本已区分，但 Chromium 实际创建数和创建内部成本仍待确认，尚无生产优化。全程最多一个 QEMU。见 [M5-003](tasks/M5-003.md)、[复扫记录](measurements/syscall-hotspots-post-munmap-20260927.md)与[定位记录](measurements/openat-path-cost-20260927.md)。
 
 2026-09-26：**M5-002 munmap 优化已独立验证并提交。** 五轮 munmap CPU 中位数 37.654816 → 0.274485 秒，原页首帧观察中位区间约提前 4 秒；见 [测量记录](measurements/munmap-sparse-20260926.md)。[首轮 syscall 扫描](measurements/syscall-hotspots-20260926.md) 是优化前诊断；下一步先复扫热点再选择 openat 等候选。M1-013 统计工具的剩余独立验收和五开五关对照按用户要求停止，不将未完成项写成通过。
 
@@ -72,7 +74,7 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | M2 图形与输入 | Weston DRM 会话和 wl_shm 客户端可见；buffer 内容可改变；键鼠经过虚拟设备到客户端；连续 10 分钟，非重启后拼接 | M2-001 显示与正常退出通过；真实键鼠/10分钟和资源循环待验证 |
 | M3 首个可运行 Chromium | 目标是原生 Wayland 窗口正确显示原始 index.html；首次实际可运行就保存命令、screendump、日志、代码与不可变 tag，记录真实链路 | 原始 index 首帧已通过；baseline/first-runnable 已建立，IPC 期限为120秒；输入/稳定性/正常退出待验证 |
 | M4 功能与稳定性 | renderer 等多进程；两个可切换页面/窗口；真实键鼠；JS/CSS 各 6 项及视觉核对；30 分钟无崩溃/OOM、每 2 分钟加载共 10 次无卡死 | 未开始 |
-| M5 数据驱动优化 | 对比最早可运行 tag；每项假设有原始 before/after，各不少于 5 次、中位数与范围，并通过相同功能/稳定性回归 | 已有 M5-001 buddy 修复；本轮 syscall 热点已取得，M5-002 munmap 已通过五轮独立对照并提交；后续候选待复扫 |
+| M5 数据驱动优化 | 对比最早可运行 tag；每项假设有原始 before/after，各不少于 5 次、中位数与范围，并通过相同功能/稳定性回归 | 已有 M5-001 buddy 修复；本轮 syscall 热点已取得，M5-002 munmap 已通过五轮独立对照并提交；复扫与 openat 定位已完成，下一项改为 M5-004 启动关键路径 |
 | M6 交付与答辩 | 干净环境复现；初赛材料与决赛现场步骤分开核对；评分项对应证据；官方平台/脚本发布后迁移复测 | 未开始，文档与补丁持续积累 |
 
 ## 当前可执行任务
@@ -87,9 +89,11 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | [M1-001](tasks/M1-001.md) | Linux 对照与诊断入口 | 与 M0-003 可并行；同一补齐后的 rootfs/Wayland 包及参数；一个通过、一个失败/超时最小用例均有退出码/分层日志 | 最小 system 对照已验证；图形会话对照随 M2/M3 继续 |
 | [M1-002](tasks/M1-002.md) | 首个阻塞：大型 PIE 与固定 ELF 解释器地址冲突 | 原盘/补齐盘均复现；最小 ELF 与 Linux 对照；解释器基址动态选择与非法 ELF 错误传播 | **已修复并回归通过**：原 Chromium `--version`、80 MiB BSS PIE、畸形 ELF errno、BusyBox/Weston/seatd 与重复启动均通过 |
 | [M1-004](tasks/M1-004.md) | Wayland 的 STREAM fd/共享缓冲区 | M0-002 后做最小复现；SCM_RIGHTS + mmap + 生命周期，Linux 对照；M2 wl_shm 客户端的必要前置 | 接口验证通过：STREAM fd/共享映射/生命周期与 memfd seals 同盘 20 项通过，独立测试见任务卡 |
-| [M1-003](tasks/M1-003.md) | 时间点、进程树与可信内存计量 | 随启动入口准备；固定 0 字段不能算通过 | 已有首帧采样/trace CPU 预算；内存计量仍待实现 |
+| [M1-003](tasks/M1-003.md) | 时间点、进程树与可信内存计量 | 随启动入口准备；固定 0 字段不能算通过 | 已有首帧采样；历史 trace CPU 预算口径已纠正，完整预算/内存计量未完成 |
 | [M1-013](tasks/M1-013.md) | syscall 聚合、校准与首轮热点 | 统计入口与原页真实运行 | 主区校准/首轮完成；剩余工具验证按用户指示停止 |
-| [M5-002](tasks/M5-002.md) | munmap 启动 CPU 热点 | M1-013 数据与最小分段定位 | 下一项，未修改优化路径 |
+| [M5-002](tasks/M5-002.md) | munmap 启动 CPU 热点 | M1-013 数据与最小分段定位 | 已完成五轮独立验证并提交 |
+| [M5-003](tasks/M5-003.md) | openat CPU 路径定位 | 优化后五轮复扫 | 诊断闭环完成；深入创建路径暂缓 |
+| [M5-004](tasks/M5-004.md) | 当前版本启动预算与首帧依赖 | 阶段标记、运行/就绪/阻塞及串行 Linux 对照 | 分析完成；观测实现和新对照尚未开始 |
 | [M2-001](tasks/M2-001.md) | Weston DRM/pixman 与动态 wl_shm 客户端 | M1-004；真实 monitor 图像变化、frame/release、正常退出 | **独立验收及干净复跑通过**；非 VT seat、暂允许无输入 |
 | [M1-005](tasks/M1-005.md) | Chromium子进程的no_new_privs | M3实际失败；同盘ABI/线程/fork/exec/setid探针及独立回归 | 已修复：同盘五类NNP对照、130单测及M1/M2独立回归通过 |
 | [M1-006](tasks/M1-006.md) | 活跃TID的调度参数查询 | M3日志及同盘动态/静态probe；查询语义与独立回归 | 已修复：动态/静态各33项、107单测及M1/M2独立回归通过 |

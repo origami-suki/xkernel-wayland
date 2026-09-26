@@ -45,7 +45,7 @@ python3 scripts/analyze_trace_cpu_budget.py --run artifacts/runs/<run-id> \
   --window-label browser-start-to-first-paint --output <新目录>
 ```
 
-CPU 取 slice 的 `thread_dur`，只汇总 `depth=0`，因此是**下界**；没有调度事件，所以不能把 `dur - thread_dur` 归因到具体锁、I/O 或定时器。实测偏差与覆盖限制见 [2026-09-26 CPU 预算记录](measurements/cpu-budget-20260926.md)。
+CPU 取 slice 的 `thread_dur`。2026-09-27 复核发现旧预算入口有窗口未剪裁、同名进程覆盖及 tracing 嵌套累计问题；`depth=0` 也不自动证明跨 track 互斥。该工具本轮未修复，不能将输出作为精确阶段 CPU、利用率或下界。没有调度事件，`dur - thread_dur` 也不能归因到具体锁、I/O 或定时器。详见[纠正后的 CPU 预算记录](measurements/cpu-budget-20260926.md)。
 
 在 [Perfetto UI](https://ui.perfetto.dev/) 选择 **Open trace file**，打开 `.pftrace`。本轮已实际验证网页加载该文件并显示 Browser、原页 Renderer、GPU、NetworkService 等轨道；文件在本地打开，没有使用分享/上传入口。浏览器本地缓存 URL 不是跨设备分享链接，应交付实际 `.pftrace` 文件。
 

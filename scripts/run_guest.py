@@ -213,6 +213,9 @@ def main():
                         help="maximum guest runtime in seconds, excluding validation/hashing")
     parser.add_argument("--vcpus", type=int, choices=(1, 4), default=4,
                         help="runtime CPU count for controlled comparisons; same 4-CPU-capable bundle")
+    parser.add_argument("--memory", default="2g",
+                        help="guest RAM size passed to QEMU -m (default 2g; override only for a recorded "
+                             "controlled comparison, e.g. 4g)")
     parser.add_argument("--serial-byte-delay-ms", type=float, default=0,
                         help="pace guest script input before execution to avoid serial input loss")
     parser.add_argument("--guest-commands", type=Path,
@@ -232,6 +235,8 @@ def main():
     sampler = OneSecondSampler(max_frames=args.capture_limit) if args.sample_every_second else None
     require(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}", args.run_id), "invalid run ID")
     require(0 < args.timeout <= 3600, "timeout must be in (0, 3600] seconds")
+    require(re.fullmatch(r"[1-9][0-9]{0,4}[mMgG]?", args.memory) is not None,
+            "memory must be a QEMU -m size such as 2g or 4096")
     require(0 <= args.serial_byte_delay_ms <= 100, "serial byte delay must be in [0, 100] ms")
     require(not args.gdb_snapshot_on_ready or args.gdb, "--gdb-snapshot-on-ready requires --gdb")
     require(not (args.gdb and args.sample_every_second),
@@ -260,9 +265,10 @@ def main():
              "gdb_capture_sha256": sha256(output / "gdb_capture.py"),
              "disk": {"path": str(disk), "snapshot": True},
              "timeout_seconds": args.timeout,
+              "memory": args.memory,
              "vcpus": args.vcpus,
              "serial_byte_delay_ms": args.serial_byte_delay_ms,
-             "policy": f"TCG thread=multi, 2 GiB, {args.vcpus} vCPU; NET and VSOCK omitted for offline "
+             "policy": f"TCG thread=multi, {args.memory} RAM, {args.vcpus} vCPU; NET and VSOCK omitted for offline "
                        "serial/monitor checks; no DHCP, host forwarding or vhost dependency",
              "mode": "monitor-stop" if args.monitor_stop else "pid1-exit"}
     process = serial = monitor = None
@@ -284,7 +290,7 @@ def main():
             debug = DebugSession(output, socket_dir / "gdb", str(Path(gdb).resolve()), state)
             state["debug"]["version"] = command([gdb, "--version"])
         argv = [QEMU, "-machine", "virt,gic-version=3", "-cpu", "cortex-a76",
-                "-accel", "tcg,thread=multi", "-m", "2g", "-smp", str(args.vcpus),
+                "-accel", "tcg,thread=multi", "-m", args.memory, "-smp", str(args.vcpus),
                 "-kernel", str(kernel_image), "-snapshot",
                 "-drive", f"id=disk0,if=none,format=raw,file={disk}",
                 "-device", "virtio-blk-pci,drive=disk0", "-object", "rng-random,id=host_rng0",

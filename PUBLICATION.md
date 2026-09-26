@@ -22,7 +22,7 @@ git config --local core.hooksPath .githooks
 
 优先阅读 `docs/first-runnable.md`、`docs/roadmap.md`、`docs/acceptance.md` 和 `docs/measurements/`。已验证结果、局部结果和待验收项目应分别描述。仓库中的历史文档可能使用旧项目名称 XKernelGUISupport。
 
-公开仓库只包含提交过的版本。本地未提交的 syscall 计量、内存对照及文档调整未随首次发布上传；不得根据本地草稿推断线上版本已包含相应能力。
+公开仓库只包含提交并推送过的版本。首次发布未包含 syscall 计量和内存对照；后续已按任务分别整理提交，具体内容以所检出的提交为准。M1-013 计量工具的未完成验收见任务卡，不因源码入库而改为通过。
 
 ## 来源与授权边界
 

@@ -4,7 +4,7 @@
 
 初始化提交之后使用 `task/<任务号>-<简短描述>` 短期分支。`main` 保持通过已建立的阶段检查；一个提交解决一个独立问题，代码与对应测试一起提交。重构、功能变化与优化分别提交。
 
-内核代码在 `sources/x-kernel` 内开任务分支，保留上游历史，不在 detached HEAD 上积累工作。内核验证和提交完成后，再更新集成仓库的 submodule 指针。上游基线保持不变，不主动同步新版本。集成仓库暂未配置远端；内核公共 origin 仅用于初次获取，后续贡献仓库位置另行配置。
+内核代码在 `sources/x-kernel` 内开任务分支，保留上游历史，不在 detached HEAD 上积累工作。内核验证和提交完成后，再更新集成仓库的 submodule 指针。上游起点保持 `v0.2.0`，不整体同步新版本；允许按 `AGENTS.md` 的流程从上游获取候选补丁，由独立 Agent 验证后引入最小修复。集成仓库 origin 指向 GitHub 的 origami-suki/xkernel-wayland；本机内核 origin 保留 Gitee 上游，github 远端指向 origami-suki/x-kernel。新克隆的子模块 origin 按 .gitmodules 指向 GitHub，获取上游时另设 upstream。外发、push 和 PR 仍需用户授权。
 
 ## 提交格式
 

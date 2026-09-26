@@ -93,7 +93,7 @@ su -s /bin/sh kiosk -c /usr/local/bin/wayland-browser
 
 会话均使用 `exec` 前台运行，没有 compositor/browser respawn；未设 `--no-sandbox`、`--disable-gpu` 或原 X11 ANGLE/GLX 参数。需要参数调整时必须先记录真实阻塞和实际调用命令。Weston kiosk shell 适合首窗验证，多窗口/焦点功能在后续任务按需求验证。
 
-## 原页与学习实验
+## 原页校验
 
 官方入口固定为 `file:///opt/ict-testpages/index.html`，三个文件从原压缩包按字节复制：
 
@@ -105,12 +105,10 @@ su -s /bin/sh kiosk -c /usr/local/bin/wayland-browser
 
 原欢迎页 `/usr/share/kiosk/index.html` 的 hash 仍为 `d34337bee3341cfd1feb775d68dc5c360e862b63d6fe126d2434a01754734f67`。浏览器入口不会使用它。
 
-亲手实验：在 root 串口先运行 `wayland-prepare`、`weston --version` 和 `seatd -v`，比较版本成功与 `/run/seatd.sock` 尚不存在；再前台启动 seatd，观察 socket 的属组和权限。随后以 kiosk 启动 Weston，分别记录“ELF 能执行”“seat/socket 能连接”“QEMU monitor 能看到像素”三个阶段的第一条成功或失败日志。这能区分新增用户态文件与内核跨层接口的责任边界；M0 不把第三阶段提前标为通过。
-
 ## 最终 x-kernel 探测与当前边界
 
 `artifacts/runs/m0-wayland-final/` 使用最终盘严格检查 prepare、runtime 权限、shm 权限、Weston/seatd 版本、设备、三份原页及 musl/Chromium 文件 hash，全部通过并正常关机，基盘哈希不变。`card0`、`event0`、`mice` 可列出，但尚未验证 libinput 枚举/事件、seatd socket、Weston DRM 输出或 wl_shm 协议。
 
-完整 `wayland-probe` 包含 Chromium `--version`，当前内核会因此 panic，用户态 timeout 无法隔离内核崩溃；暂时只把这个入口用于 [M1-002](../tasks/M1-002.md) 的有界故障复现。无 Weston 增量的原始工作盘也复现相同 ELF 装载回溯。日常 M0 学习使用上面的已通过命令，图形会话序列是后续 M2 的执行入口，不能当作本轮已经运行通过。
+完整 `wayland-probe` 包含 Chromium `--version`，当前内核会因此 panic，用户态 timeout 无法隔离内核崩溃；暂时只把这个入口用于 [M1-002](../tasks/M1-002.md) 的有界故障复现。无 Weston 增量的原始工作盘也复现相同 ELF 装载回溯。日常 M0 检查使用上面的已通过命令，图形会话序列是后续 M2 的执行入口，不能当作本轮已经运行通过。
 
 所有运行及失败记录的持久索引见 [m0-evidence-index.json](m0-evidence-index.json)，索引包含原始文件 SHA256；大镜像、APK 缓存及原日志另行备份。

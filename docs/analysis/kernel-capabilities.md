@@ -178,19 +178,19 @@ QEMU virtio 键盘/相对鼠标
 
 ## 7. 建议拆成可独立验收的任务
 
-| 顺序 | 任务边界 | 验收 / 证据 | 学习实验 |
-| --- | --- | --- | --- |
-| P0 / M0 | 实际构建链、系统 QEMU 11.1.1、工作镜像、PID 1 与 Wayland 会话接线 | 源码/配置哈希；TCG 2 GiB/4 CPU 的完整命令；console 启停、新会话入口执行日志 | 比较内核 CMDLINE、编入的 init.sh 与镜像 inittab，说明哪个进程实际是 PID 1 |
-| P0 / M0 | 基于赛方 rootfs 补齐并固定 Weston DRM/pixman 用户态 | 包来源、版本、依赖、构建能力与实际 launcher；新会话的用户、runtime 目录、原 X11 自启动停用记录 | 列出 Weston、libinput、libseat/seatd 的实际角色，区分协议、renderer 与会话管理 |
-| P0 / M1 | 相同 Wayland 工作镜像的 Linux 对照与错误捕获 | 同版本 Weston/Chromium Wayland 命令、Linux 成功/失败结果和分层日志；x-kernel 首个错误可定位 | 保持工作镜像与参数不变，只换内核，对比设备获取/DRM 第一个分歧 |
-| P0 / M1，wl_shm 前置 | Unix STREAM FD / 共享缓冲 | 两进程 SCM_RIGHTS + shared mmap 的 Linux/x-kernel 对照；短读、close、泄漏回归 | 接收 FD 后关闭发送者原 fd，解释 open file description 的生命周期 |
-| P0 / M2-a | DRM 查询、原语彩条与 flip | VERSION/UNIQUE 的空缓冲与分配后查询；create/map/ADDFB2/SETCRTC/flip；两帧不同的 monitor screendump；errno/事件数据 | 修改 dumb 像素后分别不提交/提交，观察“写内存”与“显示”之间的接口 |
-| P0 / M2-b | Weston DRM/pixman 输出与 wl_shm 最小客户端 | 按版本验证 seat/VT/设备发现；客户端 buffer 更新可见，frame/release 事件和连续 10 分钟会话记录 | 对比客户端共享页、Weston 合成 buffer 与 monitor 图像，定位每层职责 |
-| P0 / M2-c | 键鼠设备与 Wayland 客户端输入 | QEMU 设备、evdev/libinput 能力、按下/抬起/鼠标 event、seat 焦点和客户端真实回显 | 从 QEMU 注入一次点击，分别观察 evdev、Wayland 客户端事件、网页计数 |
-| P0 / M3-a | Chromium Ozone Wayland 的渲染与沙箱路径 | 复用镜像浏览器；核对 Wayland 能力、实际 buffer 协议、渲染/context 与 GPU 进程日志，记录参数和限制 | 对照 Chromium browser/zygote/renderer/GPU 进程角色与实际 IPC；解释 compositor pixman 不等于浏览器后端 |
-| P0 / M3-b | 原始 index.html 首个可见窗口 | monitor screendump、代码/命令/日志立即建立不可移动 baseline/first-runnable | 页面更新前后观察 renderer 与 GPU/显示会话参与关系 |
-| P1 / M2-M4 | 显示与 IPC 资源回收 | 100 次 create/map/unmap/destroy 与窗口启动退出，内核内存/FD/resource 趋势 | 关闭窗口后检查哪些对象由句柄、mmap 或 devfs 持有 |
-| P1 / M4 | 多进程同步、稳定性和输入空闲 | pthread/futex/epoll、30 分钟与加载循环；输入空闲 CPU 的原始数据 | 同样输入频率对比空闲和活动状态，解释 poll 自唤醒的代价 |
+| 顺序 | 任务边界 | 验收 / 证据 |
+| --- | --- | --- |
+| P0 / M0 | 实际构建链、系统 QEMU 11.1.1、工作镜像、PID 1 与 Wayland 会话接线 | 源码/配置哈希；TCG 2 GiB/4 CPU 的完整命令；console 启停、新会话入口执行日志 |
+| P0 / M0 | 基于赛方 rootfs 补齐并固定 Weston DRM/pixman 用户态 | 包来源、版本、依赖、构建能力与实际 launcher；新会话的用户、runtime 目录、原 X11 自启动停用记录 |
+| P0 / M1 | 相同 Wayland 工作镜像的 Linux 对照与错误捕获 | 同版本 Weston/Chromium Wayland 命令、Linux 成功/失败结果和分层日志；x-kernel 首个错误可定位 |
+| P0 / M1，wl_shm 前置 | Unix STREAM FD / 共享缓冲 | 两进程 SCM_RIGHTS + shared mmap 的 Linux/x-kernel 对照；短读、close、泄漏回归 |
+| P0 / M2-a | DRM 查询、原语彩条与 flip | VERSION/UNIQUE 的空缓冲与分配后查询；create/map/ADDFB2/SETCRTC/flip；两帧不同的 monitor screendump；errno/事件数据 |
+| P0 / M2-b | Weston DRM/pixman 输出与 wl_shm 最小客户端 | 按版本验证 seat/VT/设备发现；客户端 buffer 更新可见，frame/release 事件和连续 10 分钟会话记录 |
+| P0 / M2-c | 键鼠设备与 Wayland 客户端输入 | QEMU 设备、evdev/libinput 能力、按下/抬起/鼠标 event、seat 焦点和客户端真实回显 |
+| P0 / M3-a | Chromium Ozone Wayland 的渲染与沙箱路径 | 复用镜像浏览器；核对 Wayland 能力、实际 buffer 协议、渲染/context 与 GPU 进程日志，记录参数和限制 |
+| P0 / M3-b | 原始 index.html 首个可见窗口 | monitor screendump、代码/命令/日志立即建立不可移动 baseline/first-runnable |
+| P1 / M2-M4 | 显示与 IPC 资源回收 | 100 次 create/map/unmap/destroy 与窗口启动退出，内核内存/FD/resource 趋势 |
+| P1 / M4 | 多进程同步、稳定性和输入空闲 | pthread/futex/epoll、30 分钟与加载循环；输入空闲 CPU 的原始数据 |
 
 P0 表示当前主线应先验证的依赖，不表示静态报告已证明每项都会运行失败。Wayland 与复用赛方 rootfs 已确定，无需重复设置路线批准门；具体包版本和支持参数在实施时核定。VT/seat/sysfs 的必要修复由所选版本的实际路径和复现决定，Xorg 特有工作不在当前主线；没有命中的历史兼容性债务不应无边界扩成全部 Linux ABI 实现。首次满足原始 index.html 可见条件仍须立即存档，不等 10 分钟或完整输入回归完成。
 

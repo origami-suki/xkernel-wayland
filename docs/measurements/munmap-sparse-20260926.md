@@ -1,6 +1,6 @@
 # M5-002：稀疏 munmap 遍历优化
 
-本项将私有映射解除过程从“每个虚拟页重新查表”改为“按层级跳过不存在的子树、在已分配叶表内顺序处理”。独立验收通过：启动窗口 munmap CPU 五轮中位数 **37.654816 → 0.274485 秒（-99.27%）**；原页首帧观察中位区间 **80.018–81.009 → 76.005–77.020 秒**，约提前 4 秒。CPU 总量减少不等于首帧等量缩短。
+本项将私有映射解除过程从“每个虚拟页重新查表”改为“按层级跳过不存在的子树、在已分配叶表内顺序处理”。独立验收通过：启动窗口 munmap CPU 五轮中位数 **37.654816 → 0.274485 秒（-99.27%）**；原页首帧观察中位区间 **80.018–81.009 → 76.005–77.020 秒**，约提前 4 秒。CPU 总量减少不等于首帧等量缩短，差额原因见下文「CPU 减少远大于首帧减少的原因」一节。
 
 ## 来源与准确受测状态
 
@@ -47,9 +47,35 @@
 - 已统计 syscall 总 CPU 中位数：69.944026 → 33.271652 秒。munmap 完成次数中位数 1027 → 1223；应用执行和进程布局会变化，不能视为逐次同一调用配对。
 - 独立微基准（每 case 五次）CPU 中位数：4 GiB 空映射 35.687 → 0.070 ms；4 GiB 固定触碰 64 页 40.282 → 0.918 ms；dense 16 MiB 18.831 → 18.469 ms。所有样本在 `micro-summary.json`，不与宿主 Linux 时间混算。
 
+## CPU 减少远大于首帧减少的原因（五轮后的追补分析）
+
+37.38 秒 CPU 减少只换来约 4 秒首帧，总 CPU 与首帧经过时间不是同一指标，现有数据可描述 CPU 分布，但不足以单独证明关键路径。以下由 `scripts/analyze_munmap_parallelism.py` 从同一批归档样本复算，修正后的产物 `artifacts/commit-cleanup-20260926/munmap-summary.json`（原 `followup-parallelism/summary.json` 保留为历史产物），不改动任何已验收结论。
+
+**开销集中在其他进程，主 browser 自身占比较低。** 按每轮 munmap CPU 的消耗名次取中位数（重负载子进程 PID 每轮漂移，按名次聚合以免串角色），单位秒：
+
+| 变体 | 第 1 | 第 2 | 第 3 | 第 4 | 前四合计占全部 munmap | 主 browser (pid 29) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 优化前 | 11.643 | 11.483 | 11.237 | 3.251 | 99.8% | 0.049 |
+| 优化后 | 0.068 | 0.059 | 0.050 | 0.048 | 80.9% | 0.062 |
+
+单次均值从约 42–44 ms 降到约 0.15–0.22 ms。优化前主 browser 只承担全部 munmap CPU 的约 0.13%，且这四个重负载进程在首帧之后仍存活并进入稳定窗口，但存活时间重叠不等于其工作不在 browser 的依赖链上。
+
+**完整采样窗口的平均占用低于四核满载。** 对每轮 `profile-host-samples.jsonl` 取 QEMU 进程宿主 CPU 时间与墙钟之比（TCG 下繁忙 vCPU 约等于占满一个宿主核）：
+
+| 变体 | 宿主 CPU 秒 | 墙钟秒 | 平均繁忙 vCPU | 占 4 vCPU |
+| --- | ---: | ---: | ---: | ---: |
+| 优化前 | 279.4 | 117.0 | 2.39 | 60% |
+| 优化后 | 234.5 | 112.0 | 2.09 | 52% |
+
+宿主为 16 线程、采样时 load 约 4；这些汇总值不能排除短时宿主竞争，也不能证明 guest 启动关键区间始终有空闲。两组宿主 CPU 中位数相差约 44.9 秒，与 munmap CPU 减少方向一致，但统计范围不同，不能据此进行精确因果归因。
+
+**容量归一化与时延。** 37.38 ÷ 4 vCPU = 9.35 秒仅表示按四核满载折算的 CPU 容量时间，不是首帧收益上限或预期值。实测首帧中位提前约 4.013 秒；五对配对全部改善（+5.0、+1.0、+4.0、+2.0、+4.0 秒，中位 +4.0），方向一致，但两组区间重叠，仍不声称每轮明显改善。确认差额原因还需要覆盖启动关键区间的调度和跨进程依赖证据。
+
+**边界。** 主 browser 取 pid 29：该 PID 在十轮中九轮为总 CPU 最高进程（baseline-2 被一个 munmap 重负载子进程超过），且与 M1-013 热点表中带原始页 URL 的 PID 一致，`--browser-pid` 可改。宿主 CPU 比值含 QEMU 的非 vCPU 线程，是利用率近似而非精确占用。该结论与首帧约一秒采样的分辨率限制叠加，不据此把 4 秒当精确值。
+
 ## 测量边界
 
-首帧是从浏览器启动前标记到首次匹配 monitor PPM 的宿主观察区间，约一秒采样，不是 guest 精确呈现时间。CPU 是窗口内完成的 dispatcher 调用，不含全部用户态/缺页/后台工作，多个线程的 CPU 总和不是关键路径经过时间。
+首帧是从浏览器启动前标记到首次匹配 monitor PPM 的宿主观察区间，约一秒采样，不是 guest 精确呈现时间。CPU 是窗口内完成的 dispatcher 调用，不含全部用户态/缺页/后台工作，多个线程的 CPU 总和不是关键路径经过时间；上一节给出该差额在这组样本中的实际大小。
 
 C2/C3 的 QEMU VmSwap 峰值分别 324/1376 KiB，其余八轮为 0；所有样本保留。QEMU RSS 峰值中位数 1,977,244 → 2,012,920 KiB，不能当作 guest 浏览器内存。宿主后台噪声、swap 对延迟的影响未单独量化，因此约 4 秒是这组样本的结果，不是无噪声保证。
 
@@ -68,6 +94,17 @@ python3 scripts/prepare_munmap_tests.py --base work/images/m1-013-profile-final.
 
 用既有 `run_guest.py` 执行 `/opt/ict-tests/munmap-sparse check` 和 `bench`；用冻结的 `run_syscall_profile.py --profile-mode on` 跑两侧应用，再以 `analyze_syscall_profile.py` 解析。M1-013 工具仍为既有未提交依赖，准确版本已随 `final-freeze/integration-source.tar` 保存，不能只凭本项 Git commit 重建统计环境。
 
+复算 CPU 与首帧差额（只读归档，不构建、不启动）：
+
+```sh
+python3 scripts/analyze_munmap_parallelism.py \
+  --output artifacts/M5-002-munmap-20260926/followup-parallelism/summary.json
+```
+
 额外 MADV_DONTNEED 用例保存在 `tests/mm/madvise-neighbours.c`；受测编译、部署和完整回归命令见 `independent/scripts/`、`application-commands.json`，其 C 源码与独立受测版本一致。
 
 源状态/配置/输入 hash：`freeze/`、`final-freeze/`、`preparation-v2/`；独立全部应用命令、原始串口、逐秒 monitor PPM、宿主采样和准确内核产物在 `independent/runs/` 及 `*-bundle/`。主提交后复核与备份结果索引见 [M5-002 任务卡](../tasks/M5-002.md)。
+
+## 整理提交复核
+
+2026-09-26：修正追补脚本将容量归一化误作首帧收益上限的推断；从原始十轮归档复算，输出保存在 `artifacts/commit-cleanup-20260926/munmap-summary.json` 和 `munmap-analysis.log`。原始实验、历史汇总与五轮验收结论未覆盖。

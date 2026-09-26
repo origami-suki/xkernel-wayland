@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-27：**M5-003 定位闭环完成，下一候选为 openat 的实际文件创建路径。** 五轮复扫 openat CPU 中位 8.068149 秒；两轮原页诊断显示中间遍历与末查找/创建占路径打开 85.58%，小 C 探针 120/120 成功并经独立复核。已有 O_CREAT 与实际创建的成本已区分，但 Chromium 实际创建数和创建内部成本仍待确认，尚无生产优化。全程最多一个 QEMU。见 [M5-003](tasks/M5-003.md)、[复扫记录](measurements/syscall-hotspots-post-munmap-20260927.md)与[定位记录](measurements/openat-path-cost-20260927.md)。
+
 2026-09-26：**M5-002 munmap 优化已独立验证并提交。** 五轮 munmap CPU 中位数 37.654816 → 0.274485 秒，原页首帧观察中位区间约提前 4 秒；见 [测量记录](measurements/munmap-sparse-20260926.md)。[首轮 syscall 扫描](measurements/syscall-hotspots-20260926.md) 是优化前诊断；下一步先复扫热点再选择 openat 等候选。M1-013 统计工具的剩余独立验收和五开五关对照按用户要求停止，不将未完成项写成通过。
 
 2026-09-25：**原生 Wayland Chromium 已正确显示原始 index.html，并立即建立不可变 `baseline/first-runnable`**（集成 `6cf0331`、内核 `31c8f270`）。关键参数为 `--ipc-connection-timeout=120`；默认 15 秒会触发已观察到的子进程连接超时。F_DUPFD 和未知 fcntl 已修复并通过同盘对照，M0/M1/M2 既有验证保留。仍使用 no-sandbox，真实输入、页面自检、10/30 分钟稳定性、正常退出和性能计量待验证。见 [首个可运行记录](first-runnable.md)。

@@ -35,6 +35,18 @@ python3 scripts/analyze_startup_trace.py --run artifacts/runs/my-chromium-trace
 
 输出 `perfetto-analysis/` 下的原始 SQL、CSV、解析日志与 `summary.json`，包括进程/线程覆盖、最长 slice、startup/navigation 阶段、资源完整性检查任务及其读取调用、非零错误/数据丢失提示。对同一 trace 执行新版查询时，用 `--output` 指定另一个新目录，不覆盖旧分析。
 
+**CPU 预算入口**（不计运行时间线，只回答"CPU 花在哪些进程、线程、函数和阶段"）：
+
+```sh
+python3 scripts/analyze_trace_cpu_budget.py --run artifacts/runs/<run-id> --output <新目录>
+# 可选阶段窗口（trace 纳秒），两条 trace 用各自的应用里程碑对齐：
+python3 scripts/analyze_trace_cpu_budget.py --run artifacts/runs/<run-id> \
+  --window-start-ns <启动基准> --window-end-ns <FirstPaint> \
+  --window-label browser-start-to-first-paint --output <新目录>
+```
+
+CPU 取 slice 的 `thread_dur`，只汇总 `depth=0`，因此是**下界**；没有调度事件，所以不能把 `dur - thread_dur` 归因到具体锁、I/O 或定时器。实测偏差与覆盖限制见 [2026-09-26 CPU 预算记录](measurements/cpu-budget-20260926.md)。
+
 在 [Perfetto UI](https://ui.perfetto.dev/) 选择 **Open trace file**，打开 `.pftrace`。本轮已实际验证网页加载该文件并显示 Browser、原页 Renderer、GPU、NetworkService 等轨道；文件在本地打开，没有使用分享/上传入口。浏览器本地缓存 URL 不是跨设备分享链接，应交付实际 `.pftrace` 文件。
 
 ## 解释边界

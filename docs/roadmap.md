@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-27：**M5-004 当前内核与 Linux 的新 Perfetto 单轮对照完成。** Leader/worker 串行采集，独立审查通过，两侧原页显示、trace 导出与正常退出均通过。内部 NonEmptyPaint 为 92.650 / 11.424 秒；匹配 3003 次读取累计 CPU 为 5.782 / 0.135 秒，是下一项最小复现候选，尚未证明首帧依赖。早期覆盖和 service 丢弃限制已记录，不视为正式性能成绩或唯一内核根因。见 [M5-004](tasks/M5-004.md) 与[对照报告](measurements/perfetto-linux-compare-20260927.md)。
+
 2026-09-27：**M5-003 定位闭环完成，下一候选为 openat 的实际文件创建路径。** 五轮复扫 openat CPU 中位 8.068149 秒；两轮原页诊断显示中间遍历与末查找/创建占路径打开 85.58%，小 C 探针 120/120 成功并经独立复核。已有 O_CREAT 与实际创建的成本已区分，但 Chromium 实际创建数和创建内部成本仍待确认，尚无生产优化。全程最多一个 QEMU。见 [M5-003](tasks/M5-003.md)、[复扫记录](measurements/syscall-hotspots-post-munmap-20260927.md)与[定位记录](measurements/openat-path-cost-20260927.md)。
 
 2026-09-26：**M5-002 munmap 优化已独立验证并提交。** 五轮 munmap CPU 中位数 37.654816 → 0.274485 秒，原页首帧观察中位区间约提前 4 秒；见 [测量记录](measurements/munmap-sparse-20260926.md)。[首轮 syscall 扫描](measurements/syscall-hotspots-20260926.md) 是优化前诊断；下一步先复扫热点再选择 openat 等候选。M1-013 统计工具的剩余独立验收和五开五关对照按用户要求停止，不将未完成项写成通过。

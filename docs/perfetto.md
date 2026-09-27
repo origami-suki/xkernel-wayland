@@ -51,6 +51,7 @@ CPU 取 slice 的 `thread_dur`，只汇总 `depth=0`，因此是**下界**；没
 
 ## 解释边界
 
+- 最新同版本新跑对照见 [M5-004 报告](measurements/perfetto-linux-compare-20260927.md)。其中专用 SQL 只累计窗口完整包含的 depth0 slice，跨边界 CPU 单列，进程按 upid 区分，追踪线程/进程用 OR 去重。旧 `analyze_trace_cpu_budget.py` 的窗口、同名进程汇总、追踪分类和按起点归桶输出存在口径限制；不要直接用其汇总作精确同窗 CPU 或饱和度结论。本任务保留旧脚本与历史产物，不改写历史原始证据。
 - slice 的 `dur` 是经过时间，可能包含抢占、阻塞和等待，不等同 CPU 用时；父子 slice 与并发任务的时长不能直接相加。
 - **历史 `31c8f270` 的 `thread_dur` 不可信。** 自编 `tests/observe/thread-clock.c` 的同盘对照证明，该版本把 1 秒睡眠计成约 1 秒 CPU 时间。CPU-only `9b55511b` 及后续 buddy 组合均通过 [M1-012](tasks/M1-012.md) 的睡眠、阻塞 read 和就绪排队校准，长任务中 CPU 与经过时间恢复区别；短 slice 仍有采样误差，不能承诺逐事件精度，也不能把 `dur-thread_dur` 自动归因到某种锁或 I/O 等待。修复不会改变旧 trace 的原始计数。
 - 默认启动追踪生成的 DISCARD/流式写入、未设周期 flush 配置会被新版 Perfetto 标记为风险。这些提示不能直接解释成“确实丢了几个事件”，也不能忽略；同时查看原始 buffer/producer/解析计数与实际覆盖范围。

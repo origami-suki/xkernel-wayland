@@ -63,6 +63,17 @@ def main():
              '-I' + str(headers), source, '-o', binary, *flags])
         probes[binary_name] = {'source': str(source.relative_to(ROOT)),
                                'source_sha256': sha256(source), 'binary_sha256': sha256(binary)}
+    source = ROOT / 'tests/chromium/gpu-observer.c'
+    binary = evidence / 'gpu-observer'
+    (evidence / source.name).write_bytes(source.read_bytes())
+    run([compiler, '-Wall', '-Wextra', '-Werror', '-O2', '-static', source, '-o', binary])
+    probes[binary.name] = {'source': str(source.relative_to(ROOT)),
+                           'source_sha256': sha256(source), 'binary_sha256': sha256(binary)}
+    session = ROOT / 'tests/chromium/virgl-session.sh'
+    run(['sh', '-n', session])
+    (evidence / 'virgl-session.sh').write_bytes(session.read_bytes())
+    probes['virgl-session.sh'] = {'source': str(session.relative_to(ROOT)),
+                                 'source_sha256': sha256(session), 'binary_sha256': sha256(session)}
     before = sha256(base)
     run(['e2fsck', '-fn', base])
     run(['cp', '--reflink=always', base, output])

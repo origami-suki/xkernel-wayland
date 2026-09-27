@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-28：**M2-004 隔离资源映射诊断建立了本会话FB→对象→virgl资源关联，根因仍未确定。** 独立审查的一次四轮运行中，FB1/资源`0x1000`对应R1/R3原页正文，FB2/资源`0x101c`对应R2/R4全黑；QEMU收到两资源的set-scanout/flush，内核日志无溢出，正式monitor仍`no surface`、Chrome仍SIG11。上一会话明暗FB编号相反，编号不可跨会话推论；submit引用不是像素写入证明。下一步仅在隔离区作有读回有效性门槛的实际输出资源诊断。见 [M2-004](tasks/M2-004.md)。
+
 2026-09-28：**M2-004 四次同类无读回刺激稳定关联FB与画面。** R1/R3的GETCRTC前后FB2及Westonselected FB一致、正文RGB相同；R2/R4的FB1一致、全黑RGB相同。独立原始证据审查PASS仅限定committed abstract FB关联，仍缺BO/resource/update身份。有限上游检索未识别适用最小补丁，未改内核；下一项是隔离诊断的FB→resource映射/生命周期与QEMU资源事件对齐。Chrome仍SIG11、formal仍no surface。见 [M2-004](tasks/M2-004.md)。
 
 2026-09-28：**M2-004 无capture读回干预后出现正文，正常capture后又黑。** 精确stride错误验证该capture任务在读回前退出；本轮正文就绪通过，30秒两帧全黑→无读回重绘后正文→正常W/外图重新黑。日志FB1→FB2→FB1仅为关联，尚非BO/GEM身份或buffer-age缺陷证明。独立证据审查PASS，正常Chrome退出/正式monitor仍未通过。见 [M2-004](tasks/M2-004.md)。

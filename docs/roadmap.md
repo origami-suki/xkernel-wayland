@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-28：**M2-004 GPU生成XRGB buffer到KMS外部像素通过限定对照。** Linux及x-kernel补跑的A/B外部RGB、采集后GPU回读均零差异，实际翻页事件/GETCRTC及清理退出全0。首x-kernel ACK空格丢失导致B未运行和exit1完整保留，补跑仅改私有采集握手，Linux未测新版。独立原始像素/证据审查PASS、314文件备份恢复通过；formal monitor仍no surface，真实Weston ABGR导入/合成与原页输出尚未验收。见 [M2-004](tasks/M2-004.md)。
+
 2026-09-27：**M2-004 GPU共享纹理两种组合通过，原页外部显示仍未通过。** 自编C在Linux/x-kernel各验证GPU绘制、DMA-BUF/SCM_RIGHTS跨进程/context导入、shader采样到另一FBO；每端1,024,000像素零差异。将producer回读移至consumer完成之后的窄变体也通过，独立oracle及实际原始像素/顺序复核通过、退出全0。保留显式glFinish和owner存活条件，不能替代真实Chromium buffer、Weston/KMS输出或隐式同步验收；内核未改。见 [M2-004](tasks/M2-004.md)。
 
 2026-09-27：**M2-004 x-kernel内部PNG已正确，外部显示仍缺正文。** 单次诊断内图与旧Linux参考文件/RGB完全一致；Wayland真实DMA-BUF提交、Weston renderer合成/flip和presentation反馈均已见，仍没有同buffer的producer/consumer/输出像素。首个1536×1280 geometry拒绝已回退，后续1280×800为ADD_FB_FAILED，不能合并归因。截图后CDP静默、trace未导出，Chrome forced SIGKILL9，正式monitor仍受限；独立证据审查PASS不等于应用验收。见 [M2-004](tasks/M2-004.md)。

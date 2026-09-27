@@ -65,6 +65,6 @@ python3 scripts/probe_virgl_host.py \
 4. 真正 PRIME/DMA-BUF fd、跨进程 import/export 与同步、3D resource 的 KMS scanout；不得用现有 handle/fd 数值转换冒充共享，也不得用旧 shadow 覆盖 GPU 图像。
 5. 原 Mesa EGL/GLES、Weston/Chromium 实际运行，确认 renderer 是 virgl，原始 index 正确显示且正常退出。
 
-首个内核模块正在独立 worktree 实现/验证。**完整 guest GPU 链路尚未完成；本记录没有 GPU 加速后的原页首帧耗时。** 按用户要求，不重跑现有软件渲染基线或性能对照。
+用户已要求结束本对话。首个内核模块的WIP、未完成构建与交接记录已保留，全部构建进程停止，未启动guest测试；接续入口见[M2-004](../tasks/M2-004.md#新对话接续任务)。**完整 guest GPU 链路尚未完成；本记录没有 GPU 加速后的原页首帧耗时。** 按用户要求，不重跑现有软件渲染基线或性能对照。
 
 协议与模式核对使用 [QEMU virtio GPU 文档](https://www.qemu.org/docs/master/system/devices/virtio/virtio-gpu.html)、[Mesa virgl 文档](https://docs.mesa3d.org/drivers/virgl.html)；本机行为由 QEMU 11.1.1 实际选项和上述运行证据验证。宿主清理路径另核对了 [QEMU v11.1.1 egl-helpers.c](https://github.com/qemu/qemu/blob/v11.1.1/ui/egl-helpers.c)。

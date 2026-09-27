@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-27：**M2-004 x-kernel内部PNG已正确，外部显示仍缺正文。** 单次诊断内图与旧Linux参考文件/RGB完全一致；Wayland真实DMA-BUF提交、Weston renderer合成/flip和presentation反馈均已见，仍没有同buffer的producer/consumer/输出像素。首个1536×1280 geometry拒绝已回退，后续1280×800为ADD_FB_FAILED，不能合并归因。截图后CDP静默、trace未导出，Chrome forced SIGKILL9，正式monitor仍受限；独立证据审查PASS不等于应用验收。见 [M2-004](tasks/M2-004.md)。
+
 2026-09-27：**M2-004 调试策略因果已验证，x-kernel正文/DOM/采样几何与Linux一致，显示仍未通过。** 同观察器Linux配对仅改工作副本DeveloperToolsAvailability 2→1，即恢复page attach和内容请求。x-kernel诊断变体取得75元素、116 DOM节点及相同正文/rect；Page layout和内部截图无回复，外部前后白屏无正文。独立证据审查PASS，生产内核未改；首次x-kernel采集器gate失败及forced SIGKILL9保留，补跑/两Linux仍关闭SIGSEGV11，正式monitor no surface。详见 [M2-004](tasks/M2-004.md)。
 
 2026-09-27：**M2-004 同用户态 CDP 对照完成，内容定位仍 BLOCKED。** Linux 原 pipe 也复现 attach ACK 后 SessionNotFound；直接 page WS 两侧最小 Runtime 无完整回复。独立审查后唯一 Linux 增量将 Page/DOM/Runtime 分开采样，三条各45秒超时、观察器page帧读取0字节，target三次attached=false；Linux外部原页仍可见，不能由共同调试静默推定x-kernel DOM异常。未追加x-kernel实验或生产内核修改，正式截图与正常关闭仍失败/阻塞。两次证据审查PASS仅限定记录准确，观察器另有未触发的负poll timeout风险；新增材料已备份。见 [M2-004](tasks/M2-004.md)。

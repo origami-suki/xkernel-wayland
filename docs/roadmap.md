@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-28：**M2-004 四次同类无读回刺激稳定关联FB与画面。** R1/R3的GETCRTC前后FB2及Westonselected FB一致、正文RGB相同；R2/R4的FB1一致、全黑RGB相同。独立原始证据审查PASS仅限定committed abstract FB关联，仍缺BO/resource/update身份。有限上游检索未识别适用最小补丁，未改内核；下一项是隔离诊断的FB→resource映射/生命周期与QEMU资源事件对齐。Chrome仍SIG11、formal仍no surface。见 [M2-004](tasks/M2-004.md)。
+
 2026-09-28：**M2-004 无capture读回干预后出现正文，正常capture后又黑。** 精确stride错误验证该capture任务在读回前退出；本轮正文就绪通过，30秒两帧全黑→无读回重绘后正文→正常W/外图重新黑。日志FB1→FB2→FB1仅为关联，尚非BO/GEM身份或buffer-age缺陷证明。独立证据审查PASS，正常Chrome退出/正式monitor仍未通过。见 [M2-004](tasks/M2-004.md)。
 
 2026-09-28：**M2-004 无CDP截图控制仍在Weston捕获后出现原页。** 同会话无C/Tracing，30秒窗口两张外图均无正文且RGB相同；一次原Weston capture后W/F2完整RGB一致并有正文。30个独立Runtime全部超时、readiness未验证，Chrome退出forced SIG9；独立证据审查PASS不排除源更新/自然进展，不唯一归因capture中的重绘/planes/读回。见 [M2-004](tasks/M2-004.md)。

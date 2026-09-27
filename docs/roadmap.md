@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-28：**M2-004 无capture读回干预后出现正文，正常capture后又黑。** 精确stride错误验证该capture任务在读回前退出；本轮正文就绪通过，30秒两帧全黑→无读回重绘后正文→正常W/外图重新黑。日志FB1→FB2→FB1仅为关联，尚非BO/GEM身份或buffer-age缺陷证明。独立证据审查PASS，正常Chrome退出/正式monitor仍未通过。见 [M2-004](tasks/M2-004.md)。
+
 2026-09-28：**M2-004 无CDP截图控制仍在Weston捕获后出现原页。** 同会话无C/Tracing，30秒窗口两张外图均无正文且RGB相同；一次原Weston capture后W/F2完整RGB一致并有正文。30个独立Runtime全部超时、readiness未验证，Chrome退出forced SIG9；独立证据审查PASS不排除源更新/自然进展，不唯一归因capture中的重绘/planes/读回。见 [M2-004](tasks/M2-004.md)。
 
 2026-09-28：**M2-004 原Weston截图后外部原页可见，仍是诊断干预结果。** 捕获前F1白屏，原screenshooter的合成图W与捕获后F2有正文且完整RGB一致；协议complete/fresh PNG/真实client退出均通过。本轮CDP内图未取得、body循环被观察器gate跳过；capture重绘/禁planes/读回与自然进展或pending C尚未拆分，不能称原场景修复。独立证据审查PASS，Chrome仍SIGSEGV11、formal monitor仍no surface。见 [M2-004](tasks/M2-004.md)。

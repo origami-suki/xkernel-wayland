@@ -31,15 +31,20 @@ int main(int argc, char **argv) {
     int available = 0;
     for (unsigned param = VIRTGPU_PARAM_3D_FEATURES;
          param <= VIRTGPU_PARAM_SUPPORTED_CAPSET_IDs; ++param) {
-        uint64_t value = 0;
+        struct { uint32_t value, canary; } output = {0, UINT32_C(0x9abcde72)};
         struct drm_virtgpu_getparam query = {
-            .param = param, .value = (uint64_t)(uintptr_t)&value
+            .param = param, .value = (uint64_t)(uintptr_t)&output.value
         };
         errno = 0;
         rc = ioctl(fd, DRM_IOCTL_VIRTGPU_GETPARAM, &query);
-        printf("VIRGL_PARAM param=%u rc=%d errno=%d value=%" PRIu64 "\n",
-               param, rc, errno, value);
-        if (param == VIRTGPU_PARAM_3D_FEATURES) available = rc == 0 && value != 0;
+        printf("VIRGL_PARAM param=%u rc=%d errno=%d value=%" PRIu32 " canary=%08" PRIx32 "\n",
+               param, rc, errno, output.value, output.canary);
+        if (output.canary != UINT32_C(0x9abcde72)) {
+            puts("VIRGL_GETPARAM_ABI_FAIL expected_4_byte_copy=1");
+            close(fd);
+            return 2;
+        }
+        if (param == VIRTGPU_PARAM_3D_FEATURES) available = rc == 0 && output.value != 0;
     }
     /* Bounded queries are diagnostic only: opaque bytes do not prove execution. */
     unsigned readable_capsets = 0;

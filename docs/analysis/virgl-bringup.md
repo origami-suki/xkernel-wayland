@@ -57,7 +57,9 @@ python3 scripts/probe_virgl_host.py \
 
 ## Guest 所需模块及验收
 
-现有 rootfs Mesa 25.1.9 已含 virgl 实现，当前没有必须替换或升级第三方用户态的证据。当前 x-kernel 使用本地 2D virtio 适配器，DRM identity 为 simpledrm、只有 card0、没有 virtgpu 3D UAPI。完整链按以下独立模块推进：
+本次已独立验证并引入三个前置模块：真实 capset 缓存、owned physical mmap、DRM 每文件状态，主内核为 `665e62d5`。最终组合 canonical 268 项单测、coverage、隔离/共享映射及默认 2D 红绿 monitor 原图与正常退出通过；主区 WARN 配置重建/clippy 和新的相同功能回归也通过。真实 virtgpu UAPI 仍明确拒绝，backing 回收仍未完成。准确源码和原始证据见[任务卡](../tasks/M2-004.md)。后续 3D 后端初版的独立静态审查失败，正在修正，不使用编译成功替代 3D/Mesa/Chromium 验收。
+
+现有 rootfs Mesa 25.1.9 已含 virgl 实现，当前没有必须替换或升级第三方用户态的证据。当前主区 x-kernel 使用本地 2D virtio 适配器并缓存真实 capset，DRM identity 为 simpledrm、只有 card0、没有 virtgpu 3D UAPI。完整链按以下独立模块推进：
 
 1. 复用已经锁定的 kvirtiodrivers 0.13.3，暴露真实协商与 capset，保留 2D；不得在关中断自旋锁内暴露长 GPU fence 等待。
 2. DRM 每个 file description 的 context/GEM handle 与 close 生命周期、真实 render 节点和发现；只能宣告确实实现的能力。
@@ -65,6 +67,6 @@ python3 scripts/probe_virgl_host.py \
 4. 真正 PRIME/DMA-BUF fd、跨进程 import/export 与同步、3D resource 的 KMS scanout；不得用现有 handle/fd 数值转换冒充共享，也不得用旧 shadow 覆盖 GPU 图像。
 5. 原 Mesa EGL/GLES、Weston/Chromium 实际运行，确认 renderer 是 virgl，原始 index 正确显示且正常退出。
 
-用户已要求结束本对话。首个内核模块的WIP、未完成构建与交接记录已保留，全部构建进程停止，未启动guest测试；接续入口见[M2-004](../tasks/M2-004.md#新对话接续任务)。**完整 guest GPU 链路尚未完成；本记录没有 GPU 加速后的原页首帧耗时。** 按用户要求，不重跑现有软件渲染基线或性能对照。
+上次对话停止时保留了首个内核模块的 WIP 和未完成构建；本次用户已授权 leader/worker 从该状态继续，先补全并独立验证第一模块。接续入口和模块验收见 [M2-004](../tasks/M2-004.md#新对话接续任务)。**完整 guest GPU 链路尚未完成；本记录没有 GPU 加速后的原页首帧耗时。** 按用户要求，不重跑现有软件渲染基线或性能对照。
 
 协议与模式核对使用 [QEMU virtio GPU 文档](https://www.qemu.org/docs/master/system/devices/virtio/virtio-gpu.html)、[Mesa virgl 文档](https://docs.mesa3d.org/drivers/virgl.html)；本机行为由 QEMU 11.1.1 实际选项和上述运行证据验证。宿主清理路径另核对了 [QEMU v11.1.1 egl-helpers.c](https://github.com/qemu/qemu/blob/v11.1.1/ui/egl-helpers.c)。

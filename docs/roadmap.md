@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-27：**M2-004 virgl 宿主组件和启动入口已独立验证。** 同版本QEMU补齐GL/EGL模块；NVIDIA RTX4060明确render node下，硬件EGL/GL、headless virgl初始化、monitor原图与退出0通过。AMD节点quit有宿主Mesa崩溃，失败记录保留。guest完整3D/DRM/DMA-BUF链尚未完成；按用户要求未复跑软件基线或计时。见 [M2-004](tasks/M2-004.md)、[链路记录](analysis/virgl-bringup.md)。
+
 2026-09-27：**M5-006 前两项热点定位通过独立复核。** GPU同步等待20.075秒已缩到初始化失败／回退／回复链，失败进程内部栈尚缺；trap返回路径无活动CPUtimer仍全线程聚合，插桩下1→33线程聚合均值约7–9→73μs，原页配对样本占poll CPU53.15%。观测开销144%，未量化生产成本或收益；临时诊断仅在隔离区，未修改生产内核。见 [M5-006](tasks/M5-006.md)、[定位报告](measurements/hotspot-localization-20260927.md)。
 
 2026-09-27：**M5-005 读取微测与线程数对照完成。** 单线程无追踪热读 CPU 约 81–92 ms，未复现 Perfetto 的 5.782 秒；增加 0/8/32 个阻塞辅助线程后，固定读取量的 x-kernel CPU 约 78/133/279 ms，混合时钟循环约 180/396/967 ms，Linux 未现相同增长。独立审查通过，下一边界为每 trap 的线程数相关共同成本；!813 仅有元数据，尚未获取或验证。见 [M5-005](tasks/M5-005.md)、[报告](measurements/read-path-probe-20260927.md)。

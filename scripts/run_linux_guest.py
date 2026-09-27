@@ -29,6 +29,7 @@ from pathlib import Path
 from frame_capture import OneSecondSampler, capture_frames
 from missing_interfaces import write_inventory
 from serial_drain import SerialDrain
+from qemu_graphics import graphics_metadata, graphics_options
 
 ROOT = Path(__file__).resolve().parents[1]
 QEMU = "/usr/bin/qemu-system-aarch64"
@@ -173,7 +174,12 @@ def main():
     parser.add_argument("--timeout", type=float, default=240)
     parser.add_argument("--sample-every-second", action="store_true",
                         help="host screenshots after __ICT_CAPTURE_START__, until STOP or 181 frames")
+    parser.add_argument("--gpu-backend", choices=("2d", "virgl"), default="2d",
+                        help="QEMU graphics backend; virgl does not prove guest acceleration")
+    parser.add_argument("--render-node", type=Path,
+                        help="explicit readable/writable host DRM render node, required for virgl")
     args = parser.parse_args()
+    graphics = graphics_options(args.gpu_backend, args.render_node)
     sampler = OneSecondSampler() if args.sample_every_second else None
     require(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}", args.run_id), "invalid run ID")
     require(0 < args.timeout <= 3600, "timeout must be in (0, 3600]")
@@ -189,6 +195,7 @@ def main():
     shutil.copy2(Path(__file__), output / "run_linux_guest.py")
     shutil.copy2(Path(__file__).with_name("frame_capture.py"), output / "frame_capture.py")
     shutil.copy2(Path(__file__).with_name("serial_drain.py"), output / "serial_drain.py")
+    shutil.copy2(Path(__file__).with_name("qemu_graphics.py"), output / "qemu_graphics.py")
     shutil.copy2(Path(__file__).with_name("missing_interfaces.py"), output / "missing_interfaces.py")
     state = {"run_id": args.run_id, "started_utc": datetime.now(timezone.utc).isoformat(),
              "integration": git_state(ROOT), "xkernel_reference": git_state(ROOT / "sources/x-kernel"),
@@ -198,6 +205,8 @@ def main():
              "runner_sha256": sha256(output / "run_linux_guest.py"),
              "frame_capture_sha256": sha256(output / "frame_capture.py"),
              "serial_drain_sha256": sha256(output / "serial_drain.py"),
+             "qemu_graphics_sha256": sha256(output / "qemu_graphics.py"),
+             "graphics": graphics_metadata(args.gpu_backend, args.render_node, graphics),
              "missing_interfaces_sha256": sha256(output / "missing_interfaces.py"),
              "disk": {"path": str(disk), "snapshot": True}, "timeout_seconds": args.timeout,
              "policy": "AArch64 TCG thread=multi, 2 GiB, 4 vCPU; same PCI devices as x-kernel runner; offline"}
@@ -220,9 +229,10 @@ def main():
                 "-append", "console=ttyAMA0 root=/dev/vda rw", "-snapshot",
                 "-drive", f"id=disk0,if=none,format=raw,file={disk}",
                 "-device", "virtio-blk-pci,drive=disk0", "-object", "rng-random,id=host_rng0",
-                "-device", "virtio-rng-pci,rng=host_rng0", "-device", "virtio-gpu-pci",
+                "-device", "virtio-rng-pci,rng=host_rng0",
+                *graphics[:2],
                 "-device", "virtio-keyboard-pci", "-device", "virtio-mouse-pci",
-                "-nic", "none", "-vga", "none", "-display", "none",
+                "-nic", "none", "-vga", "none", *graphics[2:],
                 "-chardev", f"socket,id=serial0,path={socket_dir}/serial,server=on,wait=off,"
                 f"logfile={output}/serial.log", "-serial", "chardev:serial0",
                 "-monitor", f"unix:{socket_dir}/monitor,server=on,wait=off", "-no-reboot"]

@@ -1,6 +1,7 @@
 """Host-only graphics selection tests: no real render node or QEMU is used."""
 import contextlib
 import io
+import itertools
 import json
 import os
 import stat
@@ -87,14 +88,16 @@ class RunnerGraphicsTests(unittest.TestCase):
 
     def test_planned_launch_preserves_2d_order_and_selects_virgl(self):
         for runner in (run_guest, run_linux_guest):
-            for backend in ('2d', 'virgl'):
-                with self.subTest(runner=runner.__name__, backend=backend), \
+            for backend, supplement in itertools.product(('2d', 'virgl'), (False, True)):
+                with self.subTest(runner=runner.__name__, backend=backend, supplement=supplement), \
                         tempfile.TemporaryDirectory() as temporary, contextlib.ExitStack() as stack:
                     root = Path(temporary)
                     disk = root / 'work/images/test.img'
                     disk.parent.mkdir(parents=True)
                     disk.write_bytes(b'test')
                     arguments = ['--run-id', 'graphics-test', '--disk', str(disk)]
+                    if supplement:
+                        arguments += ['--vnc-supplement']
                     options = ['-device', 'virtio-gpu-pci', '-display', 'none']
                     if backend == 'virgl':
                         arguments += ['--gpu-backend', 'virgl', '--render-node',
@@ -140,6 +143,14 @@ class RunnerGraphicsTests(unittest.TestCase):
                                  f'socket,id=serial0,path={socket_dir}/serial,server=on,wait=off,'
                                  f'logfile={output}/serial.log', '-serial', 'chardev:serial0', '-monitor',
                                  f'unix:{socket_dir}/monitor,server=on,wait=off', '-no-reboot']
+                    if supplement:
+                        expected += ['-vnc', 'unix:' + str(socket_dir / 'vnc')]
+                        self.assertFalse(state['vnc_supplement']['guest_acceleration_verified'])
+                        self.assertEqual(state['vnc_supplement']['socket'], str(socket_dir / 'vnc'))
+                        self.assertTrue((output / 'vnc_capture.py').is_file())
+                    else:
+                        self.assertNotIn('vnc_supplement', state)
+                        self.assertFalse((output / 'vnc_capture.py').exists())
                     self.assertEqual(argv, expected)
                     self.assertEqual(state['argv'], argv)
                     self.assertEqual(state['graphics']['backend'], backend)

@@ -27,6 +27,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from frame_capture import OneSecondSampler, capture_frames
+from vnc_capture import capture_vnc, vnc_options
 from missing_interfaces import write_inventory
 from serial_drain import SerialDrain
 from qemu_graphics import graphics_metadata, graphics_options
@@ -178,6 +179,8 @@ def main():
                         help="QEMU graphics backend; virgl does not prove guest acceleration")
     parser.add_argument("--render-node", type=Path,
                         help="explicit readable/writable host DRM render node, required for virgl")
+    parser.add_argument("--vnc-supplement", action="store_true",
+                        help="private UNIX VNC images as supplemental evidence; monitor remains required")
     args = parser.parse_args()
     graphics = graphics_options(args.gpu_backend, args.render_node)
     sampler = OneSecondSampler() if args.sample_every_second else None
@@ -210,6 +213,8 @@ def main():
              "missing_interfaces_sha256": sha256(output / "missing_interfaces.py"),
              "disk": {"path": str(disk), "snapshot": True}, "timeout_seconds": args.timeout,
              "policy": "AArch64 TCG thread=multi, 2 GiB, 4 vCPU; same PCI devices as x-kernel runner; offline"}
+    if args.vnc_supplement:
+        shutil.copy2(Path(__file__).with_name("vnc_capture.py"), output / "vnc_capture.py")
     print(f"Evidence: {output}", flush=True)
     process = serial = monitor = sockets = None
     drain = None
@@ -236,6 +241,17 @@ def main():
                 "-chardev", f"socket,id=serial0,path={socket_dir}/serial,server=on,wait=off,"
                 f"logfile={output}/serial.log", "-serial", "chardev:serial0",
                 "-monitor", f"unix:{socket_dir}/monitor,server=on,wait=off", "-no-reboot"]
+        if args.vnc_supplement:
+            argv += vnc_options(True, socket_dir)
+            state['vnc_supplement'] = {
+                'socket': str(socket_dir / 'vnc'), 'listener': 'private UNIX socket; no TCP port',
+                'reason': 'supplemental host readback for GL scanout when monitor lacks CPU surface',
+                'formal_monitor_requirement': 'unchanged; missing screendump remains BLOCKED',
+                'guest_acceleration_verified': False,
+                'script_sha256': sha256(output / 'vnc_capture.py')}
+        vnc_capture = (lambda label: capture_vnc(socket_dir / 'vnc', output, label,
+            context={key: state.get(key) for key in ('qemu_version', 'actual_argv', 'graphics')})) \
+            if args.vnc_supplement else None
         state["argv"] = argv
         (output / "command.sh").write_text("#!/bin/sh\nexec " + shlex.join(argv) + "\n")
         token = uuid.uuid4().hex
@@ -277,9 +293,9 @@ def main():
                 if phase == "commands":
                     send_monitor = lambda command: monitor_command(monitor, mon_log, command)
                     if sampler:
-                        sampler.update(clean, output, send_monitor, state)
+                        sampler.update(clean, output, send_monitor, state, vnc_capture=vnc_capture)
                     else:
-                        capture_frames(clean, output, send_monitor, state)
+                        capture_frames(clean, output, send_monitor, state, vnc_capture=vnc_capture)
                 completed = re.search(r"(?m)^" + re.escape(done) + r"(\d+)$", clean)
                 if phase == "commands" and completed:
                     state["guest_exit_code"] = int(completed[1])

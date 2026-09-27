@@ -25,6 +25,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from frame_capture import OneSecondSampler, capture_frames
+from vnc_capture import capture_vnc, vnc_options
 from missing_interfaces import write_inventory
 from serial_drain import SerialDrain
 from qemu_graphics import graphics_metadata, graphics_options
@@ -235,6 +236,8 @@ def main():
                         help="QEMU graphics backend; virgl does not prove guest acceleration")
     parser.add_argument("--render-node", type=Path,
                         help="explicit readable/writable host DRM render node, required for virgl")
+    parser.add_argument("--vnc-supplement", action="store_true",
+                        help="private UNIX VNC images as supplemental evidence; monitor remains required")
     args = parser.parse_args()
     graphics = graphics_options(args.gpu_backend, args.render_node)
     require(1 <= args.capture_limit <= 601, "capture limit must be in [1, 601]")
@@ -259,6 +262,8 @@ def main():
     shutil.copy2(Path(__file__).with_name("qemu_graphics.py"), output / "qemu_graphics.py")
     shutil.copy2(Path(__file__).with_name("missing_interfaces.py"), output / "missing_interfaces.py")
     shutil.copy2(Path(__file__).with_name("gdb_capture.py"), output / "gdb_capture.py")
+    if args.vnc_supplement:
+        shutil.copy2(Path(__file__).with_name("vnc_capture.py"), output / "vnc_capture.py")
     print(f"Evidence: {output}", flush=True)
     state = {"run_id": args.run_id, "started_utc": datetime.now(timezone.utc).isoformat(),
              "integration": git_state(ROOT), "kernel": git_state(KERNEL),
@@ -312,6 +317,17 @@ def main():
                 "-monitor", f"unix:{socket_dir}/monitor,server=on,wait=off", "-no-reboot"]
         if debug:
             argv += debug.qemu_args()
+        if args.vnc_supplement:
+            argv += vnc_options(True, socket_dir)
+            state['vnc_supplement'] = {
+                'socket': str(socket_dir / 'vnc'), 'listener': 'private UNIX socket; no TCP port',
+                'reason': 'supplemental host readback for GL scanout when monitor lacks CPU surface',
+                'formal_monitor_requirement': 'unchanged; missing screendump remains BLOCKED',
+                'guest_acceleration_verified': False,
+                'script_sha256': sha256(output / 'vnc_capture.py')}
+        vnc_capture = (lambda label: capture_vnc(socket_dir / 'vnc', output, label,
+            context={key: state.get(key) for key in ('qemu_version', 'actual_argv', 'graphics')})) \
+            if args.vnc_supplement else None
         state["argv"] = argv
         write_json(output / "metadata.json", state)
         (output / "command.sh").write_text("#!/bin/sh\nexec " + shlex.join(argv) + "\n")
@@ -396,9 +412,9 @@ def main():
                     state["script_bytes_sent"] = len(script)
                 if phase == "commands":
                     if sampler:
-                        sampler.update(clean, output, monitor.send, state)
+                        sampler.update(clean, output, monitor.send, state, vnc_capture=vnc_capture)
                     else:
-                        capture_frames(clean, output, monitor.send, state)
+                        capture_frames(clean, output, monitor.send, state, vnc_capture=vnc_capture)
                     # Do not queue interactive shell input while the foreground
                     # browser session owns the terminal: queued spaces can be
                     # lost before ash resumes. Capture $? only after its prompt.
@@ -412,6 +428,13 @@ def main():
                     state["guest_exit_code"] = int(completed[1])
                     dump = output / "screendump.ppm"
                     response = monitor.send("screendump " + json.dumps(str(dump)))
+                    if args.vnc_supplement:
+                        errors = re.findall(rb'(?im)^Error:[^\r\n]*',
+                            re.sub(rb'\x1b\[[0-?]*[ -/]*[@-~]', b'', response))
+                        require(not errors or errors == [b'Error: no surface'],
+                                'unexpected monitor completion capture error')
+                        if errors:
+                            state['formal_monitor_capture'] = 'BLOCKED: QEMU monitor reports no surface'
                     state["screendump"] = {"exists": dump.is_file(),
                         "bytes": dump.stat().st_size if dump.is_file() else 0,
                         "interpretation": "monitor capture only; existence is not guest rendering evidence",

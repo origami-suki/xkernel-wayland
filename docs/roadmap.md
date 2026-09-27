@@ -1,8 +1,6 @@
 # 推进路线
 
-2026-09-27：**M2-004 guest 三个前置模块已独立验证并引入。** capset、owned mmap、DRM 每文件状态的最终组合 268 项单测、fresh coverage、隔离/共享映射和默认 2D 红绿 monitor 原图及正常退出通过，主内核 `665e62d5`。真实 3D、PRIME、Mesa/Chromium 加速未完成；新命令后端的独立审查发现所有权问题，正在修正。未复跑软件基线/计时，见 [M2-004](tasks/M2-004.md)。
-
-2026-09-27：**M2-004 virgl 宿主组件和启动入口已独立验证。** 同版本QEMU补齐GL/EGL模块；NVIDIA RTX4060明确render node下，硬件EGL/GL、headless virgl初始化、monitor原图与退出0通过。AMD节点quit有宿主Mesa崩溃，失败记录保留。guest完整3D/DRM/DMA-BUF链尚未完成；按用户要求未复跑软件基线或计时。见 [M2-004](tasks/M2-004.md)、[链路记录](analysis/virgl-bringup.md)。
+2026-09-27：**M2-004 guest GPU 原语与最小 sysfs 候选已独立验证。** 最终 GPU/frontend 372/372 单测、fresh coverage、原 Mesa virgl/NVIDIA 像素回读、真实 PRIME/SCM_RIGHTS 及 2D/KMS 通过，主区 `5ed709c5` 原语/2D 回归也通过。最小上游 !796 相对链接 backport 独立 227/227、root/kiosk 设备发现和原 Weston GL 启动/正常退出通过，已引入主内核 `1e86ceaf`；主区发现/GPU/2D/Weston 集成回归也独立通过。当前 Chromium 最终 CDP 硬件 ANGLE virgl、原 URL/title 正确，但补充图像白屏缺正文，Browser.close ACK 后信号11退出，guest/runner失败。正式 virgl 纹理 monitor 截图受 QEMU no surface 限制 BLOCKED，VNC 仅补充；原页 GPU 加速及浏览器正常退出未验收。Linux 控制的硬件 ANGLE virgl 已证明，但 Browser.close 实际 SIGSEGV11。 最后一项相同用户态/VNC 控制可见 Linux 原页而 x-kernel 白屏，具体根因仍未知；控制图像不替代正式验收。固定 v0.2.0 起点及现有用户态，未复跑软件基线或计时。见 [M2-004](tasks/M2-004.md)、[链路记录](analysis/virgl-bringup.md)。
 
 2026-09-27：**M5-006 前两项热点定位通过独立复核。** GPU同步等待20.075秒已缩到初始化失败／回退／回复链，失败进程内部栈尚缺；trap返回路径无活动CPUtimer仍全线程聚合，插桩下1→33线程聚合均值约7–9→73μs，原页配对样本占poll CPU53.15%。观测开销144%，未量化生产成本或收益；临时诊断仅在隔离区，未修改生产内核。见 [M5-006](tasks/M5-006.md)、[定位报告](measurements/hotspot-localization-20260927.md)。
 
@@ -101,6 +99,7 @@ Linux 对照使用同一补齐后的 Wayland 用户态与参数。headless/neste
 | [M1-013](tasks/M1-013.md) | syscall 聚合、校准与首轮热点 | 统计入口与原页真实运行 | 主区校准/首轮完成；剩余工具验证按用户指示停止 |
 | [M5-002](tasks/M5-002.md) | munmap 启动 CPU 热点 | M1-013 数据与最小分段定位 | 下一项，未修改优化路径 |
 | [M2-001](tasks/M2-001.md) | Weston DRM/pixman 与动态 wl_shm 客户端 | M1-004；真实 monitor 图像变化、frame/release、正常退出 | **独立验收及干净复跑通过**；非 VT seat、暂允许无输入 |
+| [M2-004](tasks/M2-004.md) | virgl GPU 链路、真实 PRIME/render/KMS 与原页应用 | 独立原语/设备发现/应用验证；原 renderer、正式 monitor 图像及退出分别核对 | GPU 原语/2D/KMS 和最小 sysfs 候选 Weston GL 通过；主区发现/GPU/2D/Weston 通过；Chrome 硬件状态通过但原页正文未显示、关闭信号11，正式纹理截图 BLOCKED，任务未完成 |
 | [M1-005](tasks/M1-005.md) | Chromium子进程的no_new_privs | M3实际失败；同盘ABI/线程/fork/exec/setid探针及独立回归 | 已修复：同盘五类NNP对照、130单测及M1/M2独立回归通过 |
 | [M1-006](tasks/M1-006.md) | 活跃TID的调度参数查询 | M3日志及同盘动态/静态probe；查询语义与独立回归 | 已修复：动态/静态各33项、107单测及M1/M2独立回归通过 |
 | [M1-007](tasks/M1-007.md) | Unix socket发送者凭据与Zygote PID握手 | 同盘SO_PASSCRED/SCM_CREDENTIALS正常路径probe及Chromium源码链 | 已修复：236项同盘凭据对照、256项单测及独立M1/M2回归通过 |

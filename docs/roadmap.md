@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-27：**M2-004 白屏延时检测 PARTIAL，独立证据审查通过。** 原内核/用户态/flags 的单轮被动观察至初始GPU info后300.361秒（launch marker后346.568秒），60/180/300秒三张补充VNC逐字相同且无正文，不支持“再等几十秒即可显示”。随后及唯一补跑均CDP attach ACK后Runtime报session not found；补跑出站session/host机械控制已核对，guest接收端未观测，DOM/内部图像仍BLOCKED。补跑早期图全黑，不是五分钟白屏重复验证。DRM范围实查min=max1280×800，几何warning因果仍未证明；两轮close仍SIGSEGV11，formal monitor仍no surface。不改内核/三方、不复跑软件基线或性能。见 [M2-004](tasks/M2-004.md)。
+
 2026-09-27：**M2-004 guest GPU 原语与最小 sysfs 候选已独立验证。** 最终 GPU/frontend 372/372 单测、fresh coverage、原 Mesa virgl/NVIDIA 像素回读、真实 PRIME/SCM_RIGHTS 及 2D/KMS 通过，主区 `5ed709c5` 原语/2D 回归也通过。最小上游 !796 相对链接 backport 独立 227/227、root/kiosk 设备发现和原 Weston GL 启动/正常退出通过，已引入主内核 `1e86ceaf`；主区发现/GPU/2D/Weston 集成回归也独立通过。当前 Chromium 最终 CDP 硬件 ANGLE virgl、原 URL/title 正确，但补充图像白屏缺正文，Browser.close ACK 后信号11退出，guest/runner失败。正式 virgl 纹理 monitor 截图受 QEMU no surface 限制 BLOCKED，VNC 仅补充；原页 GPU 加速及浏览器正常退出未验收。Linux 控制的硬件 ANGLE virgl 已证明，但 Browser.close 实际 SIGSEGV11。 最后一项相同用户态/VNC 控制可见 Linux 原页而 x-kernel 白屏，具体根因仍未知；控制图像不替代正式验收。固定 v0.2.0 起点及现有用户态，未复跑软件基线或计时。见 [M2-004](tasks/M2-004.md)、[链路记录](analysis/virgl-bringup.md)。
 
 2026-09-27：**M5-006 前两项热点定位通过独立复核。** GPU同步等待20.075秒已缩到初始化失败／回退／回复链，失败进程内部栈尚缺；trap返回路径无活动CPUtimer仍全线程聚合，插桩下1→33线程聚合均值约7–9→73μs，原页配对样本占poll CPU53.15%。观测开销144%，未量化生产成本或收益；临时诊断仅在隔离区，未修改生产内核。见 [M5-006](tasks/M5-006.md)、[定位报告](measurements/hotspot-localization-20260927.md)。

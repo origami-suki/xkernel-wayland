@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-27：**M2-004 调试策略因果已验证，x-kernel正文/DOM/采样几何与Linux一致，显示仍未通过。** 同观察器Linux配对仅改工作副本DeveloperToolsAvailability 2→1，即恢复page attach和内容请求。x-kernel诊断变体取得75元素、116 DOM节点及相同正文/rect；Page layout和内部截图无回复，外部前后白屏无正文。独立证据审查PASS，生产内核未改；首次x-kernel采集器gate失败及forced SIGKILL9保留，补跑/两Linux仍关闭SIGSEGV11，正式monitor no surface。详见 [M2-004](tasks/M2-004.md)。
+
 2026-09-27：**M2-004 同用户态 CDP 对照完成，内容定位仍 BLOCKED。** Linux 原 pipe 也复现 attach ACK 后 SessionNotFound；直接 page WS 两侧最小 Runtime 无完整回复。独立审查后唯一 Linux 增量将 Page/DOM/Runtime 分开采样，三条各45秒超时、观察器page帧读取0字节，target三次attached=false；Linux外部原页仍可见，不能由共同调试静默推定x-kernel DOM异常。未追加x-kernel实验或生产内核修改，正式截图与正常关闭仍失败/阻塞。两次证据审查PASS仅限定记录准确，观察器另有未触发的负poll timeout风险；新增材料已备份。见 [M2-004](tasks/M2-004.md)。
 
 2026-09-27：**M2-004 白屏延时检测 PARTIAL，独立证据审查通过。** 原内核/用户态/flags 的单轮被动观察至初始GPU info后300.361秒（launch marker后346.568秒），60/180/300秒三张补充VNC逐字相同且无正文，不支持“再等几十秒即可显示”。随后及唯一补跑均CDP attach ACK后Runtime报session not found；补跑出站session/host机械控制已核对，guest接收端未观测，DOM/内部图像仍BLOCKED。补跑早期图全黑，不是五分钟白屏重复验证。DRM范围实查min=max1280×800，几何warning因果仍未证明；两轮close仍SIGSEGV11，formal monitor仍no surface。不改内核/三方、不复跑软件基线或性能。见 [M2-004](tasks/M2-004.md)。

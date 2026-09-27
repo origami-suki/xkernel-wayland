@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-28：**M2-004 无CDP截图控制仍在Weston捕获后出现原页。** 同会话无C/Tracing，30秒窗口两张外图均无正文且RGB相同；一次原Weston capture后W/F2完整RGB一致并有正文。30个独立Runtime全部超时、readiness未验证，Chrome退出forced SIG9；独立证据审查PASS不排除源更新/自然进展，不唯一归因capture中的重绘/planes/读回。见 [M2-004](tasks/M2-004.md)。
+
 2026-09-28：**M2-004 原Weston截图后外部原页可见，仍是诊断干预结果。** 捕获前F1白屏，原screenshooter的合成图W与捕获后F2有正文且完整RGB一致；协议complete/fresh PNG/真实client退出均通过。本轮CDP内图未取得、body循环被观察器gate跳过；capture重绘/禁planes/读回与自然进展或pending C尚未拆分，不能称原场景修复。独立证据审查PASS，Chrome仍SIGSEGV11、formal monitor仍no surface。见 [M2-004](tasks/M2-004.md)。
 
 2026-09-28：**M2-004 GPU生成XRGB buffer到KMS外部像素通过限定对照。** Linux及x-kernel补跑的A/B外部RGB、采集后GPU回读均零差异，实际翻页事件/GETCRTC及清理退出全0。首x-kernel ACK空格丢失导致B未运行和exit1完整保留，补跑仅改私有采集握手，Linux未测新版。独立原始像素/证据审查PASS、314文件备份恢复通过；formal monitor仍no surface，真实Weston ABGR导入/合成与原页输出尚未验收。见 [M2-004](tasks/M2-004.md)。

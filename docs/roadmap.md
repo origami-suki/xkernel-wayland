@@ -1,5 +1,7 @@
 # 推进路线
 
+2026-09-28：**M2-004 实际输出资源读回将像素差异定位到两块virgl输出资源，根因仍未确定。** 同会话两轮先观察R1亮FB2/`0x101c`、R2黑FB1/`0x1000`；一次显式读回的两份4,096,000字节原始帧与各自VNC全像素零差异，哨兵与backing恢复检查通过。原runner离线提取失败保留，修正解析后独立复核仅通过诊断像素结论；读回有同步干预，不能倒推无干预纹理或宣布buffer-age缺陷。formal monitor仍`no surface`、Chrome关闭后forced SIG9，M2-004未完成。见 [M2-004](tasks/M2-004.md)。
+
 2026-09-28：**M2-004 隔离资源映射诊断建立了本会话FB→对象→virgl资源关联，根因仍未确定。** 独立审查的一次四轮运行中，FB1/资源`0x1000`对应R1/R3原页正文，FB2/资源`0x101c`对应R2/R4全黑；QEMU收到两资源的set-scanout/flush，内核日志无溢出，正式monitor仍`no surface`、Chrome仍SIG11。上一会话明暗FB编号相反，编号不可跨会话推论；submit引用不是像素写入证明。下一步仅在隔离区作有读回有效性门槛的实际输出资源诊断。见 [M2-004](tasks/M2-004.md)。
 
 2026-09-28：**M2-004 四次同类无读回刺激稳定关联FB与画面。** R1/R3的GETCRTC前后FB2及Westonselected FB一致、正文RGB相同；R2/R4的FB1一致、全黑RGB相同。独立原始证据审查PASS仅限定committed abstract FB关联，仍缺BO/resource/update身份。有限上游检索未识别适用最小补丁，未改内核；下一项是隔离诊断的FB→resource映射/生命周期与QEMU资源事件对齐。Chrome仍SIG11、formal仍no surface。见 [M2-004](tasks/M2-004.md)。

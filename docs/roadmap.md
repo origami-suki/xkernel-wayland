@@ -1,3 +1,5 @@
+# 2026-10-01：**M2-004 同会话 Weston 用户态断点诊断取得实际 age/BO 读数，根因仍未确定。** 在准确 maps/ELF 身份下，`eglQuerySurface(EGL_BUFFER_AGE_EXT)` 成功返回且输出 age 为 0，`gbm_surface_lock_front_buffer` 返回非空 `gbm_bo *`；四停点和 runner/GDB/QEMU 生命周期经独立审查通过。该样本受断点扰动，未建立 age 异常、BO 内容/生命周期、FB/virgl resource 身份或原页显示因果；本轮 by-path 实际为 NVIDIA `/dev/dri/renderD129`，不沿用动态节点号。正式 monitor 仍 `no surface`，Chromium 正常退出与 M2-004 功能验收仍未通过。见 [M2-004](tasks/M2-004.md)。
+
 # 推进路线
 
 2026-09-28：**M2-004 实际输出资源读回将像素差异定位到两块virgl输出资源，根因仍未确定。** 同会话两轮先观察R1亮FB2/`0x101c`、R2黑FB1/`0x1000`；一次显式读回的两份4,096,000字节原始帧与各自VNC全像素零差异，哨兵与backing恢复检查通过。原runner离线提取失败保留，修正解析后独立复核仅通过诊断像素结论；读回有同步干预，不能倒推无干预纹理或宣布buffer-age缺陷。formal monitor仍`no surface`、Chrome关闭后forced SIG9，M2-004未完成。见 [M2-004](tasks/M2-004.md)。

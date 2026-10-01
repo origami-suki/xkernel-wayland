@@ -1,3 +1,5 @@
+# 2026-10-01：**M2-004 同会话 BO→FB→virgl resource 身份诊断独立通过，显示根因仍未确定。** 原内核、原用户态和原页下，三个只读断点均确认 Weston root TID19；本会话 BO `0xdf31ae0`→FB2（backend fd13/handle5）→内核对象 `0xffff00006a55ed10`→resource `0x101b`，实际 outer `present_fb` frame 的 typed Symbol 读取与寄存器交叉核对通过。前三版工具失败原样保留，最终版全部宿主 wait 为0；没有新像素/scanout/应用退出证据，不把旧会话明暗编号移植过来。主内核未改，M2-004 功能仍未通过。见 [M2-004](tasks/M2-004.md)。
+
 # 2026-10-01：**M2-004 同会话 Weston 用户态断点诊断取得实际 age/BO 读数，根因仍未确定。** 在准确 maps/ELF 身份下，`eglQuerySurface(EGL_BUFFER_AGE_EXT)` 成功返回且输出 age 为 0，`gbm_surface_lock_front_buffer` 返回非空 `gbm_bo *`；四停点和 runner/GDB/QEMU 生命周期经独立审查通过。该样本受断点扰动，未建立 age 异常、BO 内容/生命周期、FB/virgl resource 身份或原页显示因果；本轮 by-path 实际为 NVIDIA `/dev/dri/renderD129`，不沿用动态节点号。正式 monitor 仍 `no surface`，Chromium 正常退出与 M2-004 功能验收仍未通过。见 [M2-004](tasks/M2-004.md)。
 
 # 推进路线
